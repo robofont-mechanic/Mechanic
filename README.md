@@ -5,19 +5,28 @@ Mechanic provides an interface in RoboFont for installing and updating extension
 
 https://github.com/jackjennings/Mechanic
 
+![mechanic preview](http://ja.ckjennin.gs/public/images/Mechanic-preview.png)
+
 Installation
 ------------
 
 Double click `Mechanic.roboFontExt`.
 
+Features
+--------
+
+* Checks for updates of configured extensions on update (options)
+* Ignore individual extensions from being updated
+* Manually check for updates of configured extensions
+
 Extension Registry
 ------------------
 
-The list of installable extensions are (currently) maintained within the extension. Open an [Issue](https://github.com/jackjennings/Mechanic) with the name of your extension and a link to the repository and it will be merged into the next Mechanic update.
+The list of installable extensions are (currently) maintained within the extension. Open an [Issue](https://github.com/jackjennings/Mechanic/issues) with the name of your extension and a link to the repository and it will be merged into the next Mechanic update.
 
 Currently, Mechanic manages the following extensions:
 
-* [RoboToDo](jackjennings/RoboToDo)
+* [RoboToDo](https://github.com/jackjennings/RoboToDo)
 
 Mechanic for Developers
 -----------------------

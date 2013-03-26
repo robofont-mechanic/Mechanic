@@ -43,9 +43,11 @@
 	<string>_startup.py</string>
 	<key>name</key>
 	<string>Mechanic</string>
+	<key>repository</key>
+	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1364274019.966798</real>
+	<real>1364305366.102496</real>
 	<key>version</key>
-	<string>0.1.0</string>
+	<string>0.1.1</string>
 </dict>
 </plist>
