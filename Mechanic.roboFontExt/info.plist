@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>addToMenu</key>
+	<array>
+		<dict>
+			<key>path</key>
+			<string>check_for_updates.py</string>
+			<key>preferredName</key>
+			<string>Check for Updates</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
+			<string>install_extensions.py</string>
+			<key>preferredName</key>
+			<string>Install Extensions</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
+			<string>settings.py</string>
+			<key>preferredName</key>
+			<string>Settings</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+	</array>
+	<key>developer</key>
+	<string>Jack Jennings</string>
+	<key>developerURL</key>
+	<string>http://ja.ckjennin.gs</string>
+	<key>developerurl</key>
+	<string>http://ja.ckjennin.gs</string>
+	<key>html</key>
+	<true/>
+	<key>launchAtStartUp</key>
+	<integer>1</integer>
+	<key>mainScript</key>
+	<string>_startup.py</string>
+	<key>name</key>
+	<string>Mechanic</string>
+	<key>timeStamp</key>
+	<real>1364274019.966798</real>
+	<key>version</key>
+	<string>0.1.0</string>
+</dict>
+</plist>
