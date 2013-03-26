@@ -7,6 +7,11 @@ https://github.com/jackjennings/Mechanic
 
 ![mechanic preview](http://ja.ckjennin.gs/public/images/Mechanic-preview.png)
 
+Requirements
+------------
+
+Mechanic requires RoboFont 1.3 or greater.
+
 Installation
 ------------
 
