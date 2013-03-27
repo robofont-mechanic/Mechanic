@@ -32,6 +32,7 @@ The list of installable extensions are (currently) maintained within the extensi
 Currently, Mechanic manages the following extensions:
 
 * [RoboToDo](https://github.com/jackjennings/RoboToDo)
+* Mechanic
 
 Mechanic for Developers
 -----------------------
