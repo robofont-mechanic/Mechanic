@@ -8,7 +8,7 @@ from mechanic.helpers import *
 from mechanic.models import Extension, GithubRepo
 
 class UpdatesWindow(BaseWindowController):
-    
+    """Window to display extensions with newer remote versions."""
     window_title = "Extension Updates"
     title = Font.string(text="Updates are available for your RoboFont extensions.",style="bold")
     explanation = Font.string(text="The following extensions have updates available to download. If you don't want to install now, choose Extensions > Mechanic > Check for Updates when you're ready to install.",size=11)
@@ -45,6 +45,8 @@ class UpdatesWindow(BaseWindowController):
                 callback=self.update)
             self.update_update_button_label()
             self.w.setDefaultButton(self.w.updateButton)
+            
+            self.w.open()
         else:
             if silent:
                 print "%s: %s" % (self.no_updates_title, self.no_updates)
@@ -65,10 +67,6 @@ class UpdatesWindow(BaseWindowController):
         else:
             update_label = "Install %d Updates" % count
         self.w.updateButton._nsObject.setTitle_(update_label)
-
-    def open(self):
-        if hasattr(self, 'w'):
-            self.w.open()
         
     def cancel(self, sender):
         self.w.close()
@@ -101,7 +99,7 @@ class UpdatesWindow(BaseWindowController):
         self.w.close()
 
 class SettingsWindow(BaseWindowController):
-    
+    """Window to display extension settings."""
     window_title = "Mechanic Settings"
     checkbox_label = "Check for updates on startup"
     check_on_startup = Storage.get("check_on_startup")
@@ -127,6 +125,8 @@ class SettingsWindow(BaseWindowController):
             callback=self.update)
         self.w.setDefaultButton(self.w.updateButton)
 
+        self.w.open()
+
     def update(self, sender):
         ignore = Storage.get("ignore")
         Storage.set("check_on_startup", 
@@ -142,11 +142,8 @@ class SettingsWindow(BaseWindowController):
     def cancel(self, sender):
         self.w.close()
 
-    def open(self):
-        self.w.open()
-
 class InstallationWindow(BaseWindowController):
-    
+    """Window to display installable extensions."""
     window_title = "Install Extensions"
     
     def __init__(self, registry='../registry.json'):
@@ -168,9 +165,8 @@ class InstallationWindow(BaseWindowController):
         self.update_install_button_label()
         self.w.setDefaultButton(self.w.install_button)
         
-    def open(self):
         self.w.open()
-    
+            
     def open_repo(self, sender):
         list = self.w.installationList.get()
         selections = self.w.installationList.getSelection()
@@ -237,6 +233,3 @@ class InstallationWindow(BaseWindowController):
         else:
             label = "Install Extensions"
         self.w.install_button._nsObject.setTitle_(label)
-
-if __name__ is '__main__':
-    InstallationWindow().open()

@@ -3,7 +3,7 @@ from vanilla import List, CheckBoxListCell
 from mojo.extensions import ExtensionBundle, getExtensionDefault, setExtensionDefault
 
 def ExtensionList(posSize, extensions, **kwargs):
-    
+    """Return vanilla list of extensions wrapped in dicts."""
     extension_cells = []
     for extension in extensions:
         extension_cell = {
@@ -21,7 +21,7 @@ def ExtensionList(posSize, extensions, **kwargs):
     return list
 
 def UpdatesList(posSize, extensions, **kwargs):
-    
+    """Return an ExtensionList for updateable extensions."""
     columns = [
                {"title": "Install", "key": "install", "width": 40, "editable": True, "cell": CheckBoxListCell()}, 
                {"title": "Extension", "key": "name", "width": 300, "editable": False}, 
@@ -31,7 +31,7 @@ def UpdatesList(posSize, extensions, **kwargs):
     return ExtensionList(posSize, extensions, columnDescriptions=columns, **kwargs)
 
 def SettingsList(posSize, extensions, **kwargs):
-    
+    """Return an ExtensionList for settings window."""
     columns = [
                {"title": "Check", "key": "check_for_updates", "width": 40, "editable": True, "cell": CheckBoxListCell()},
                {"title": "Extension", "key": "name", "width": 300, "editable": False},
@@ -41,7 +41,7 @@ def SettingsList(posSize, extensions, **kwargs):
     return ExtensionList(posSize, extensions, columnDescriptions=columns, **kwargs)
 
 def InstallationList(posSize, registry, **kwargs):
-    
+    """Return an ExtensionList for installation window."""
     columns = [
                {"title": "Extension", "key": "name", "width": 200, "editable": False},
                {"title": "Repository", "key": "repository", "width": 200, "editable": False},
@@ -58,7 +58,7 @@ def InstallationList(posSize, registry, **kwargs):
     return List(posSize, extension_cells, columnDescriptions=columns, **kwargs)
 
 class Font(object):
-    
+    """Convenience class for returning NSAttributedStrings."""
     @staticmethod
     def regular(size): return {NSFontAttributeName:NSFont.systemFontOfSize_(size)}
     
@@ -74,7 +74,7 @@ class Font(object):
         return str.alloc().initWithString_attributes_(text, getattr(self,style)(size))
 
 class Version(object):
-    
+    """Convenience class for comparing version strings."""
     major = 0
     minor = 0
     patch = 0
@@ -119,7 +119,7 @@ class Version(object):
         return self.__lt__(other) or self.__eq__(other)
         
 class Storage(object):
-    
+    """Convenience class for storing extension settings."""
     defaults = {"ignore": {}, "check_on_startup": True}
     defaultKey = "com.jackjennings.mechanic"
     
