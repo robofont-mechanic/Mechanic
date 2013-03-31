@@ -31,8 +31,9 @@ The list of installable extensions are (currently) maintained within the extensi
 
 Currently, Mechanic manages the following extensions:
 
-* [RoboToDo](https://github.com/jackjennings/RoboToDo)
-* Mechanic
+* [Mechanic](https://github.com/jackjennings/Mechanic) by Jack Jennings
+* [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
+* [SidebearingsEQ](https://github.com/franzheidl/SidebearingsEQ) by Franz Heidl
 
 Mechanic for Developers
 -----------------------
