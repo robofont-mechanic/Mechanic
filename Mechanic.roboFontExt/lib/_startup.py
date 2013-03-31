@@ -17,7 +17,7 @@ class MechanicObserver:
         """Open updates window unless ran in last hour"""
         last_run = Storage.get('last_run')
         if last_run is None or last_run < time.time() - (60 * 60):
-            UpdatesWindow()
+            UpdatesWindow(quiet=True)
             Storage.set('last_run', time.time())
 
 Storage.setDefaults()

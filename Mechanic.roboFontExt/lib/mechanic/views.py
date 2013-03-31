@@ -16,7 +16,7 @@ class UpdatesWindow(BaseWindowController):
     no_updates_title = 'Mechanic'
     no_updates = 'All updateable extensions are up to date.'
     
-    def __init__(self, silent=True):
+    def __init__(self, quiet=False):
         self.updateables = []
         ignore = Storage.get('ignore')
         
@@ -47,11 +47,10 @@ class UpdatesWindow(BaseWindowController):
             self.w.setDefaultButton(self.w.updateButton)
             
             self.w.open()
+        elif not quiet:
+            message(self.no_updates_title, self.no_updates)
         else:
-            if silent:
-                print "%s: %s" % (self.no_updates_title, self.no_updates)
-            else:
-                message(self.no_updates_title, self.no_updates)
+            print "%s: %s" % (self.no_updates_title, self.no_updates)
 
     def update_update_button_label(self, sender=None):
         rows = self.w.updateableList.get()
