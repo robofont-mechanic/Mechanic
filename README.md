@@ -7,6 +7,11 @@ https://github.com/jackjennings/Mechanic
 
 ![mechanic preview](http://ja.ckjennin.gs/public/images/Mechanic-preview.png)
 
+Requirements
+------------
+
+Mechanic requires RoboFont 1.3 or greater.
+
 Installation
 ------------
 
@@ -27,6 +32,7 @@ The list of installable extensions are (currently) maintained within the extensi
 Currently, Mechanic manages the following extensions:
 
 * [RoboToDo](https://github.com/jackjennings/RoboToDo)
+* Mechanic
 
 Mechanic for Developers
 -----------------------
@@ -47,7 +53,7 @@ Mechanic makes a few of assumptions about your repository:
 	From the command line, your first release might look like:
 
 	```
-		git tags -a 0.1 -m "Release version 0.1"
+		git tag -a 0.1 -m "Release version 0.1"
 		git push origin master --tags
 	```
 	
