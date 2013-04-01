@@ -184,7 +184,7 @@ class InstallationWindow(BaseWindowController):
         self.progress = self.startProgress('Updating', ticks)
 
         for remote_cell in installable:
-            remote = GithubRepo(remote_cell['repository'])
+            remote = GithubRepo(remote_cell['repository'], name=remote_cell['name'])
             try:
                 self.progress.update('Getting data from %s...' % remote_cell['repository'])
                 remote.get()
@@ -194,11 +194,8 @@ class InstallationWindow(BaseWindowController):
                     remote.file.write(content)
                 remote.file.close()
                 self.progress.update('Extracting %s...' % remote_cell['name'])
-                folder = remote.extract_file()
+                extension_path = remote.extract_file()
                 self.progress.update('Installing %s...' % remote_cell['name'])
-
-                extension_name = filter(lambda f: re.search('.roboFontExt$', f), os.listdir(folder))[0]
-                extension_path = os.path.join(folder, extension_name)
 
                 new_extension = Extension(path=extension_path)
                 new_extension.bundle.install()
