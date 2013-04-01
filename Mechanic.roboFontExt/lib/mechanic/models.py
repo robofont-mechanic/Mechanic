@@ -12,7 +12,8 @@ class Extension(object):
     def __init__(self, name=None, path=None):
         self.config = {}
         self.configured = False
-        self.bundle = ExtensionBundle(name=name, path=path)
+        self.name = name
+        self.bundle = ExtensionBundle(name=self.name, path=path)
         self.path = self.bundle.bundlePath()
         self.configure()
 
@@ -23,7 +24,7 @@ class Extension(object):
             self.config = plistlib.readPlist(self.configPath)
             if 'repository' in self.config:
                 self.configured = True
-                self.remote = GithubRepo(self.config['repository'])
+                self.remote = GithubRepo(self.config['repository'], name=self.name)
             
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
@@ -45,8 +46,9 @@ class GithubRepo(object):
     
     tags_url = "https://api.github.com/repos/%s/tags"
 
-    def __init__(self, repo):
+    def __init__(self, repo, name=None):
         self.repo = repo
+        self.name = name
         self.username, self.name = repo.split('/')
         self.version = None
         self.downloading = False
@@ -89,8 +91,9 @@ class GithubRepo(object):
         for root, dirnames, filenames in os.walk(self.tmp_path):
             for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
                 matches.append(os.path.join(root, dirname))
-                
-        return matches[0]
+        
+        exact = fnmatch.filter(matches, '*%s.roboFontExt' % self.name)
+        return (exact and exact[0]) or matches[0]
     
     def download(self):
         """Download remote version of extension."""
@@ -112,3 +115,8 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+
+if __name__ is "__main__":
+    gr = GithubRepo('jackjennings/Dummy', 'Dummy')
+    print gr.download()
+    
