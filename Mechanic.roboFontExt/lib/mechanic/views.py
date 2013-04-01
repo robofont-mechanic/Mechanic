@@ -21,10 +21,11 @@ class UpdatesWindow(BaseWindowController):
         ignore = Storage.get('ignore')
         
         for name in ExtensionBundle.allExtentions():
-            if not name in ignore:
-                extension = Extension(name=name)
-                if extension.configured and not extension.is_current_version():
-                    self.updateables.append(extension)
+            extension = Extension(name=name)
+            if (not extension.bundle.name in ignore and
+                    extension.configured and 
+                    not extension.is_current_version()):
+                self.updateables.append(extension)
         
         if len(self.updateables) > 0:
             self.w = Window((500,400),
