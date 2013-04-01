@@ -60,6 +60,6 @@ Mechanic makes a few of assumptions about your repository:
 	
 	Because Mechanic checks the locally installed extension's plist against your git tags, you'll need to manually ensure that the version in your `info.plist` matches your release's tagged version. Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
 
-2. **Your extension exists in the root directory**. Mechanic (currently) installs the first RoboFont extension that it finds in the base folder of your repository. This means that it is not possible to store multiple extensions in a single repository, nor can your extension be stored in a sub directory of the repository.
+2. **Your repository contains one extension**. Mechanic (currently) installs the first RoboFont extension that it finds in your repository. This means that it is not possible to store multiple extensions in a single repository.
 
-3. **You're working on the master branch**. Mechanic will always download the most up to date version of your software from the master branch.
+3. **You're working on the master branch**. Mechanic will always download the most recent tagged version of your software from the master branch.
