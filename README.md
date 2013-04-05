@@ -20,8 +20,8 @@ Double click `Mechanic.roboFontExt`.
 Features
 --------
 
-* Checks for updates of configured extensions on update (options)
-* Ignore individual extensions from being updated
+* Checks for updates of configured extensions on update (optional)
+* Conditionally ignore individual extensions from being updated
 * Manually check for updates of configured extensions
 
 Extension Registry
