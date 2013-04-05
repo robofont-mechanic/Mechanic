@@ -102,7 +102,7 @@ class SettingsWindow(BaseWindowController):
     """Window to display extension settings."""
     window_title = "Mechanic Settings"
     checkbox_label = "Check for updates on startup"
-    check_on_startup = Storage.get("check_on_startup")
+    check_on_startup = bool(Storage.get("check_on_startup"))
     
     def __init__(self):
         self.configured = []
