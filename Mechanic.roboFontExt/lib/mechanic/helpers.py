@@ -54,6 +54,7 @@ def InstallationList(posSize, registry, **kwargs):
                 "repository": repo
                 }
         extension_cells.append(cell)
+    extension_cells = sorted(extension_cells, key=lambda k: k['name'].lower())
     
     return List(posSize, extension_cells, columnDescriptions=columns, **kwargs)
 

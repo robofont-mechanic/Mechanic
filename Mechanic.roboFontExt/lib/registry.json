@@ -2,5 +2,17 @@
   "Mechanic": "jackjennings/Mechanic",
   "Replicant": "jackjennings/Replicant",
   "RoboToDo": "jackjennings/RoboToDo",
-  "SidebearingsEQ": "franzheidl/SidebearingsEQ"
+  "SidebearingsEQ": "franzheidl/SidebearingsEQ",
+  "LayerPreview": "typemytype/RoboFontExtensions",
+  "Arrange Windows": "typemytype/RoboFontExtensions",
+  "FeaturePreview": "typemytype/RoboFontExtensions",
+  "GlifViewer": "typemytype/RoboFontExtensions",
+  "Groups2Features": "typemytype/RoboFontExtensions",
+  "Outliner": "typemytype/RoboFontExtensions",
+  "PixelTool": "typemytype/RoboFontExtensions",
+  "RamsaySt": "typemytype/RoboFontExtensions",
+  "send2twitter": "typemytype/RoboFontExtensions",
+  "ShapeTool": "typemytype/RoboFontExtensions",
+  "TinyDrawBot": "typemytype/RoboFontExtensions",
+  "TypeCooker": "typemytype/RoboFontExtensions"
 }
