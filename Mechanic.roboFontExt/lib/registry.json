@@ -14,5 +14,11 @@
   "send2twitter": "typemytype/RoboFontExtensions",
   "ShapeTool": "typemytype/RoboFontExtensions",
   "TinyDrawBot": "typemytype/RoboFontExtensions",
-  "TypeCooker": "typemytype/RoboFontExtensions"
+  "TypeCooker": "typemytype/RoboFontExtensions",
+  "AdjustMetrics": "FontBureau/fbOpenTools",
+  "BoundingTool": "FontBureau/fbOpenTools",
+  "Glyph Select": "FontBureau/fbOpenTools",
+  "Overlay UFOs": "FontBureau/fbOpenTools",
+  "Random Word Generator": "FontBureau/fbOpenTools",
+  "ShowDelta": "FontBureau/fbOpenTools"
 }
