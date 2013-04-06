@@ -45,7 +45,7 @@ Mechanic assumes that you are releasing on the master branch.
 
 Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
 
-## Versioning With Tags (recommended)
+## Versioning with Tags (recommended)
 
 If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
 
@@ -69,7 +69,7 @@ Because Mechanic checks the locally installed extension's plist against your git
 
 When versioning with tags, Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. If you need to have more than one extension in your repository, consider versioning with `info.plist`.
 
-## Versioning With `info.plist`
+## Versioning with `info.plist`
 
 You can also version your extension using only the key found in `info.plist`.
 
