@@ -69,7 +69,7 @@ Because Mechanic checks the locally installed extension's plist against your git
 
 When versioning with tags, Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. If you need to have more than one extension in your repository, consider versioning with `info.plist`.
 
-## Versioning with info.plist
+## Versioning With `info.plist`
 
 You can also version your extension using only the key found in `info.plist`.
 
