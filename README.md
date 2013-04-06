@@ -20,8 +20,8 @@ Double click `Mechanic.roboFontExt`.
 Features
 --------
 
-* Checks for updates of configured extensions on update (options)
-* Ignore individual extensions from being updated
+* Checks for updates of configured extensions on update (optional)
+* Conditionally ignore individual extensions from being updated
 * Manually check for updates of configured extensions
 
 Extension Registry
@@ -32,6 +32,7 @@ The list of installable extensions are (currently) maintained within the extensi
 Currently, Mechanic manages the following extensions:
 
 * [Mechanic](https://github.com/jackjennings/Mechanic) by Jack Jennings
+* [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
 * [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
 * [SidebearingsEQ](https://github.com/franzheidl/SidebearingsEQ) by Franz Heidl
 
