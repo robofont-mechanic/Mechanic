@@ -39,28 +39,51 @@ Currently, Mechanic manages the following extensions:
 Mechanic for Developers
 -----------------------
 
-If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. Mechanic will recognize your extension when these two lines are present in your extension's `info.plist` file:
+If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up.
+
+Mechanic assumes that you are releasing on the master branch.
+
+Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
+
+## Versioning with Tags (recommended)
+
+If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
+
+In order for Mechanic to recognize your extension, add a `repository` key to your `info.plist` file:
 
 ```xml
 	<key>repository</key>
 	<string>username/Repository</string>
 ```
 
-`string` should contain your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
+* `repository` should contain your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
 
-Mechanic makes a few of assumptions about your repository:
+When checking a local extension's version against a repository, Mechanic will search your repository's tags for the latest version number. When you want to release a new version of your extension, tag the specific commit with a incremented version number. From the command line, your first release might look like:
 
-1. **Releases are organized by tags**. When checking a local extension's version against a repository, Mechanic will search your repository's tags for the latest version number. When you want to release a new version of your extension, tag the specific commit with a incremented version number. Using tags instead matching the remote `info.plist` version, allows you to continue to commit to your repository, and only release when you are ready.
+```
+	git tag -a 0.1 -m "Release version 0.1"
+	git push origin master --tags
+```
 
-	From the command line, your first release might look like:
+Because Mechanic checks the locally installed extension's plist against your git tags, you'll need to manually ensure that the version in your `info.plist` matches your release's tagged version. 
 
-	```
-		git tag -a 0.1 -m "Release version 0.1"
-		git push origin master --tags
-	```
-	
-	Because Mechanic checks the locally installed extension's plist against your git tags, you'll need to manually ensure that the version in your `info.plist` matches your release's tagged version. Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
+When versioning with tags, Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. If you need to have more than one extension in your repository, consider versioning with `info.plist`.
 
-2. **Your repository contains one extension** or **your extension's filename matches the name in info.plist**. Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. It's not a particularly good solution, so the best practice is to have one extension per repository (which lets you take advantage of versioning better, regardless.)
+## Versioning with `info.plist`
 
-3. **You're working on the master branch**. Mechanic will always download the most recent tagged version of your software from the master branch.
+You can also version your extension using only the key found in `info.plist`.
+
+Add the standard `repository` key to your `info.plist`, along with an `extensionPath` key.
+
+```xml
+	<key>repository</key>
+	<string>username/Repository</string>
+	<key>extensionPath</key>
+	<string>path/to/Extension.roboFontExt</string>
+```
+
+* `repository` should contain your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
+
+* `extensionPath` should contain the path to your extension, relative to the root of your repository (e.g. `ext/myExtension/myExtension.roboFontExt`)
+
+Mechanic will download the `info.plist` file that is contained in the extension specified in `extensionPath` when checking for updates.
