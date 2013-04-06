@@ -31,10 +31,22 @@ The list of installable extensions are (currently) maintained within the extensi
 
 Currently, Mechanic manages the following extensions:
 
+* [Arrange Windows](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Feature Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Glif Viewer](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Groups2Features](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Layer Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Mechanic](https://github.com/jackjennings/Mechanic) by Jack Jennings
+* [Outliner](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Pixel Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Ramsay St.](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
 * [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
+* [send2twitter](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Shape Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [SidebearingsEQ](https://github.com/franzheidl/SidebearingsEQ) by Franz Heidl
+* [Tiny Draw Bot](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Type Cooker](https://github.com/typemytype/RoboFontExtensions) by TypeMedia
 
 Mechanic for Developers
 -----------------------
