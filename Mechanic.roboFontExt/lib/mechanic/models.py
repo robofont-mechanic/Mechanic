@@ -65,7 +65,6 @@ class GithubRepo(object):
             plist_path = os.path.join(self.extension_path, 'info.plist')
             plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
             response = requests.get(plist_url)
-            print plist_url
             plist = plistlib.readPlistFromString(response.content)
             self.zip = self.zip_url % {'repo': self.repo}
             self.version = plist['version']
