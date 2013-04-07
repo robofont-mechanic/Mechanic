@@ -230,3 +230,4 @@ class InstallationWindow(BaseWindowController):
         else:
             label = "Install Extensions"
         self.w.install_button._nsObject.setTitle_(label)
+    

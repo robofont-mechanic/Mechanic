@@ -61,19 +61,24 @@ class GithubRepo(object):
         
     def get(self):
         """Return the version and location of remote extension."""
-        if self.extension_path:
-            plist_path = os.path.join(self.extension_path, 'info.plist')
-            plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-            response = requests.get(plist_url)
-            plist = plistlib.readPlistFromString(response.content)
-            self.zip = self.zip_url % {'repo': self.repo}
-            self.version = plist['version']
-        elif self._get_tags():
-            self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
-            self.zip = self.tags[0]['zipball_url']
-            self.version = self.tags[0]['name']
-        else:
-            self.zip = self.zip_url % {'repo': self.repo}
+        try:
+            if self.extension_path:
+                plist_path = os.path.join(self.extension_path, 'info.plist')
+                plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
+                response = requests.get(plist_url)
+                response.raise_for_status()
+                plist = plistlib.readPlistFromString(response.content)
+                self.zip = self.zip_url % {'repo': self.repo}
+                self.version = plist['version']
+            elif self._get_tags():
+                self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
+                self.zip = self.tags[0]['zipball_url']
+                self.version = self.tags[0]['name']
+            else:
+                self.zip = self.zip_url % {'repo': self.repo}
+        except requests.exceptions.HTTPError:
+            print "Couldn't get information about %s from %s" % (self.name, self.repo)
+            self.version = '0.0.0'
     
     def setup_download(self):
         """Clear extension tmp dir, open download stream and local file."""
@@ -132,3 +137,4 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+
