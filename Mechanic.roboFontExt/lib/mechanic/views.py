@@ -149,6 +149,7 @@ class InstallationWindow(BaseWindowController):
     def __init__(self, registry='../registry.json'):
         registry_data = open(registry)
         registry = json.load(registry_data)
+        registry_data.close()
         
         self.w = Window((500,350),
             self.window_title,
