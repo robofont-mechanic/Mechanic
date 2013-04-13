@@ -44,18 +44,9 @@ def InstallationList(posSize, registry, **kwargs):
     """Return an ExtensionList for installation window."""
     columns = [
                {"title": "Extension", "key": "name", "width": 200, "editable": False},
-               {"title": "Repository", "key": "repository", "width": 200, "editable": False},
+               {"title": "Author", "key": "author", "width": 200, "editable": False},
               ]
-    
-    extension_cells = []
-    for name, repo in registry.iteritems():
-        cell = {
-                "name": name,
-                "repository": repo
-                }
-        extension_cells.append(cell)
-    extension_cells = sorted(extension_cells, key=lambda k: k['name'].lower())
-    
+    extension_cells = sorted(registry, key=lambda k: k[u'name'].lower())
     return List(posSize, extension_cells, columnDescriptions=columns, **kwargs)
 
 class Font(object):

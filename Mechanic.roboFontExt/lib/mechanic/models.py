@@ -130,6 +130,23 @@ class GithubRepo(object):
             shutil.rmtree(self.tmp_path)
         mkdir_p(self.tmp_path)
 
+class Registry(object):    
+    registry_url = "http://robofont-mechanic.herokuapp.com/v1/registry.json"
+
+    def __init__(self, url=None):
+        if url is not None:
+            self.registry_url = url
+        
+    def get(self):
+        response = requests.get(self.registry_url)
+        response.raise_for_status()
+        return response.json()
+        
+    def post(self, data):
+        response = requests.post(self.registry_url, data=json.dumps(data))
+        repsonse.raise_for_status()
+        return response.json()
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -137,4 +154,4 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
-
+    

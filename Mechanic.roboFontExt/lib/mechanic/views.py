@@ -5,7 +5,7 @@ from vanilla.dialogs import message
 from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.extensions import ExtensionBundle
 from mechanic.helpers import *
-from mechanic.models import Extension, GithubRepo
+from mechanic.models import Extension, GithubRepo, Registry
 
 class UpdatesWindow(BaseWindowController):
     """Window to display extensions with newer remote versions."""
@@ -146,29 +146,29 @@ class InstallationWindow(BaseWindowController):
     """Window to display installable extensions."""
     window_title = "Install Extensions"
     
-    def __init__(self, registry='../registry.json'):
-        registry_data = open(registry)
-        registry = json.load(registry_data)
-        registry_data.close()
+    def __init__(self):
+        extensions = Registry().get()
         
         self.w = Window((500,350),
             self.window_title,
             autosaveName="mechanicInstaller")
         
         self.w.installationList = InstallationList((20,20,-20,-50),
-                                                   registry, 
+                                                   extensions, 
                                                    selectionCallback=self.update_buttons,
-                                                   allowsMultipleSelection=True)
-        self.w.open_repo_button = Button((-330,-35,140,20), "Open Repository",
-            callback=self.open_repo)
+                                                   allowsMultipleSelection=True,
+                                                   doubleClickCallback=self.open_repo)
+        self.w.uninstall_button = Button((-290,-35,100,20), "Uninstall",
+            callback=self.uninstall)
         self.w.install_button = Button((-180,-35,160,20), "Install Extension",
             callback=self.install)
-        self.update_install_button_label()
+        self.update_buttons()
         self.w.setDefaultButton(self.w.install_button)
         
         self.w.open()
             
     def open_repo(self, sender):
+        print sender
         list = self.w.installationList.get()
         selections = self.w.installationList.getSelection()
         for selection in selections:
@@ -206,20 +206,26 @@ class InstallationWindow(BaseWindowController):
                 print "Mechanic: Couldn't download %s" % remote_cell['name']
             
         self.progress.close()
+        self.update_buttons()
+        
+    def uninstall(self, sender):
+        uninstallable = self._uninstallable()
+    
+        self.progress = self.startProgress('Updating', len(uninstallable))
 
+        for extension in uninstallable:
+            self.progress.update('Uninstalling %s...' % extension.name)
+            extension.deinstall()
+        
+        self.progress.close()
+        self.update_buttons()
 
     def update_buttons(self, sender=None):
         self.update_install_button_label()
-        self.update_repo_button_label()
+        self.update_uninstall_button_label()
         
-    def update_repo_button_label(self, sender=None):
-        selections = self.w.installationList.getSelection()
-        self.w.open_repo_button._nsObject.setEnabled_(selections)
-        if len(selections) > 1:
-            label = "Open Repositories"
-        else:
-            label = "Open Repository"
-        self.w.open_repo_button._nsObject.setTitle_(label)
+    def update_uninstall_button_label(self, sender=None):
+        self.w.uninstall_button._nsObject.setEnabled_(len(self._uninstallable()) > 0)
         
     def update_install_button_label(self, sender=None):
         selections = self.w.installationList.getSelection()
@@ -231,4 +237,13 @@ class InstallationWindow(BaseWindowController):
         else:
             label = "Install Extensions"
         self.w.install_button._nsObject.setTitle_(label)
-    
+        
+    def _uninstallable(self):
+        list = self.w.installationList.get()
+        selections = self.w.installationList.getSelection()
+        uninstallable = []
+        for selection in selections:
+            extension = ExtensionBundle(name=list[selection]['filename'])
+            if extension.bundleExists():
+                uninstallable.append(extension)
+        return uninstallable
