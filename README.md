@@ -47,6 +47,7 @@ Currently, Mechanic manages the following extensions:
 * [Random Word Generator](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
 * [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
 * [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
+* [Scaling Edit Tool](https://github.com/klaavo/scalingEditTool) by Timo Klaavo
 * [send2twitter](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Shape Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [ShowDelta](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
