@@ -20,5 +20,6 @@
   "Glyph Select": "FontBureau/fbOpenTools",
   "Overlay UFOs": "FontBureau/fbOpenTools",
   "Random Word Generator": "FontBureau/fbOpenTools",
-  "ShowDelta": "FontBureau/fbOpenTools"
+  "ShowDelta": "FontBureau/fbOpenTools",
+  "Scaling Edit Tool": "klaavo/scalingEditTool"
 }
