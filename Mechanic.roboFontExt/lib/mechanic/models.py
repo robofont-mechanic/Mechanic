@@ -1,11 +1,11 @@
-import os, shutil, errno, sys, re, plistlib, fnmatch
+import os, shutil, errno, sys, re, plistlib, fnmatch, time, json
 from glob import glob
 
 import requests
 from zipfile import ZipFile
 
 from mojo.extensions import ExtensionBundle
-from mechanic.helpers import Version
+from mechanic.helpers import Version, Storage
 
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
@@ -130,6 +130,67 @@ class GithubRepo(object):
             shutil.rmtree(self.tmp_path)
         mkdir_p(self.tmp_path)
 
+class Registry(object):    
+    registry_url = "http://www.robofontmechanic.com/api/v1/registry.json"
+
+    def __init__(self, url=None):
+        if url is not None:
+            self.registry_url = url
+    
+    def all(self):
+        response = requests.get(self.registry_url)
+        response.raise_for_status()
+        return response.json()
+        
+    def add(self, data):
+        response = requests.post(self.registry_url, data=data)
+        return response
+        
+class Updates(object):
+    
+    def __init__(self):
+        self.unreachable = False
+        
+    def all(self, force=False):
+        if force or self.updatedAt() < time.time() - (60 * 60):
+            return self._fetchUpdates()
+        else:
+            return self._getCached()
+    
+    def updatedAt(self):
+        return Storage.get('cached_at')
+        
+    def _fetchUpdates(self):
+        updates = []
+        ignore = Storage.get('ignore')
+        for name in ExtensionBundle.allExtentions():
+            extension = Extension(name=name)
+            if (not extension.bundle.name in ignore and
+                    extension.configured):
+                try:
+                    if not extension.is_current_version():
+                        updates.append(extension)
+                except:
+                    self.unreachable = True
+        self._setCached(updates)
+        return updates
+    
+    def _getCached(self):
+        cache = Storage.get('cache')
+        extensions = []
+        for cached in cache.iteritems():
+            extension = Extension(name=cached[0])
+            extension.remote.version = cached[1]
+            extensions.append(extension)
+        return extensions
+        
+    def _setCached(self, extensions):
+        Storage.set('cached_at', time.time())
+        cache = {}
+        for extension in extensions:
+            cache[extension.bundle.name] = extension.remote.version
+        Storage.set('cache', cache)
+                
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -137,4 +198,3 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
-

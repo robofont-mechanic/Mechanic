@@ -1,24 +1,19 @@
 from AppKit import *
-from vanilla import List, CheckBoxListCell
+from vanilla import List, CheckBoxListCell, Group
 from mojo.extensions import ExtensionBundle, getExtensionDefault, setExtensionDefault
 
-def ExtensionList(posSize, extensions, **kwargs):
-    """Return vanilla list of extensions wrapped in dicts."""
-    extension_cells = []
-    for extension in extensions:
-        extension_cell = {
-                          'name': extension.bundle.name,
-                          'local_version': extension.config['version'],
-                          'remote_version': extension.remote.version,
-                          'install': True,
-                          'check_for_updates': extension.bundle.name not in Storage.get('ignore'),
-                          'self': extension
-                         }
-        extension_cells.append(extension_cell)
+class ExtensionList(List):
     
-    list = List(posSize, extension_cells, **kwargs)
-    
-    return list
+    def _wrapItem(self, extension):
+        item = {
+                'name': extension.bundle.name,
+                'local_version': extension.config['version'],
+                'remote_version': extension.remote.version,
+                'install': True,
+                'check_for_updates': extension.bundle.name not in Storage.get('ignore'),
+                'self': extension
+               }
+        return super(ExtensionList, self)._wrapItem(item)
 
 def UpdatesList(posSize, extensions, **kwargs):
     """Return an ExtensionList for updateable extensions."""
@@ -44,18 +39,9 @@ def InstallationList(posSize, registry, **kwargs):
     """Return an ExtensionList for installation window."""
     columns = [
                {"title": "Extension", "key": "name", "width": 200, "editable": False},
-               {"title": "Repository", "key": "repository", "width": 200, "editable": False},
+               {"title": "Author", "key": "author", "width": 200, "editable": False},
               ]
-    
-    extension_cells = []
-    for name, repo in registry.iteritems():
-        cell = {
-                "name": name,
-                "repository": repo
-                }
-        extension_cells.append(cell)
-    extension_cells = sorted(extension_cells, key=lambda k: k['name'].lower())
-    
+    extension_cells = sorted(registry, key=lambda k: k[u'name'].lower())
     return List(posSize, extension_cells, columnDescriptions=columns, **kwargs)
 
 class Font(object):
@@ -121,7 +107,11 @@ class Version(object):
         
 class Storage(object):
     """Convenience class for storing extension settings."""
-    defaults = {"ignore": {}, "check_on_startup": True}
+    defaults = {"ignore": {}, 
+                "check_on_startup": True, 
+                "cache": {}, 
+                "cached_at": 0.0, 
+                "ignore_patch_updates": False}
     defaultKey = "com.jackjennings.mechanic"
     
     @classmethod

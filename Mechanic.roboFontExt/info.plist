@@ -6,17 +6,17 @@
 	<array>
 		<dict>
 			<key>path</key>
-			<string>check_for_updates.py</string>
+			<string>install.py</string>
 			<key>preferredName</key>
-			<string>Check for Updates</string>
+			<string>Install</string>
 			<key>shortKey</key>
 			<string></string>
 		</dict>
 		<dict>
 			<key>path</key>
-			<string>install_extensions.py</string>
+			<string>register.py</string>
 			<key>preferredName</key>
-			<string>Install Extensions</string>
+			<string>Register</string>
 			<key>shortKey</key>
 			<string></string>
 		</dict>
@@ -25,6 +25,14 @@
 			<string>settings.py</string>
 			<key>preferredName</key>
 			<string>Settings</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
+			<string>updates.py</string>
+			<key>preferredName</key>
+			<string>Updates</string>
 			<key>shortKey</key>
 			<string></string>
 		</dict>
@@ -46,8 +54,8 @@
 	<key>repository</key>
 	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1366037719.580634</real>
+	<real>1367372777.034821</real>
 	<key>version</key>
-	<string>0.3.3</string>
+	<string>0.5.0</string>
 </dict>
 </plist>
