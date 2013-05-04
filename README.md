@@ -20,14 +20,15 @@ Double click `Mechanic.roboFontExt`.
 Features
 --------
 
-* Checks for updates of configured extensions on update (optional)
+* Browse and install extensions from a list of publicly available extensions
+* Checks for updates of configured extensions on startup (optional)
 * Conditionally ignore individual extensions from being updated
+* Optionally ignore small updates on startup
 * Manually check for updates of configured extensions
+* Register extensions to the public extension registry
 
 Extension Registry
 ------------------
-
-The list of installable extensions are (currently) maintained within the extension. Open an [Issue](https://github.com/jackjennings/Mechanic/issues) with the name of your extension and a link to the repository and it will be merged into the next Mechanic update.
 
 Currently, Mechanic manages the following extensions:
 
@@ -43,6 +44,7 @@ Currently, Mechanic manages the following extensions:
 * [Outliner](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Overlay UFOs](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
 * [Pixel Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Plum](https://github.com/jackjennings/Plum) by Jack Jennings
 * [Ramsay St.](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Random Word Generator](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
 * [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
@@ -63,6 +65,8 @@ If you are already hosting your code on GitHub, support for mechanic is easy to 
 Either way:
 * Mechanic assumes that you are releasing on the master branch.
 * Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
+
+Once you have added the required keys to your `info.plist` file, you can register your extension from within the Mechanic interface in RoboFont.
 
 ### Versioning with Tags (recommended)
 
