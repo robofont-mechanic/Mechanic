@@ -20,32 +20,55 @@ Double click `Mechanic.roboFontExt`.
 Features
 --------
 
-* Checks for updates of configured extensions on update (optional)
+* Browse and install extensions from a list of publicly available extensions
+* Checks for updates of configured extensions on startup (optional)
 * Conditionally ignore individual extensions from being updated
+* Optionally ignore small updates on startup
 * Manually check for updates of configured extensions
+* Register extensions to the public extension registry
 
 Extension Registry
 ------------------
 
-The list of installable extensions are (currently) maintained within the extension. Open an [Issue](https://github.com/jackjennings/Mechanic/issues) with the name of your extension and a link to the repository and it will be merged into the next Mechanic update.
-
 Currently, Mechanic manages the following extensions:
 
+* [Adjust Metrics](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
+* [Arrange Windows](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Bounding Tool](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
+* [Feature Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Glif Viewer](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Glyph Select](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
+* [Groups2Features](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Layer Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
 * [Mechanic](https://github.com/jackjennings/Mechanic) by Jack Jennings
+* [Outliner](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Overlay UFOs](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
+* [Pixel Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Plum](https://github.com/jackjennings/Plum) by Jack Jennings
+* [Ramsay St.](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Random Word Generator](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
 * [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
 * [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
+* [Scaling Edit Tool](https://github.com/klaavo/scalingEditTool) by Timo Klaavo
+* [send2twitter](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Shape Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [ShowDelta](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
 * [SidebearingsEQ](https://github.com/franzheidl/SidebearingsEQ) by Franz Heidl
+* [Tiny Draw Bot](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
+* [Type Cooker](https://github.com/typemytype/RoboFontExtensions) by TypeMedia
 
 Mechanic for Developers
 -----------------------
 
-If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up.
+If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up: with git tags, or through `info.plist`.
 
-Mechanic assumes that you are releasing on the master branch.
+Either way:
+* Mechanic assumes that you are releasing on the master branch.
+* Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
 
-Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
+Once you have added the required keys to your `info.plist` file, you can register your extension from within the Mechanic interface in RoboFont.
 
-## Versioning with Tags (recommended)
+### Versioning with Tags (recommended)
 
 If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
 
@@ -69,7 +92,7 @@ Because Mechanic checks the locally installed extension's plist against your git
 
 When versioning with tags, Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. If you need to have more than one extension in your repository, consider versioning with `info.plist`.
 
-## Versioning with `info.plist`
+### Versioning with `info.plist`
 
 You can also version your extension using only the key found in `info.plist`.
 
