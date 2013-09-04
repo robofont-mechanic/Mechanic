@@ -30,32 +30,7 @@ Features
 Extension Registry
 ------------------
 
-Currently, Mechanic manages the following extensions:
-
-* [Adjust Metrics](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [Arrange Windows](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Bounding Tool](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [Feature Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Glif Viewer](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Glyph Select](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [Groups2Features](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Layer Preview](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Mechanic](https://github.com/jackjennings/Mechanic) by Jack Jennings
-* [Outliner](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Overlay UFOs](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [Pixel Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Plum](https://github.com/jackjennings/Plum) by Jack Jennings
-* [Ramsay St.](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Random Word Generator](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [Replicant](https://github.com/jackjennings/Replicant) by Jack Jennings
-* [RoboToDo](https://github.com/jackjennings/RoboToDo) by Jack Jennings
-* [Scaling Edit Tool](https://github.com/klaavo/scalingEditTool) by Timo Klaavo
-* [send2twitter](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Shape Tool](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [ShowDelta](https://github.com/FontBureau/fbOpenTools) by Font Bureau (David Jonathan Ross)
-* [SidebearingsEQ](https://github.com/franzheidl/SidebearingsEQ) by Franz Heidl
-* [Tiny Draw Bot](https://github.com/typemytype/RoboFontExtensions) by Frederik Berlaen
-* [Type Cooker](https://github.com/typemytype/RoboFontExtensions) by TypeMedia
+Mechanic has a website that lists all of the [available extensions](http://robofontmechanic.com).
 
 Mechanic for Developers
 -----------------------
