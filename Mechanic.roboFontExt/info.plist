@@ -56,6 +56,10 @@
 	<key>timeStamp</key>
 	<real>1367372777.034821</real>
 	<key>version</key>
-	<string>0.5.0</string>
+	<string>0.5.1</string>
+	<key>requiresVersionMajor</key>
+	<string>1</string>
+	<key>requiresVersionMinor</key>
+	<string>5</string>
 </dict>
 </plist>
