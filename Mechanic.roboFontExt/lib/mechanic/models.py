@@ -51,9 +51,10 @@ class GithubRepo(object):
     zip_url = "https://github.com/%(repo)s/archive/master.zip"
     plist_url = "https://raw.github.com/%(repo)s/master/%(plist_path)s"
 
-    def __init__(self, repo, name=None, extension_path=None):
+    def __init__(self, repo, name=None, extension_path=None, filename=None):
         self.repo = repo
         self.extension_path = extension_path
+        self.filename = filename
         self.username, self.name = repo.split('/')
         if name is not None:
             self.name = name
@@ -103,13 +104,18 @@ class GithubRepo(object):
         if self.extension_path:
             return os.path.join(folder, self.extension_path)
         else: 
+            if self.filename:
+                match = '*%s' % self.filename
+            else:
+                match = '*%s.roboFontExt' % self.name
+            
             matches = []
             for root, dirnames, filenames in os.walk(self.tmp_path):
                 for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
                     matches.append(os.path.join(root, dirname))
-        
-            exact = fnmatch.filter(matches, '*%s.roboFontExt' % self.name)
-            return (exact and exact[0]) or matches[0]
+            
+            exact = fnmatch.filter(matches, match)
+            return (exact and exact[0]) or None
     
     def download(self):
         """Download remote version of extension."""

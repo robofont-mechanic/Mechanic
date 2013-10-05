@@ -394,7 +394,9 @@ class InstallTab(MechanicTab):
         self.progress = self.startProgress('Updating', ticks)
 
         for remote_cell in installable:
-            remote = GithubRepo(remote_cell['repository'], name=remote_cell['name'])
+            remote = GithubRepo(remote_cell['repository'], 
+                                name = remote_cell['name'],
+                                filename = remote_cell['filename'])
             try:
                 self.progress.update('Getting %s...' % remote_cell['repository'])
                 remote.get()
