@@ -10,7 +10,7 @@ https://github.com/jackjennings/Mechanic
 Requirements
 ------------
 
-Mechanic requires RoboFont 1.3 or greater.
+Mechanic requires RoboFont 1.5 or greater.
 
 Installation
 ------------
