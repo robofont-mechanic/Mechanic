@@ -186,8 +186,9 @@ class Updates(object):
         extensions = []
         for cached in cache.iteritems():
             extension = Extension(name=cached[0])
-            extension.remote.version = cached[1]
-            extensions.append(extension)
+            if extension.configured:
+                extension.remote.version = cached[1]
+                extensions.append(extension)
         return extensions
         
     def _setCached(self, extensions):

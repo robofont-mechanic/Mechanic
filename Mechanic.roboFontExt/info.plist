@@ -54,12 +54,8 @@
 	<key>repository</key>
 	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1380995449.197983</real>
+	<real>1381164722.693044</real>
 	<key>version</key>
 	<string>0.5.1</string>
-	<key>requiresVersionMajor</key>
-	<string>1</string>
-	<key>requiresVersionMinor</key>
-	<string>5</string>
 </dict>
 </plist>
