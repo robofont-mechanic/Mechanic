@@ -308,7 +308,7 @@ class SettingsTab(MechanicTab):
 
     def addList(self):
         self.configured = []
-        for name in ExtensionBundle.allExtentions():
+        for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
             if extension.configured:
                 self.configured.append(extension)

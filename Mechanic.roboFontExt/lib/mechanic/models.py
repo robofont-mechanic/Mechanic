@@ -169,7 +169,7 @@ class Updates(object):
     def _fetchUpdates(self):
         updates = []
         ignore = Storage.get('ignore')
-        for name in ExtensionBundle.allExtentions():
+        for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
             if (not extension.bundle.name in ignore and
                     extension.configured):
