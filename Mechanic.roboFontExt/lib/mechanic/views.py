@@ -356,12 +356,14 @@ class InstallTab(MechanicTab):
     def updateList(self):
         if not self.installationList.get():
             try:
-                extensions = sorted(Registry().all(), key=lambda e: e['name'])
+                extensions = Registry().all()
                 self.enable()
             except:
                 extensions = []
                 self.disable()
             self.installationList.set(extensions)
+        else:
+            self.installationList.refresh()
 
         self.parent.w.setDefaultButton(self.install_button)    
     
@@ -415,6 +417,7 @@ class InstallTab(MechanicTab):
                 # ToDo: Make this report different errors
                 print "Mechanic: Couldn't download %s" % remote_cell['name']
             
+        self.installationList.refresh()
         self.progress.close()
         self.update_buttons()
         
@@ -426,7 +429,8 @@ class InstallTab(MechanicTab):
         for extension in uninstallable:
             self.progress.update('Uninstalling %s...' % extension.name)
             extension.deinstall()
-        
+
+        self.installationList.refresh()    
         self.progress.close()
         self.update_buttons()
 
@@ -453,13 +457,14 @@ class InstallTab(MechanicTab):
         selections = self.installationList.getSelection()
         uninstallable = []
         for selection in selections:
-            extension = ExtensionBundle(name=list[selection]['filename'])
+            extension = ExtensionBundle(name=list[selection]['filename'].split("/")[-1])
             if extension.bundleExists():
                 uninstallable.append(extension)
         return uninstallable
 
 class RegisterTab(MechanicTab):
-    tabSize = (500, 165)
+    tabSize = (500, 225)
+    explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
     
     def setup(self):
         indent = 105
@@ -472,6 +477,8 @@ class RegisterTab(MechanicTab):
 
         self.extensionRepositoryLabel = TextBox((15,98,80,22), "Repository:", alignment="right")
         self.extensionRepository = EditText((indent,95,-20,22), placeholder="username/MyExtension")
+        
+        self.explanatoryText = TextBox((105,130,-20,50), self.explanation)
                 
         self.importButton = Button((-250,-35,80,20), "Import",
                                    callback=self.getExt)
