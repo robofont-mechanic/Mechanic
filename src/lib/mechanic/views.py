@@ -310,7 +310,7 @@ class SettingsTab(MechanicTab):
         self.configured = []
         for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
-            if extension.configured:
+            if extension.is_configured():
                 self.configured.append(extension)
 
         self.settingsList = SettingsList((20,75,-20,-20),
