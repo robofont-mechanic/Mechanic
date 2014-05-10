@@ -63,7 +63,7 @@ class Extension(object):
     def initialize_remote(self):
         extension_path = self.read_config_key('extensionPath')
         repository = self.read_repository()
-        if extension_path and repository:
+        if repository:
             return GithubRepo(repository, 
                               name=self.name,
                               extension_path=extension_path)
