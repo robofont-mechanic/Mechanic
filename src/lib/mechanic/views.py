@@ -335,6 +335,7 @@ class SettingsTab(MechanicTab):
         Storage.set('ignore', ignore)
 
 class InstallTab(MechanicTab):
+    tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
 
     def setup(self):        
