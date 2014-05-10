@@ -11,23 +11,18 @@ class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
     
     def __init__(self, name=None, path=None):
-        self.config = {}
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
         self.path = self.bundle.bundlePath()
+        self.config = None
         self.remote = None
-        self.configure()
+        self.configure_remote()
 
-    def configure(self):
+    def configure_remote(self):
         """Set config attribute from info.plist contents."""
         self.config = self.read_config()
         if self.config is not None:
-            extension_path = self.read_config_key('extensionPath')
-            repository = self.read_repository()
-            if extension_path and repository:
-                self.remote = GithubRepo(repository, 
-                                         name=self.name,
-                                         extension_path=extension_path)
+            self.remote = self.initialize_remote()
             
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
@@ -64,6 +59,14 @@ class Extension(object):
         
     def is_configured(self):
         return self.remote is not None
+        
+    def initialize_remote(self):
+        extension_path = self.read_config_key('extensionPath')
+        repository = self.read_repository()
+        if extension_path and repository:
+            return GithubRepo(repository, 
+                              name=self.name,
+                              extension_path=extension_path)
 
 class GithubRepo(object):
     
