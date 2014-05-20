@@ -1,4 +1,4 @@
-import json, webbrowser, os, re, time, plistlib, requests
+import json, webbrowser, os, re, time, plistlib, requests, threading
 from AppKit import *
 from vanilla import *
 from vanilla.dialogs import message, getFile
@@ -146,6 +146,11 @@ class UpdateNotificationWindow(BaseWindowController):
         local = Version(update.config.version)
         remote = Version(update.remote.version)
         return remote.major > local.major or remote.minor > remote.minor
+        
+    @classmethod
+    def withNewThread(cls):
+        import threading
+        threading.Thread(target=cls).start()
 
 class MechanicTab(VanillaBaseObject):
     nsViewClass = NSView
