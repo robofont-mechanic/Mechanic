@@ -1,4 +1,4 @@
-import json, webbrowser, os, re, time, plistlib, requests, threading
+import json, webbrowser, os, re, time, plistlib, requests
 from AppKit import *
 from vanilla import *
 from vanilla.dialogs import message, getFile
