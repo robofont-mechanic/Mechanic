@@ -9,6 +9,7 @@ class MechanicObserver:
     
     def __init__(self):
         addObserver(self, 'checkForUpdates', 'applicationDidFinishLaunching')
+        addObserver(self, 'checkForUpdates', 'applicationDidBecomeActive')
         
     def checkForUpdates(self, info):
         """Open updates window unless ran in last hour"""
