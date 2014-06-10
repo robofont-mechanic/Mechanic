@@ -9,13 +9,12 @@ from mechanic.models import Extension, GithubRepo, Registry, Updates
 
 class MechanicWindow(BaseWindowController):
     """Window to display all Mechanic stuff"""
-    toolbarImagesMap = {
-                        "Install" : "toolbarRun",
-                        "Update" : "toolbarScriptReload",
-                        "Register" : "toolbarScriptOpen",
-                        "Settings" : "prefToolbarMisc",
-                       }
-    items = ["Install", "Update", "Register", "Settings"]
+    toolbarItems = {
+                    "Install": "toolbarRun",
+                    "Update": "toolbarScriptReload",
+                    "Register": "toolbarScriptOpen",
+                    "Settings": "prefToolbarMisc"
+                   }
     
     def __init__(self, active="Install"):
         self.w = Window((500,300),
@@ -29,17 +28,16 @@ class MechanicWindow(BaseWindowController):
         self.w.open()
 
     def addToolbar(self):
-        toolbarItems = []
-        for index, value in enumerate(self.items):
-            toolbarItem = dict(itemIdentifier=value,
-                               label=value,
+        items = []
+        for title, image in self.toolbarItems.iteritems():
+            toolbarItem = dict(itemIdentifier=title,
+                               label=title,
                                callback=self.toolbarSelect,
-                               imageNamed=self.toolbarImagesMap[value],
-                               selectable=True
-                               )
-            toolbarItems.append(toolbarItem)
+                               imageNamed=image,
+                               selectable=True)
+            items.append(toolbarItem)
 
-        self.w.addToolbar(toolbarIdentifier="mechanicToolbar", toolbarItems=toolbarItems, addStandardItems=False)
+        self.w.addToolbar(toolbarIdentifier="mechanicToolbar", toolbarItems=items, addStandardItems=False)
     
     def setActivePane(self, pane):
         current_index = self.w.tabs.get()
