@@ -41,20 +41,20 @@ class MechanicWindow(BaseWindowController):
     
     def setActivePane(self, pane):
         current_index = self.w.tabs.get()
-        index = self.items.index(pane)
+        index = self.toolbarItems.keys().index(pane)
         if not self.w.isVisible():
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
         self.w.tabs[current_index].view.deactivate()
         self.w.tabs[index].view.setWindowSize()
         self.w.tabs[index].view.activate()
-        name = self.items[index]
+        name = self.toolbarItems.keys()[index]
 
     def toolbarSelect(self, sender):
         self.setActivePane(sender.itemIdentifier())
         
     def addTabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0), self.items, showTabs=False)        
+        self.w.tabs = Tabs((0, 0, -0, -0), self.toolbarItems.keys(), showTabs=False)        
         self.install = self.w.tabs[0]
         self.update = self.w.tabs[1]
         self.register = self.w.tabs[2]
