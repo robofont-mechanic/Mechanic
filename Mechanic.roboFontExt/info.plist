@@ -37,6 +37,13 @@
 			<string></string>
 		</dict>
 	</array>
+	<key>com.robofontmechanic.Mechanic</key>
+	<dict>
+		<key>description</key>
+		<string>Package manager for RoboFont extensions</string>
+		<key>repository</key>
+		<string>jackjennings/Mechanic</string>
+	</dict>
 	<key>developer</key>
 	<string>Jack Jennings</string>
 	<key>developerURL</key>
@@ -52,7 +59,7 @@
 	<key>repository</key>
 	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1402596153.833283</real>
+	<real>1402596917.618316</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>
