@@ -9,25 +9,20 @@ from mechanic.helpers import Version, Storage
 
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
+    
     def __init__(self, name=None, path=None):
-        self.config = {}
-        self.configured = False
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
         self.path = self.bundle.bundlePath()
-        self.configure()
+        self.config = None
+        self.remote = None
+        self.configure_remote()
 
-    def configure(self):
+    def configure_remote(self):
         """Set config attribute from info.plist contents."""
-        self.configPath = os.path.join(self.path, 'info.plist')
-        if(os.path.exists(self.configPath)):
-            self.config = plistlib.readPlist(self.configPath)
-            if 'repository' in self.config:
-                extension_path = self.config['extensionPath'] if hasattr(self.config, 'extensionPath') else None
-                self.remote = GithubRepo(self.config['repository'], 
-                                         name=self.name,
-                                         extension_path=extension_path)
-                self.configured = True
+        self.config = self.read_config()
+        if self.config is not None:
+            self.remote = self.initialize_remote()
             
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
@@ -44,6 +39,34 @@ class Extension(object):
         if not self.remote.version:
             self.remote.get()
         return Version(self.remote.version) <= Version(self.config['version'])
+        
+    def has_configuration(self):
+        return os.path.exists(self.config_path())
+
+    def read_config(self):
+        if self.has_configuration():
+            return plistlib.readPlist(self.config_path())
+    
+    def read_repository(self):
+        return self.read_config_key('com.robofontmechanic.repository') or self.read_config_key('repository')
+    
+    def read_config_key(self, key):
+        if hasattr(self.config, key):
+            return self.config[key]
+    
+    def config_path(self):
+        return os.path.join(self.path, 'info.plist')
+        
+    def is_configured(self):
+        return self.remote is not None
+        
+    def initialize_remote(self):
+        extension_path = self.read_config_key('extensionPath')
+        repository = self.read_repository()
+        if repository:
+            return GithubRepo(repository, 
+                              name=self.name,
+                              extension_path=extension_path)
 
 class GithubRepo(object):
     
@@ -172,7 +195,7 @@ class Updates(object):
         for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
             if (not extension.bundle.name in ignore and
-                    extension.configured):
+                    extension.is_configured()):
                 try:
                     if not extension.is_current_version():
                         updates.append(extension)
@@ -186,7 +209,7 @@ class Updates(object):
         extensions = []
         for cached in cache.iteritems():
             extension = Extension(name=cached[0])
-            if extension.configured:
+            if extension.is_configured():
                 extension.remote.version = cached[1]
                 extensions.append(extension)
         return extensions

@@ -41,8 +41,6 @@
 	<string>Jack Jennings</string>
 	<key>developerURL</key>
 	<string>http://ja.ckjennin.gs</string>
-	<key>developerurl</key>
-	<string>http://ja.ckjennin.gs</string>
 	<key>html</key>
 	<true/>
 	<key>launchAtStartUp</key>
@@ -54,7 +52,7 @@
 	<key>repository</key>
 	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1393120929.022888</real>
+	<real>1402596153.833283</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>

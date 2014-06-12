@@ -9,13 +9,12 @@ from mechanic.models import Extension, GithubRepo, Registry, Updates
 
 class MechanicWindow(BaseWindowController):
     """Window to display all Mechanic stuff"""
-    toolbarImagesMap = {
-                        "Install" : "toolbarRun",
-                        "Update" : "toolbarScriptReload",
-                        "Register" : "toolbarScriptOpen",
-                        "Settings" : "prefToolbarMisc",
-                       }
-    items = ["Install", "Update", "Register", "Settings"]
+    toolbarItems = {
+                    "Install": "toolbarRun",
+                    "Update": "toolbarScriptReload",
+                    "Register": "toolbarScriptOpen",
+                    "Settings": "prefToolbarMisc"
+                   }
     
     def __init__(self, active="Install"):
         self.w = Window((500,300),
@@ -29,34 +28,33 @@ class MechanicWindow(BaseWindowController):
         self.w.open()
 
     def addToolbar(self):
-        toolbarItems = []
-        for index, value in enumerate(self.items):
-            toolbarItem = dict(itemIdentifier=value,
-                               label=value,
+        items = []
+        for title, image in self.toolbarItems.iteritems():
+            toolbarItem = dict(itemIdentifier=title,
+                               label=title,
                                callback=self.toolbarSelect,
-                               imageNamed=self.toolbarImagesMap[value],
-                               selectable=True
-                               )
-            toolbarItems.append(toolbarItem)
+                               imageNamed=image,
+                               selectable=True)
+            items.append(toolbarItem)
 
-        self.w.addToolbar(toolbarIdentifier="mechanicToolbar", toolbarItems=toolbarItems, addStandardItems=False)
+        self.w.addToolbar(toolbarIdentifier="mechanicToolbar", toolbarItems=items, addStandardItems=False)
     
     def setActivePane(self, pane):
         current_index = self.w.tabs.get()
-        index = self.items.index(pane)
+        index = self.toolbarItems.keys().index(pane)
         if not self.w.isVisible():
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
         self.w.tabs[current_index].view.deactivate()
         self.w.tabs[index].view.setWindowSize()
         self.w.tabs[index].view.activate()
-        name = self.items[index]
+        name = self.toolbarItems.keys()[index]
 
     def toolbarSelect(self, sender):
         self.setActivePane(sender.itemIdentifier())
         
     def addTabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0), self.items, showTabs=False)        
+        self.w.tabs = Tabs((0, 0, -0, -0), self.toolbarItems.keys(), showTabs=False)        
         self.install = self.w.tabs[0]
         self.update = self.w.tabs[1]
         self.register = self.w.tabs[2]
@@ -134,7 +132,7 @@ class UpdateNotificationWindow(BaseWindowController):
                 new_extension.bundle.install()
             except:
                 # ToDo: Make this report different errors
-                print "Mechanic: Couldn't download %s" % remote_cell['name']
+                print "Mechanic: Couldn't download %s" % extension.bundle.name
             
         self.progress.close()
         
@@ -146,6 +144,11 @@ class UpdateNotificationWindow(BaseWindowController):
         local = Version(update.config.version)
         remote = Version(update.remote.version)
         return remote.major > local.major or remote.minor > remote.minor
+        
+    @classmethod
+    def withNewThread(cls):
+        import threading
+        threading.Thread(target=cls).start()
 
 class MechanicTab(VanillaBaseObject):
     nsViewClass = NSView
@@ -261,7 +264,7 @@ class UpdatesTab(MechanicTab):
             update_label = "Install %d Update" % count
         else:
             update_label = "Install %d Updates" % count
-        self.updateButton._nsObject.setTitle_(update_label)
+        self.updateButton.setTitle(update_label)
                 
     def update(self, sender):
         installable = []
@@ -310,7 +313,7 @@ class SettingsTab(MechanicTab):
         self.configured = []
         for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
-            if extension.configured:
+            if extension.is_configured():
                 self.configured.append(extension)
 
         self.settingsList = SettingsList((20,75,-20,-20),
@@ -335,6 +338,7 @@ class SettingsTab(MechanicTab):
         Storage.set('ignore', ignore)
 
 class InstallTab(MechanicTab):
+    tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
 
     def setup(self):        
@@ -450,7 +454,7 @@ class InstallTab(MechanicTab):
             label = "Install %d Extension" % len(selections)
         else:
             label = "Install Extensions"
-        self.install_button._nsObject.setTitle_(label)
+        self.install_button.setTitle(label)
         
     def _uninstallable(self):
         list = self.installationList.get()

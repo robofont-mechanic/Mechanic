@@ -1,7 +1,4 @@
-import os, sys, time
-
-lib_path = os.path.join(os.path.dirname(__file__), "modules")
-if not lib_path in sys.path: sys.path.append(lib_path)
+import time
 
 from mojo.events import addObserver
 from mechanic.helpers import Storage
@@ -12,12 +9,13 @@ class MechanicObserver:
     
     def __init__(self):
         addObserver(self, 'checkForUpdates', 'applicationDidFinishLaunching')
+        addObserver(self, 'checkForUpdates', 'applicationDidBecomeActive')
         
     def checkForUpdates(self, info):
         """Open updates window unless ran in last hour"""
         last_run = Storage.get('last_run')
         if last_run is None or last_run < time.time() - (60 * 60):
-            UpdateNotificationWindow()
+            UpdateNotificationWindow.withNewThread()
             Storage.set('last_run', time.time())
 
 Storage.setDefaults()
