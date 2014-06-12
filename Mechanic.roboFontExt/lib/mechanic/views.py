@@ -148,6 +148,7 @@ class UpdateNotificationWindow(BaseWindowController):
     @classmethod
     def withNewThread(cls):
         import threading
+        print "Mechanic: checking for updates..."
         threading.Thread(target=cls).start()
 
 class MechanicTab(VanillaBaseObject):
