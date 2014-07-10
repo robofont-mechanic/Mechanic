@@ -75,8 +75,9 @@ class MechanicWindow(BaseWindowController):
             tab.view = item['view']((0,0,-0,-0), self)
 
     def tabIndex(self, label):
-        return next((index for index, item in 
-            enumerate(self.__toolbar_items) if item['label'] == label), 0)
+        return next((index for index, item
+                           in enumerate(self.__toolbar_items)
+                           if item['label'] == label), 0)
 
 class UpdateNotificationWindow(BaseWindowController):
     window_title = "Extension Updates"
