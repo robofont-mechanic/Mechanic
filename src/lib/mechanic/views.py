@@ -8,61 +8,75 @@ from mechanic.helpers import *
 from mechanic.models import Extension, GithubRepo, Registry, Updates
 
 class MechanicWindow(BaseWindowController):
-    """Window to display all Mechanic stuff"""
-    toolbarItems = {
-                    "Install": "toolbarRun",
-                    "Update": "toolbarScriptReload",
-                    "Register": "toolbarScriptOpen",
-                    "Settings": "prefToolbarMisc"
-                   }
+    title = "Mechanic"
     
     def __init__(self, active="Install"):
         self.w = Window((500,300),
-                        autosaveName="mechanicWindow",
-                        title="Mechanic")
+                        autosaveName=self.__class__.__name__,
+                        title=self.title)
+        self.__toolbar_items = []
 
-        self.addToolbar()
+        self.addToolbarItem(title="Install",
+                            image="toolbarRun",
+                            view="InstallTab")
+
+        self.addToolbarItem(title="Update",
+                            image="toolbarScriptReload",
+                            view="UpdatesTab")
+
+        self.addToolbarItem(title="Register",
+                            image="toolbarScriptOpen",
+                            view="RegisterTab")
+
+        self.addToolbarItem(title="Settings",
+                            image="prefToolbarMisc",
+                            view="SettingsTab")
+
+        self.createToolbar()
         self.addTabs()
         self.setActivePane(active)
-        
+
         self.w.open()
 
-    def addToolbar(self):
-        items = []
-        for title, image in self.toolbarItems.iteritems():
-            toolbarItem = dict(itemIdentifier=title,
-                               label=title,
-                               callback=self.toolbarSelect,
-                               imageNamed=image,
-                               selectable=True)
-            items.append(toolbarItem)
+    def addToolbarItem(self, **kwargs):
+        item = dict(itemIdentifier=kwargs['title'],
+                    label=kwargs['title'],
+                    callback=self.toolbarSelect,
+                    imageNamed=kwargs['image'],
+                    selectable=True,
+                    view=globals()[kwargs['view']])
+        self.__toolbar_items.append(item)
 
-        self.w.addToolbar(toolbarIdentifier="mechanicToolbar", toolbarItems=items, addStandardItems=False)
-    
+    def createToolbar(self):
+        self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
+                          toolbarItems=self.__toolbar_items,
+                          addStandardItems=False)
+
     def setActivePane(self, pane):
         current_index = self.w.tabs.get()
-        index = self.toolbarItems.keys().index(pane)
+        index = self.tabIndex(pane)
         if not self.w.isVisible():
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
         self.w.tabs[current_index].view.deactivate()
         self.w.tabs[index].view.setWindowSize()
         self.w.tabs[index].view.activate()
-        name = self.toolbarItems.keys()[index]
 
     def toolbarSelect(self, sender):
         self.setActivePane(sender.itemIdentifier())
-        
+
     def addTabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0), self.toolbarItems.keys(), showTabs=False)        
-        self.install = self.w.tabs[0]
-        self.update = self.w.tabs[1]
-        self.register = self.w.tabs[2]
-        self.settings = self.w.tabs[3]
-        self.install.view = InstallTab((0,0,-0,-0), self)
-        self.update.view = UpdatesTab((0,0,-0,-0), self)
-        self.register.view = RegisterTab((0,0,-0,-0), self)
-        self.settings.view = SettingsTab((0,0,-0,-0), self)
+        self.w.tabs = Tabs((0, 0, -0, -0),
+                           [item['label'] for item in self.__toolbar_items],
+                           showTabs=False)
+
+        for index, item in enumerate(self.__toolbar_items):
+            tab = self.w.tabs[index]
+            tab.view = item['view']((0,0,-0,-0), self)
+
+    def tabIndex(self, label):
+        return next((index for index, item in 
+            enumerate(self.__toolbar_items) if item['label'] == label), 0)
 
 class UpdateNotificationWindow(BaseWindowController):
     window_title = "Extension Updates"
