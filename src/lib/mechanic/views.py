@@ -4,16 +4,42 @@ from vanilla import *
 from vanilla.dialogs import message, getFile
 from defconAppKit.windows.baseWindow import BaseWindowController
 from mojo.extensions import ExtensionBundle
+from mojo.events import addObserver
+
 from mechanic.helpers import *
 from mechanic.models import Extension, GithubRepo, Registry, Updates
 
-class MechanicWindow(BaseWindowController):
-    title = "Mechanic"
+class MechanicBaseWindow(BaseWindowController):
+
+    def __init__(self):
+        self.watch("repositoryWillRead")#, 'Getting %s...' % extension.config.repository
+        self.watch("repositoryDidRead")
+        
+        self.watch("repositoryWillDownload")#, 'Downloading %s...' % extension.bundle.name
+        self.watch("repositoryDidDownloadChunk")
+        self.watch("repositoryDidDownload")
+        
+        self.watch("repositoryWillExtractDownload")#, 'Extracting %s...' % extension.bundle.name
+        self.watch("repositoryDidExtractDownload") #
+        
+        self.watch("extensionWillInstall")#, 'Installing %s...' % extension.bundle.name
+        self.watch("extensionDidInstall")
+
+    def watch(self, event_name, message=None):
+        addObserver(self, "print_info", event_name)
+        
+    def print_info(self, info):
+        print info
+
+class MechanicWindow(MechanicBaseWindow):
+    window_title = "Mechanic"
     
     def __init__(self, active="Install"):
+        super(MechanicWindow, self).__init__()
+        
         self.w = Window((500,300),
                         autosaveName=self.__class__.__name__,
-                        title=self.title)
+                        title=self.window_title)
         self.__toolbar_items = []
 
         self.addToolbarItem(title="Install",
@@ -79,33 +105,45 @@ class MechanicWindow(BaseWindowController):
                            in enumerate(self.__toolbar_items)
                            if item['label'] == label), 0)
 
-class UpdateNotificationWindow(BaseWindowController):
+class UpdateNotificationWindow(MechanicBaseWindow):
     window_title = "Extension Updates"
+    
     explanation = Font.string(text="If you don't want to install now, choose Extensions > Mechanic > Updates when you're ready to install.",size=11)
-    extImage = NSImage.imageNamed_("ExtensionIcon")
     no_updates_title = 'Mechanic'
     no_updates = 'All updateable extensions are up to date.'
+    updates_available = "Updates are available for %d of your extensions."
+
+    @classmethod
+    def with_new_thread(cls):
+        import threading
+        threading.Thread(target=cls).start()
+
+    @property
+    def title(self):
+        return Font.string(text=self.updates_available % len(self.updates),
+                           style="bold")
 
     def __init__(self, force=False):
+        super(UpdateNotificationWindow, self).__init__()
+        
+        print "Mechanic: checking for updates..."
+        
         self.updater = Updates()
-        self.updates = self.updater.all(force)
-        if bool(Storage.get('ignore_patch_updates')):
-            self.updates = filter(self._filterPatchUpdates, self.updates)
-            
+        self.updates = self.updater.all(force, skip_patch_updates=bool(Storage.get('ignore_patch_updates')))
+        
+        # TODO: Make this use exceptions
         if self.updater.unreachable:
             print "%s: Couldn't connect to the internet" % self.no_updates_title
             return
             
-        if len(self.updates) > 0:
-            self.w = Window((520,130),
-                            self.window_title,
-                            autosaveName="mechanicUpdatesWindow")
+        if self.updates:
+            self.w = Window((500,300),
+                            autosaveName=self.__class__.__name__,
+                            title=self.window_title)
             
-            self.w.image = ImageView((15,15,80,80), scale='fit')
-            if self.extImage:
-                self.w.image.setImage(imageObject=self.extImage)
+            self.create_image()
             
-            self.w.title = TextBox((105,20,-20,20), self.title(len(self.updates)))
+            self.w.title = TextBox((105,20,-20,20), self.title)
             self.w.explanation = TextBox((105,45,-20,50), self.explanation)
             
             self.w.updateButton = Button((-150,-40,130,20), "Install Updates",
@@ -120,51 +158,28 @@ class UpdateNotificationWindow(BaseWindowController):
         else:
             print "%s: %s" % (self.no_updates_title, self.no_updates)
     
-    def title(self, len):
-        return Font.string(text="Updates are available for %d of your extensions." % len,style="bold")
-    
     def cancel(self, sender):
         self.w.close()
         
     def update(self, sender):            
-        ticks = len(self.updates) * 4
+        ticks = len(self.updates) * Extension.ticks_per_download
         self.progress = self.startProgress('Updating', ticks)
 
         for extension in self.updates:
-            try:
-                self.progress.update('Getting %s...' % extension.config.repository)
-                extension.remote.get()
-                self.progress.update('Downloading %s...' % extension.bundle.name)
-                extension.remote.setup_download()
-                for content in extension.remote.stream_content:
-                    extension.remote.file.write(content)
-                extension.remote.file.close()
-                self.progress.update('Extracting %s...' % extension.bundle.name)
-                extension_path = extension.remote.extract_file()
-                self.progress.update('Installing %s...' % extension.bundle.name)
+            extension.update()
 
-                new_extension = Extension(path=extension_path)
-                new_extension.bundle.install()
-            except:
-                # ToDo: Make this report different errors
-                print "Mechanic: Couldn't download %s" % extension.bundle.name
-            
         self.progress.close()
         
     def showDetails(self, sender):
         self.w.close()
         MechanicWindow("Update")
-        
-    def _filterPatchUpdates(self, update):
-        local = Version(update.config.version)
-        remote = Version(update.remote.version)
-        return remote.major > local.major or remote.minor > remote.minor
-        
-    @classmethod
-    def withNewThread(cls):
-        import threading
-        print "Mechanic: checking for updates..."
-        threading.Thread(target=cls).start()
+
+    def create_image(self):
+        image = NSImage.imageNamed_("ExtensionIcon")
+        self.w.image = ImageView((15,15,80,80), scale='fit')
+        if image:
+            self.w.image.setImage(imageObject=image)
+
 
 class MechanicTab(VanillaBaseObject):
     nsViewClass = NSView
@@ -250,9 +265,7 @@ class UpdatesTab(MechanicTab):
             self.updateUpdatedAt()            
     
     def addUpdatedAt(self):
-        self.updatedAt = TextBox((20,-31,-20,20), 
-                         "",
-                         sizeStyle="small")
+        self.updatedAt = TextBox((20,-31,-20,20), "", sizeStyle="small")
         self.updateUpdatedAt()
 
     def updateUpdatedAt(self):
@@ -292,19 +305,7 @@ class UpdatesTab(MechanicTab):
         self.progress = self.startProgress('Updating', ticks)
 
         for extension in installable:
-            self.progress.update('Downloading %s...' % extension.bundle.name)
-            try:
-                extension.remote.setup_download()
-                for content in extension.remote.stream_content:
-                    extension.remote.file.write(content)
-                extension.remote.file.close()
-                self.progress.update('Extracting %s...' % extension.bundle.name)
-                folder = extension.remote.extract_file()
-                self.progress.update('Installing %s...' % extension.bundle.name)
-                extension.update(folder)
-            except:
-                # ToDo: Make this report different errors
-                print "Mechanic: Couldn't download %s" % extension.bundle.name
+            extension.update()
         
         self.updateList(True)
         self.progress.close()
@@ -419,23 +420,8 @@ class InstallTab(MechanicTab):
             remote = GithubRepo(remote_cell['repository'], 
                                 name = remote_cell['name'],
                                 filename = remote_cell['filename'])
-            try:
-                self.progress.update('Getting %s...' % remote_cell['repository'])
-                remote.get()
-                self.progress.update('Downloading %s...' % remote_cell['name'])
-                remote.setup_download()
-                for content in remote.stream_content:
-                    remote.file.write(content)
-                remote.file.close()
-                self.progress.update('Extracting %s...' % remote_cell['name'])
-                extension_path = remote.extract_file()
-                self.progress.update('Installing %s...' % remote_cell['name'])
-
-                new_extension = Extension(path=extension_path)
-                new_extension.bundle.install()
-            except:
-                # ToDo: Make this report different errors
-                print "Mechanic: Couldn't download %s" % remote_cell['name']
+            extension_path = remote.download()
+            Extension(path=extension_path).install()
             
         self.installationList.refresh()
         self.progress.close()
@@ -523,11 +509,9 @@ class RegisterTab(MechanicTab):
     def register(self, sender):
         self.progress = self.startProgress('Sending to registry server...')
         try:
-            response = Registry().add({
-                                       'name': self.extensionName.get(),
-                                       'filename': self.extensionFilename.get(),
-                                       'repository': self.extensionRepository.get()
-                                      })
+            response = Registry().add(name=self.extensionName.get(),
+                                      filename=self.extensionFilename.get(),
+                                      repository=self.extensionRepository.get())
             self.progress.close()
             response.raise_for_status()
             self.showNotificationSheet('%s was added.' % self.extensionName.get())

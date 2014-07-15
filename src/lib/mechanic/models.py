@@ -4,11 +4,14 @@ from glob import glob
 import requests
 from zipfile import ZipFile
 
+from mojo.events import postEvent
 from mojo.extensions import ExtensionBundle
 from mechanic.helpers import Version, Storage
 
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
+    
+    ticks_per_download = 4
     
     def __init__(self, name=None, path=None):
         self.name = name
@@ -26,14 +29,30 @@ class Extension(object):
             
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
+        
+        postEvent('extensionWillUpdate', extension=new_extension)
+        
         if extension_path is None:
             extension_path = self.remote.download()
-        
-        new_extension = Extension(path=extension_path)
 
-        self.bundle.deinstall()
-        new_extension.bundle.install()
+        Extension(path=extension_path).install()
+
+        postEvent('extensionDidUpdate', extension=new_extension)
+    
+    def install(self):
+        # TODO: Make this a noop if path isn't present
+        postEvent('extensionWillInstall', extension=new_extension)
         
+        self.uninstall_duplicates()
+        self.bundle.install()
+        
+        postEvent('extensionDidInstall', extension=new_extension)
+
+    def uninstall_duplicates(self):
+        existing_extension = ExtensionBundle(name=self.name)
+        if existing_extension.bundleExists():
+            existing_extension.bundle.deinstall()
+
     def is_current_version(self):
         """Return if extension is at curent version"""
         if not self.remote.version:
@@ -85,6 +104,9 @@ class GithubRepo(object):
         
     def get(self):
         """Return the version and location of remote extension."""
+        
+        postEvent('repositoryWillRead', repository=self)
+        
         try:
             if self.extension_path:
                 plist_path = os.path.join(self.extension_path, 'info.plist')
@@ -103,7 +125,9 @@ class GithubRepo(object):
         except requests.exceptions.HTTPError:
             print "Couldn't get information about %s from %s" % (self.name, self.repo)
             self.version = '0.0.0'
-    
+        
+        postEvent('repositoryDidRead', repository=self)
+        
     def setup_download(self):
         """Clear extension tmp dir, open download stream and local file."""
         if not hasattr(self,'data'):
@@ -124,29 +148,52 @@ class GithubRepo(object):
         
         folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
         
+        postEvent('repositoryWillExtractDownload', repository=self)
+        
         if self.extension_path:
-            return os.path.join(folder, self.extension_path)
+            path = os.path.join(folder, self.extension_path)
         else: 
             if self.filename:
                 match = '*%s' % self.filename
             else:
                 match = '*%s.roboFontExt' % self.name
             
+            # TODO: Make this use a generator
             matches = []
             for root, dirnames, filenames in os.walk(self.tmp_path):
                 for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
                     matches.append(os.path.join(root, dirname))
             
             exact = fnmatch.filter(matches, match)
-            return (exact and exact[0]) or None
+            path = (exact and exact[0]) or None
+
+        postEvent('repositoryDidExtractDownload', repository=self)
+        
+        return path
     
     def download(self):
         """Download remote version of extension."""
+
+        postEvent('repositoryWillDownload', repository=self)
+
         self.setup_download()
-        for content in self.stream_content:
-            self.file.write(content)
-        self.file.close()
-        return self.extract_file()
+
+        try:
+            for content in self.stream_content:
+                self.file.write(content)
+                postEvent('repositoryDidDownloadChunk', 
+                          repository=self, 
+                          size=self.content_length,
+                          downloaded=self.file.tell())
+            postEvent('repositoryDidDownload', repository=self)
+            return self.extract_file()
+        except:
+            # ToDo: Make this report different errors
+            postEvent('repositoryFailedDownload', repository=self)
+            print "Mechanic: Couldn't download %s" % self.name
+        finally:
+            self.stream.close()
+            self.file.close()
 
     def _get_tags(self):
         response = requests.get(self.tags_url % {'repo': self.repo})
@@ -180,11 +227,16 @@ class Updates(object):
     def __init__(self):
         self.unreachable = False
         
-    def all(self, force=False):
+    def all(self, force=False, skip_patch_updates=False):
         if force or self.updatedAt() < time.time() - (60 * 60):
-            return self._fetchUpdates()
+            updates = self._fetchUpdates()
         else:
-            return self._getCached()
+            updates = self._getCached()
+            
+        if skip_patch_updates:
+            updates = filter(self._filterPatchUpdates, updates)
+        
+        return updates
     
     def updatedAt(self):
         return Storage.get('cached_at')
@@ -220,7 +272,12 @@ class Updates(object):
         for extension in extensions:
             cache[extension.bundle.name] = extension.remote.version
         Storage.set('cache', cache)
-                
+
+    def _filterPatchUpdates(self, update):
+        local = Version(update.config.version)
+        remote = Version(update.remote.version)
+        return remote.major > local.major or remote.minor > remote.minor
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
