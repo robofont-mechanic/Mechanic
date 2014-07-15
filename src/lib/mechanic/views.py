@@ -14,29 +14,29 @@ class MechanicBaseWindow(BaseWindowController):
     def __init__(self):
         self.watch("repositoryWillRead")#, 'Getting %s...' % extension.config.repository
         self.watch("repositoryDidRead")
-        
+
         self.watch("repositoryWillDownload")#, 'Downloading %s...' % extension.bundle.name
         self.watch("repositoryDidDownloadChunk")
         self.watch("repositoryDidDownload")
-        
+
         self.watch("repositoryWillExtractDownload")#, 'Extracting %s...' % extension.bundle.name
         self.watch("repositoryDidExtractDownload") #
-        
+
         self.watch("extensionWillInstall")#, 'Installing %s...' % extension.bundle.name
         self.watch("extensionDidInstall")
 
     def watch(self, event_name, message=None):
         addObserver(self, "print_info", event_name)
-        
+
     def print_info(self, info):
         print info
 
 class MechanicWindow(MechanicBaseWindow):
     window_title = "Mechanic"
-    
+
     def __init__(self, active="Install"):
         super(MechanicWindow, self).__init__()
-        
+
         self.w = Window((500,300),
                         autosaveName=self.__class__.__name__,
                         title=self.window_title)
@@ -107,7 +107,7 @@ class MechanicWindow(MechanicBaseWindow):
 
 class UpdateNotificationWindow(MechanicBaseWindow):
     window_title = "Extension Updates"
-    
+
     explanation = Font.string(text="If you don't want to install now, choose Extensions > Mechanic > Updates when you're ready to install.",size=11)
     no_updates_title = 'Mechanic'
     no_updates = 'All updateable extensions are up to date.'
@@ -125,27 +125,27 @@ class UpdateNotificationWindow(MechanicBaseWindow):
 
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
-        
+
         print "Mechanic: checking for updates..."
-        
+
         self.updater = Updates()
         self.updates = self.updater.all(force, skip_patch_updates=bool(Storage.get('ignore_patch_updates')))
-        
+
         # TODO: Make this use exceptions
         if self.updater.unreachable:
             print "%s: Couldn't connect to the internet" % self.no_updates_title
             return
-            
+
         if self.updates:
             self.w = Window((500,300),
                             autosaveName=self.__class__.__name__,
                             title=self.window_title)
-            
+
             self.create_image()
-            
+
             self.w.title = TextBox((105,20,-20,20), self.title)
             self.w.explanation = TextBox((105,45,-20,50), self.explanation)
-            
+
             self.w.updateButton = Button((-150,-40,130,20), "Install Updates",
                                          callback=self.update)
             self.w.cancelButton = Button((-255,-40,90,20), "Not Now",
@@ -153,14 +153,14 @@ class UpdateNotificationWindow(MechanicBaseWindow):
             self.w.showDetailsButton = Button((105,-40,110,20), "Show Details",
                                          callback=self.showDetails)
             self.w.setDefaultButton(self.w.updateButton)
-            
+
             self.w.open()
         else:
             print "%s: %s" % (self.no_updates_title, self.no_updates)
-    
+
     def cancel(self, sender):
         self.w.close()
-        
+
     def update(self, sender):            
         ticks = len(self.updates) * Extension.ticks_per_download
         self.progress = self.startProgress('Updating', ticks)
@@ -169,7 +169,7 @@ class UpdateNotificationWindow(MechanicBaseWindow):
             extension.update()
 
         self.progress.close()
-        
+
     def showDetails(self, sender):
         self.w.close()
         MechanicWindow("Update")
@@ -180,29 +180,28 @@ class UpdateNotificationWindow(MechanicBaseWindow):
         if image:
             self.w.image.setImage(imageObject=image)
 
-
 class MechanicTab(VanillaBaseObject):
     nsViewClass = NSView
     disabledText = "Couldn't connect to the Internet..."
     tabSize = (500, 300)
-    
+
     def __init__(self, posSize, parent=None):
         self._setupView(self.nsViewClass, posSize)
         self.parent = parent
         self.setup()
-        
+
     def setup(self):
         pass
-        
+
     def activate(self):
         pass
-        
+
     def deactivate(self):
         pass
-        
+
     def setWindowSize(self):
         self.parent.w.resize(self.tabSize[0], self.tabSize[1], False)
-        
+
     def disable(self):
         if not hasattr(self, 'disabledOverlay'):
             colorTile = NSImage.alloc().initWithSize_((10, 10))
@@ -211,32 +210,32 @@ class MechanicTab(VanillaBaseObject):
             color.set()
             NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
             colorTile.unlockFocus()
-        
+
             self.disabledOverlay = Group((0,0,-0,-0))
             self.disabledOverlay.background = ImageView((0, 0, 0, 0), scale="fit")
             self.disabledOverlay.background.setImage(imageObject=colorTile)
-        
+
             disabledText = Font.string(self.disabledText)
             self.disabledOverlay.disabledText = TextBox((0,120,-0,-0), self.disabledText, alignment="center")
             self.disabledOverlay.disabledText._nsObject.setTextColor_(NSColor.whiteColor())
-            
+
     def enable(self):
         if hasattr(self, 'disabledOverlay'):
             self.disabledOverlay._nsObject.removeFromSuperview()
-        
+
     def startProgress(self, *args, **kwargs):
         return self.parent.startProgress(*args, **kwargs)
 
     def closeNotificationSheet(self, sender):
         self.parent.w.notification.close()
-        
+
     def showNotificationSheet(self, text, size=(300, 80)):
         self.parent.w.notification = Sheet(size, self.parent.w)
         self.parent.w.notification.text = TextBox((15, 15, -50, -15), text)
         self.parent.w.notification.closeButton = Button((-115,-37,100,22), 'Close', callback=self.closeNotificationSheet)
         self.parent.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
         self.parent.w.notification.open()
-    
+
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
 
@@ -256,14 +255,14 @@ class UpdatesTab(MechanicTab):
         self.updateableList = UpdatesList(posSize,
                                           [], 
                                           editCallback=self.updateUpdateButtonLabel)
-    
+
     def updateList(self, force=False):
         updater = Updates()
         updates = updater.all(force)
         if not updater.unreachable:
             self.updateableList.set(updates)
-            self.updateUpdatedAt()            
-    
+            self.updateUpdatedAt()
+
     def addUpdatedAt(self):
         self.updatedAt = TextBox((20,-31,-20,20), "", sizeStyle="small")
         self.updateUpdatedAt()
@@ -294,19 +293,19 @@ class UpdatesTab(MechanicTab):
         else:
             update_label = "Install %d Updates" % count
         self.updateButton.setTitle(update_label)
-                
+
     def update(self, sender):
         installable = []
         for extension in self.updateableList.get():
             if extension['install']:
                 installable.append(extension['self'])
-        
+
         ticks = len(installable) * 3
         self.progress = self.startProgress('Updating', ticks)
 
         for extension in installable:
             extension.update()
-        
+
         self.updateList(True)
         self.progress.close()
 
@@ -365,7 +364,7 @@ class InstallTab(MechanicTab):
         self.install_button = Button((-180,-35,160,20), "Install Extension",
                                      callback=self.install)
         self.update_buttons()
-        
+
     def addList(self):
         posSize = (20,20,-20,-50)
         self.installationList = InstallationList(posSize,
@@ -373,7 +372,7 @@ class InstallTab(MechanicTab):
                                                  selectionCallback=self.update_buttons,
                                                  allowsMultipleSelection=True,
                                                  doubleClickCallback=self.open_repo)
-    
+
     def updateList(self):
         if not self.installationList.get():
             try:
@@ -386,33 +385,33 @@ class InstallTab(MechanicTab):
         else:
             self.installationList.refresh()
 
-        self.parent.w.setDefaultButton(self.install_button)    
-    
+        self.parent.w.setDefaultButton(self.install_button)
+
     def activate(self):
         self.updateList()
-        
+
     def disable(self):
         self.installationList.enable(False)
         super(InstallTab, self).disable()
-        
+
     def enable(self):
         self.installationList.enable(True)
         super(InstallTab, self).enable()
-    
+
     def open_repo(self, sender):
         list = self.installationList.get()
         selections = self.installationList.getSelection()
         for selection in selections:
             cell = list[selection]
             webbrowser.open('http://github.com/%s' % cell['repository'])
-        
+
     def install(self, sender):
         list = self.installationList.get()
         selections = self.installationList.getSelection()
         installable = []
         for selection in selections:
             installable.append(list[selection])
-            
+
         ticks = len(installable) * 4
         self.progress = self.startProgress('Updating', ticks)
 
@@ -422,14 +421,14 @@ class InstallTab(MechanicTab):
                                 filename = remote_cell['filename'])
             extension_path = remote.download()
             Extension(path=extension_path).install()
-            
+
         self.installationList.refresh()
         self.progress.close()
         self.update_buttons()
-        
+
     def uninstall(self, sender):
         uninstallable = self._uninstallable()
-    
+
         self.progress = self.startProgress('Updating', len(uninstallable))
 
         for extension in uninstallable:
@@ -443,10 +442,10 @@ class InstallTab(MechanicTab):
     def update_buttons(self, sender=None):
         self.update_install_button_label()
         self.update_uninstall_button_label()
-        
+
     def update_uninstall_button_label(self, sender=None):
         self.uninstall_button._nsObject.setEnabled_(len(self._uninstallable()) > 0)
-        
+
     def update_install_button_label(self, sender=None):
         selections = self.installationList.getSelection()
         self.install_button._nsObject.setEnabled_(selections)
@@ -457,7 +456,7 @@ class InstallTab(MechanicTab):
         else:
             label = "Install Extensions"
         self.install_button.setTitle(label)
-        
+
     def _uninstallable(self):
         list = self.installationList.get()
         selections = self.installationList.getSelection()
@@ -471,10 +470,10 @@ class InstallTab(MechanicTab):
 class RegisterTab(MechanicTab):
     tabSize = (500, 225)
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
-    
+
     def setup(self):
         indent = 105
-        
+
         self.extensionNameLabel = TextBox((15,18,80,22), "Name:", alignment="right")
         self.extensionName = EditText((indent,15,-20,22), placeholder="My Extension")
 
@@ -483,29 +482,29 @@ class RegisterTab(MechanicTab):
 
         self.extensionRepositoryLabel = TextBox((15,98,80,22), "Repository:", alignment="right")
         self.extensionRepository = EditText((indent,95,-20,22), placeholder="username/MyExtension")
-        
+
         self.explanatoryText = TextBox((105,130,-20,50), self.explanation)
-                
+
         self.importButton = Button((-250,-35,80,20), "Import",
                                    callback=self.getExt)
         self.registerButton = Button((-160,-35,140,20), "Register",
                                      callback=self.register)
 
     def activate(self):
-        self.parent.w.setDefaultButton(self.registerButton)    
+        self.parent.w.setDefaultButton(self.registerButton)
 
     def getExt(self, sender):
         getFile(fileTypes=['roboFontExt'], 
                 parentWindow=self.parent.w, 
                 resultCallback=self.importExt)
-        
+
     def importExt(self, file):
         extension = Extension(path=file[0])
         if extension.bundle.bundleExists():
             self.extensionName.set(extension.bundle.name)
             self.extensionFilename.set(os.path.basename(extension.path))
             self.extensionRepository.set(extension.config.repository)
-        
+
     def register(self, sender):
         self.progress = self.startProgress('Sending to registry server...')
         try:

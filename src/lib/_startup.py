@@ -6,11 +6,11 @@ from mechanic.views import UpdateNotificationWindow
 
 class MechanicObserver:
     """Observe application launch to check for updates"""
-    
+
     def __init__(self):
         addObserver(self, 'checkForUpdates', 'applicationDidFinishLaunching')
         addObserver(self, 'checkForUpdates', 'applicationDidBecomeActive')
-        
+
     def checkForUpdates(self, info):
         """Open updates window unless ran in last hour"""
         last_run = Storage.get('last_run')
