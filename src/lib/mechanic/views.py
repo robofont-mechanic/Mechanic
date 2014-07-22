@@ -7,6 +7,7 @@ from mojo.extensions import ExtensionBundle
 from mechanic.helpers import *
 from mechanic.models import Extension, GithubRepo, Registry, Updates
 from mechanic.windows.base import BaseWindow
+from mechanic.windows.tab import BaseTab
 
 
 class UpdateNotificationWindow(BaseWindow):
@@ -107,67 +108,7 @@ class MechanicWindow(BaseWindow):
         self.open()
 
 
-class MechanicTab(VanillaBaseObject):
-    nsViewClass = NSView
-    disabledText = "Couldn't connect to the Internet..."
-    tabSize = (500, 300)
-
-    def __init__(self, posSize, parent=None):
-        self._setupView(self.nsViewClass, posSize)
-        self.parent = parent
-        self.setup()
-
-    def setup(self):
-        pass
-
-    def activate(self):
-        pass
-
-    def deactivate(self):
-        pass
-
-    def setWindowSize(self):
-        self.parent.w.resize(self.tabSize[0], self.tabSize[1], False)
-
-    def disable(self):
-        if not hasattr(self, 'disabledOverlay'):
-            colorTile = NSImage.alloc().initWithSize_((10, 10))
-            colorTile.lockFocus()
-            color = NSColor.colorWithCalibratedWhite_alpha_(0, 0.65)
-            color.set()
-            NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
-            colorTile.unlockFocus()
-
-            self.disabledOverlay = Group((0,0,-0,-0))
-            self.disabledOverlay.background = ImageView((0, 0, 0, 0), scale="fit")
-            self.disabledOverlay.background.setImage(imageObject=colorTile)
-
-            disabledText = Font.string(self.disabledText)
-            self.disabledOverlay.disabledText = TextBox((0,120,-0,-0), self.disabledText, alignment="center")
-            self.disabledOverlay.disabledText._nsObject.setTextColor_(NSColor.whiteColor())
-
-    def enable(self):
-        if hasattr(self, 'disabledOverlay'):
-            self.disabledOverlay._nsObject.removeFromSuperview()
-
-    def startProgress(self, *args, **kwargs):
-        return self.parent.startProgress(*args, **kwargs)
-
-    def closeNotificationSheet(self, sender):
-        self.parent.w.notification.close()
-
-    def showNotificationSheet(self, text, size=(300, 80)):
-        self.parent.w.notification = Sheet(size, self.parent.w)
-        self.parent.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.parent.w.notification.closeButton = Button((-115,-37,100,22), 'Close', callback=self.closeNotificationSheet)
-        self.parent.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
-        self.parent.w.notification.open()
-
-    def showConnectionErrorSheet(self):
-        self.showNotificationSheet(self.disabledText)
-
-
-class UpdatesTab(MechanicTab):
+class UpdatesTab(BaseTab):
 
     def setup(self):
         self.addList()
@@ -237,7 +178,8 @@ class UpdatesTab(MechanicTab):
         self.updateList(True)
         self.progress.close()
 
-class SettingsTab(MechanicTab):
+
+class SettingsTab(BaseTab):
     updates_label = "Check for updates on startup"
     minor_updates_label = "Ignore patch updates on startup"
     check_on_startup = Storage.get("check_on_startup")
@@ -281,7 +223,8 @@ class SettingsTab(MechanicTab):
                 del ignore[row["name"]]
         Storage.set('ignore', ignore)
 
-class InstallTab(MechanicTab):
+
+class InstallTab(BaseTab):
     tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
 
@@ -395,7 +338,8 @@ class InstallTab(MechanicTab):
                 uninstallable.append(extension)
         return uninstallable
 
-class RegisterTab(MechanicTab):
+
+class RegisterTab(BaseTab):
     tabSize = (500, 225)
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
