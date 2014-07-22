@@ -84,11 +84,11 @@ class Toolbar(object):
                            in enumerate(self.items)
                            if item['label'] == label), 0)
 
-    def add_item(self, **kwargs):
-        item = dict(itemIdentifier=kwargs['title'],
-                    label=kwargs['title'],
+    def add_item(self, view):
+        item = dict(itemIdentifier=view.title,
+                    label=view.title,
                     callback=self.window.toolbarSelect,
-                    imageNamed=kwargs['image'],
+                    imageNamed=view.image,
                     selectable=True,
-                    view=kwargs['view'])
+                    view=view)
         self.items.append(item)
