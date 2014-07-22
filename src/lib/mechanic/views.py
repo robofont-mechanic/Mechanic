@@ -88,21 +88,21 @@ class MechanicWindow(BaseWindow):
     def __init__(self, *args, **kwargs):
         super(MechanicWindow, self).__init__(*args, **kwargs)
 
-        self.addToolbarItem(title="Install",
-                            image="toolbarRun",
-                            view=InstallTab)
+        self.toolbar.add_item(title="Install",
+                              image="toolbarRun",
+                              view=InstallTab)
 
-        self.addToolbarItem(title="Update",
-                            image="toolbarScriptReload",
-                            view=UpdatesTab)
+        self.toolbar.add_item(title="Update",
+                              image="toolbarScriptReload",
+                              view=UpdatesTab)
 
-        self.addToolbarItem(title="Register",
-                            image="toolbarScriptOpen",
-                            view=RegisterTab)
+        self.toolbar.add_item(title="Register",
+                              image="toolbarScriptOpen",
+                              view=RegisterTab)
 
-        self.addToolbarItem(title="Settings",
-                            image="prefToolbarMisc",
-                            view=SettingsTab)
+        self.toolbar.add_item(title="Settings",
+                              image="prefToolbarMisc",
+                              view=SettingsTab)
 
         self.open()
 
@@ -165,6 +165,7 @@ class MechanicTab(VanillaBaseObject):
 
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
+
 
 class UpdatesTab(MechanicTab):
 

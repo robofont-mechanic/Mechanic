@@ -24,8 +24,6 @@ class BaseWindow(BaseWindowController):
         self.watch("extensionWillInstall")#, 'Installing %s...' % extension.bundle.name
         self.watch("extensionDidInstall")
 
-        self.__toolbar_items = []
-
     def watch(self, event_name, message=None):
         addObserver(self, "print_info", event_name)
 
@@ -33,29 +31,20 @@ class BaseWindow(BaseWindowController):
         print info
 
     def open(self):
-        if self.__toolbar_items:
+        if self.toolbar.items:
             self.createToolbar()
             self.addTabs()
             self.setActivePane(self.first_tab)
         self.w.open()
 
-    def addToolbarItem(self, **kwargs):
-        item = dict(itemIdentifier=kwargs['title'],
-                    label=kwargs['title'],
-                    callback=self.toolbarSelect,
-                    imageNamed=kwargs['image'],
-                    selectable=True,
-                    view=kwargs['view'])
-        self.__toolbar_items.append(item)
-
     def createToolbar(self):
         self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
-                          toolbarItems=self.__toolbar_items,
+                          toolbarItems=self.toolbar.items,
                           addStandardItems=False)
 
     def setActivePane(self, pane):
         current_index = self.w.tabs.get()
-        index = self.tabIndex(pane)
+        index = self.toolbar.index_of(pane)
         if not self.w.isVisible():
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
@@ -68,14 +57,38 @@ class BaseWindow(BaseWindowController):
 
     def addTabs(self):
         self.w.tabs = Tabs((0, 0, -0, -0),
-                           [item['label'] for item in self.__toolbar_items],
+                           [item['label'] for item in self.toolbar.items],
                            showTabs=False)
 
-        for index, item in enumerate(self.__toolbar_items):
+        for index, item in enumerate(self.toolbar.items):
             tab = self.w.tabs[index]
             tab.view = item['view']((0,0,-0,-0), self)
 
-    def tabIndex(self, label):
+    @property
+    def toolbar(self):
+        try:
+            return self.__toolbar
+        except AttributeError:
+            self.__toolbar = Toolbar(self)
+            return self.__toolbar
+
+
+class Toolbar(object):
+    
+    def __init__(self, window):
+        self.items = []
+        self.window = window
+    
+    def index_of(self, label):
         return next((index for index, item
-                           in enumerate(self.__toolbar_items)
+                           in enumerate(self.items)
                            if item['label'] == label), 0)
+
+    def add_item(self, **kwargs):
+        item = dict(itemIdentifier=kwargs['title'],
+                    label=kwargs['title'],
+                    callback=self.window.toolbarSelect,
+                    imageNamed=kwargs['image'],
+                    selectable=True,
+                    view=kwargs['view'])
+        self.items.append(item)
