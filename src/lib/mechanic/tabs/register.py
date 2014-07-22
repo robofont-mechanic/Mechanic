@@ -61,7 +61,7 @@ class RegisterTab(BaseTab):
             self.extensionName.set('')
             self.extensionFilename.set('')
             self.extensionRepository.set('')
-        except requests.exceptions.HTTPError, e:
+        except requests.exceptions.HTTPError as e:
             errors = response.json()['error']
             if isinstance(errors, basestring): errors = [errors]
             errors = map(lambda e: '%s.' % e.capitalize(), errors)
