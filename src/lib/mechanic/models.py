@@ -15,6 +15,10 @@ class Extension(object):
 
     ticks_per_download = 4
 
+    @classmethod
+    def allExtensions(cls):
+        return [cls(name=n) for n in ExtensionBundle.allExtensions()]
+
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)

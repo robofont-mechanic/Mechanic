@@ -27,14 +27,10 @@ class SettingsTab(BaseTab):
                                              callback=self.saveIgnorePatchUpdates)
 
     def addList(self):
-        self.configured = []
-        for name in ExtensionBundle.allExtensions():
-            extension = Extension(name=name)
-            if extension.is_configured():
-                self.configured.append(extension)
-
+        extensions = Extension.allExtensions()
+        configured = [e for e in extensions if e.is_configured()]
         self.settingsList = SettingsList((20,75,-20,-20),
-                                         self.configured,
+                                         configured,
                                          editCallback=self.update)
 
     def saveCheckForUpdates(self, sender):
