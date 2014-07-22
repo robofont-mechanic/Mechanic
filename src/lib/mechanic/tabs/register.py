@@ -1,11 +1,11 @@
-import json, webbrowser, os, re, time, plistlib, requests
-from AppKit import *
+import os
+import requests
 from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.helpers import *
-from mechanic.models import Extension, GithubRepo, Registry, Updates
+from mechanic.models import Extension, Registry
 from mechanic.tabs.base import BaseTab
 
 

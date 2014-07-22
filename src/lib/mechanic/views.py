@@ -1,5 +1,4 @@
-import json, webbrowser, os, re, time, plistlib, requests
-from AppKit import *
+from AppKit import NSImage
 from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle

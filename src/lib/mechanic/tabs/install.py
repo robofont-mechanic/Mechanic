@@ -1,11 +1,11 @@
-import json, webbrowser, os, re, time, plistlib, requests
-from AppKit import *
+import webbrowser
+import requests
 from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.helpers import *
-from mechanic.models import Extension, GithubRepo, Registry, Updates
+from mechanic.models import Extension, GithubRepo, Registry
 from mechanic.tabs.base import BaseTab
 
 
@@ -75,8 +75,8 @@ class InstallTab(BaseTab):
 
         for remote_cell in installable:
             remote = GithubRepo(remote_cell['repository'], 
-                                name = remote_cell['name'],
-                                filename = remote_cell['filename'])
+                                name=remote_cell['name'],
+                                filename=remote_cell['filename'])
             extension_path = remote.download()
             Extension(path=extension_path).install()
 
