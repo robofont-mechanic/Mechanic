@@ -1,114 +1,18 @@
 import json, webbrowser, os, re, time, plistlib, requests
 from AppKit import *
 from vanilla import *
-from vanilla.dialogs import message, getFile
-from defconAppKit.windows.baseWindow import BaseWindowController
+from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
-from mojo.events import addObserver
 
 from mechanic.helpers import *
 from mechanic.models import Extension, GithubRepo, Registry, Updates
+from mechanic.windows.base import BaseWindow
 
-class MechanicBaseWindow(BaseWindowController):
 
-    def __init__(self):
-        self.watch("repositoryWillRead")#, 'Getting %s...' % extension.config.repository
-        self.watch("repositoryDidRead")
-
-        self.watch("repositoryWillDownload")#, 'Downloading %s...' % extension.bundle.name
-        self.watch("repositoryDidDownloadChunk")
-        self.watch("repositoryDidDownload")
-
-        self.watch("repositoryWillExtractDownload")#, 'Extracting %s...' % extension.bundle.name
-        self.watch("repositoryDidExtractDownload") #
-
-        self.watch("extensionWillInstall")#, 'Installing %s...' % extension.bundle.name
-        self.watch("extensionDidInstall")
-
-    def watch(self, event_name, message=None):
-        addObserver(self, "print_info", event_name)
-
-    def print_info(self, info):
-        print info
-
-class MechanicWindow(MechanicBaseWindow):
-    window_title = "Mechanic"
-
-    def __init__(self, active="Install"):
-        super(MechanicWindow, self).__init__()
-
-        self.w = Window((500,300),
-                        autosaveName=self.__class__.__name__,
-                        title=self.window_title)
-        self.__toolbar_items = []
-
-        self.addToolbarItem(title="Install",
-                            image="toolbarRun",
-                            view="InstallTab")
-
-        self.addToolbarItem(title="Update",
-                            image="toolbarScriptReload",
-                            view="UpdatesTab")
-
-        self.addToolbarItem(title="Register",
-                            image="toolbarScriptOpen",
-                            view="RegisterTab")
-
-        self.addToolbarItem(title="Settings",
-                            image="prefToolbarMisc",
-                            view="SettingsTab")
-
-        self.createToolbar()
-        self.addTabs()
-        self.setActivePane(active)
-
-        self.w.open()
-
-    def addToolbarItem(self, **kwargs):
-        item = dict(itemIdentifier=kwargs['title'],
-                    label=kwargs['title'],
-                    callback=self.toolbarSelect,
-                    imageNamed=kwargs['image'],
-                    selectable=True,
-                    view=globals()[kwargs['view']])
-        self.__toolbar_items.append(item)
-
-    def createToolbar(self):
-        self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
-                          toolbarItems=self.__toolbar_items,
-                          addStandardItems=False)
-
-    def setActivePane(self, pane):
-        current_index = self.w.tabs.get()
-        index = self.tabIndex(pane)
-        if not self.w.isVisible():
-            self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
-        self.w.tabs.set(index)
-        self.w.tabs[current_index].view.deactivate()
-        self.w.tabs[index].view.setWindowSize()
-        self.w.tabs[index].view.activate()
-
-    def toolbarSelect(self, sender):
-        self.setActivePane(sender.itemIdentifier())
-
-    def addTabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0),
-                           [item['label'] for item in self.__toolbar_items],
-                           showTabs=False)
-
-        for index, item in enumerate(self.__toolbar_items):
-            tab = self.w.tabs[index]
-            tab.view = item['view']((0,0,-0,-0), self)
-
-    def tabIndex(self, label):
-        return next((index for index, item
-                           in enumerate(self.__toolbar_items)
-                           if item['label'] == label), 0)
-
-class UpdateNotificationWindow(MechanicBaseWindow):
+class UpdateNotificationWindow(BaseWindow):
     window_title = "Extension Updates"
 
-    explanation = Font.string(text="If you don't want to install now, choose Extensions > Mechanic > Updates when you're ready to install.",size=11)
+    explanation = "If you don't want to install now, choose Extensions > Mechanic > Updates when you're ready to install."
     no_updates_title = 'Mechanic'
     no_updates = 'All updateable extensions are up to date.'
     updates_available = "Updates are available for %d of your extensions."
@@ -137,14 +41,11 @@ class UpdateNotificationWindow(MechanicBaseWindow):
             return
 
         if self.updates:
-            self.w = Window((500,300),
-                            autosaveName=self.__class__.__name__,
-                            title=self.window_title)
-
             self.create_image()
 
             self.w.title = TextBox((105,20,-20,20), self.title)
-            self.w.explanation = TextBox((105,45,-20,50), self.explanation)
+            self.w.explanation = TextBox((105,45,-20,50), 
+                                         Font.string(text=self.explanation, size=11))
 
             self.w.updateButton = Button((-150,-40,130,20), "Install Updates",
                                          callback=self.update)
@@ -179,6 +80,32 @@ class UpdateNotificationWindow(MechanicBaseWindow):
         self.w.image = ImageView((15,15,80,80), scale='fit')
         if image:
             self.w.image.setImage(imageObject=image)
+
+
+class MechanicWindow(BaseWindow):
+    window_title = "Mechanic"
+
+    def __init__(self, *args, **kwargs):
+        super(MechanicWindow, self).__init__(*args, **kwargs)
+
+        self.addToolbarItem(title="Install",
+                            image="toolbarRun",
+                            view=InstallTab)
+
+        self.addToolbarItem(title="Update",
+                            image="toolbarScriptReload",
+                            view=UpdatesTab)
+
+        self.addToolbarItem(title="Register",
+                            image="toolbarScriptOpen",
+                            view=RegisterTab)
+
+        self.addToolbarItem(title="Settings",
+                            image="prefToolbarMisc",
+                            view=SettingsTab)
+
+        self.open()
+
 
 class MechanicTab(VanillaBaseObject):
     nsViewClass = NSView
