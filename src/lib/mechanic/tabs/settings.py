@@ -4,6 +4,7 @@ from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.helpers import *
+from mechanic.lists import *
 from mechanic.models import Extension
 from mechanic.tabs.base import BaseTab
 
@@ -18,13 +19,13 @@ class SettingsTab(BaseTab):
     def setup(self):                
         self.addList()
         self.checkForUpdates = CheckBox((20,15,-20,20),
-                                          self.updates_label,
-                                          value=Storage.get("check_on_startup"),
-                                          callback=self.saveCheckForUpdates)
+                                        self.updates_label,
+                                        value=Storage.get("check_on_startup"),
+                                        callback=self.saveCheckForUpdates)
         self.ignorePatchUpdates = CheckBox((20,40,-20,20),
-                                             self.minor_updates_label,
-                                             value=Storage.get("ignore_patch_updates"),
-                                             callback=self.saveIgnorePatchUpdates)
+                                           self.minor_updates_label,
+                                           value=Storage.get("ignore_patch_updates"),
+                                           callback=self.saveIgnorePatchUpdates)
 
     def addList(self):
         extensions = Extension.allExtensions()

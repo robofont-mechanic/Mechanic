@@ -3,6 +3,7 @@ from vanilla import *
 from vanilla.dialogs import getFile
 
 from mechanic.helpers import *
+from mechanic.lists import *
 from mechanic.models import Updates
 from mechanic.tabs.base import BaseTab
 
@@ -27,11 +28,8 @@ class UpdatesTab(BaseTab):
                                           editCallback=self.updateUpdateButtonLabel)
 
     def updateList(self, force=False):
-        updater = Updates()
-        updates = updater.all(force)
-        if not updater.unreachable:
-            self.updateableList.set(updates)
-            self.updateUpdatedAt()
+        self.updateableList.refresh(force=force)
+        self.updateUpdatedAt()
 
     def addUpdatedAt(self):
         self.updatedAt = TextBox((20,-31,-20,20), "", sizeStyle="small")
@@ -45,17 +43,14 @@ class UpdatesTab(BaseTab):
             self.updatedAt.set('')
 
     def addUpdateButton(self):
-        self.updateButton = Button((-160,-35,140,20), "Update",
-                            callback=self.update)
+        self.updateButton = Button((-160,-35,140,20),
+                                   "Update",
+                                   callback=self.update)
         self.updateUpdateButtonLabel()
 
     def updateUpdateButtonLabel(self, sender=None):
-        rows = self.updateableList.get()
-        count = 0
-        for row in rows:
-            if row['install']:
-                count += 1
-        self.updateButton._nsObject.setEnabled_(count is not 0)
+        count = len(self.updateableList.get_selected())
+        self.updateButton.enable(count is not 0)
         if count is 0:
             update_label = "Update"
         elif count is 1:
@@ -65,11 +60,7 @@ class UpdatesTab(BaseTab):
         self.updateButton.setTitle(update_label)
 
     def update(self, sender):
-        installable = []
-        for extension in self.updateableList.get():
-            if extension['install']:
-                installable.append(extension['self'])
-
+        installable = self.updateableList.get_checked_extensions()
         ticks = len(installable) * 3
         self.progress = self.startProgress('Updating', ticks)
 
