@@ -9,22 +9,21 @@ from mechanic.models import Updates
 class ExtensionList(List):
 
     def _wrapItem(self, extension):
-        item = {
-                'name': extension.bundle.name,
+        check = extension.bundle.name not in Storage.get('ignore')
+        item = {'name': extension.bundle.name,
                 'local_version': extension.config['version'],
                 'remote_version': extension.remote.version,
                 'install': True,
-                'check_for_updates': extension.bundle.name not in Storage.get('ignore'),
-                'self': extension
-               }
+                'check_for_updates': check,
+                'self': extension}
         return super(ExtensionList, self)._wrapItem(item)
 
 
 class UpdatesList(ExtensionList):
     """Return an ExtensionList for updates window."""
 
-    __columns = [{"title": "Install", "key": "install", "width": 40, "editable": True, "cell": CheckBoxListCell()}, 
-                 {"title": "Extension", "key": "name", "width": 300, "editable": False}, 
+    __columns = [{"title": "Install", "key": "install", "width": 40, "editable": True, "cell": CheckBoxListCell()},
+                 {"title": "Extension", "key": "name", "width": 300, "editable": False},
                  {"title": "Version", "key": "remote_version", "width": 60, "editable": False}]
 
     def __init__(self, *args, **kwargs):
@@ -46,48 +45,43 @@ class UpdatesList(ExtensionList):
 
 class SettingsList(ExtensionList):
     """Return an ExtensionList for settings window."""
-    
+
     __columns = [{"title": "Check", "key": "check_for_updates", "width": 40, "editable": True, "cell": CheckBoxListCell()},
                  {"title": "Extension", "key": "name", "width": 300, "editable": False},
                  {"title": "Version", "key": "local_version", "editable": False}]
 
     def __init__(self, *args, **kwargs):
-       kwargs['columnDescriptions'] = self.__columns
-       super(SettingsList, self).__init__(*args, **kwargs)
+        kwargs['columnDescriptions'] = self.__columns
+        super(SettingsList, self).__init__(*args, **kwargs)
 
 
 class InstallationList(List):
     """Return an ExtensionList for installation window."""
 
     def __init__(self, posSize, registry, **kwargs):
-        columns = [
-                   {
-                       "title": "Installed", 
-                       "key": "installed", 
-                       "width": 25, 
-                       "editable": False, 
-                       "cell": InstalledStatusCell.alloc().init()
-                   }, {
-                       "title": "Extension", 
-                       "key": "extension", 
-                       "width": 200, 
-                       "editable": False, 
-                       "formatter": ExtensionDescriptionFormatter.alloc().init()
-                   }
-                  ]
+        columns = [{"title": "Installed",
+                    "key": "installed",
+                    "width": 25,
+                    "editable": False,
+                    "cell": InstalledStatusCell.alloc().init()},
+                   {"title": "Extension",
+                    "key": "extension",
+                    "width": 200,
+                    "editable": False,
+                    "formatter": ExtensionDescriptionFormatter.alloc().init()}]
+
         extension_cells = sorted(registry, key=lambda k: k[u'name'].lower())
-        return super(InstallationList, self).__init__(posSize, 
-                                                      extension_cells, 
-                                                      rowHeight=39.0, 
-                                                      columnDescriptions=columns, 
-                                                      showColumnTitles=False, 
-                                                      **kwargs)
+        super(InstallationList, self).__init__(posSize,
+                                               extension_cells,
+                                               rowHeight=39.0,
+                                               columnDescriptions=columns,
+                                               showColumnTitles=False,
+                                               **kwargs)
 
     def _wrapItem(self, extension):
-        item = {
-                'installed': ExtensionBundle(name = extension[u'filename'].split("/")[-1]).bundleExists(),
-                'extension': extension
-               }
+        name = extension[u'filename'].split("/")[-1]
+        item = {'installed': ExtensionBundle(name=name).bundleExists(),
+                'extension': extension}
         return super(InstallationList, self)._wrapItem(item)
 
     def _unwrapListItems(self, items=None):
@@ -105,6 +99,7 @@ class InstallationList(List):
 
     def refresh(self):
         self.set(self.get())
+
 
 class InstalledStatusCell(NSActionCell):
 

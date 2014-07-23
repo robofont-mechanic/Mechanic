@@ -31,8 +31,9 @@ class UpdateNotificationWindow(BaseWindow):
 
         print "Mechanic: checking for updates..."
 
+        skip_patch = bool(Storage.get('ignore_patch_updates'))
         self.updater = Updates()
-        self.updates = self.updater.all(force, skip_patch_updates=bool(Storage.get('ignore_patch_updates')))
+        self.updates = self.updater.all(force, skip_patch_updates=skip_patch)
 
         # TODO: Make this use exceptions
         if self.updater.unreachable:
@@ -42,16 +43,20 @@ class UpdateNotificationWindow(BaseWindow):
         if self.updates:
             self.create_image()
 
-            self.w.title = TextBox((105,20,-20,20), self.title)
-            self.w.explanation = TextBox((105,45,-20,50), 
-                                         Font.string(text=self.explanation, size=11))
+            self.w.title = TextBox((105, 20, -20, 20), self.title)
 
-            self.w.updateButton = Button((-150,-40,130,20), "Install Updates",
+            explanation = Font.string(text=self.explanation, size=11)
+            self.w.explanation = TextBox((105, 45, -20, 50), explanation)
+
+            self.w.updateButton = Button((-150, -40, 130, 20),
+                                         "Install Updates",
                                          callback=self.update)
-            self.w.cancelButton = Button((-255,-40,90,20), "Not Now",
+            self.w.cancelButton = Button((-255, -40, 90, 20),
+                                         "Not Now",
                                          callback=self.cancel)
-            self.w.showDetailsButton = Button((105,-40,110,20), "Show Details",
-                                         callback=self.showDetails)
+            self.w.showDetailsButton = Button((105, -40, 110, 20),
+                                              "Show Details",
+                                              callback=self.showDetails)
             self.w.setDefaultButton(self.w.updateButton)
 
             self.w.open()
@@ -76,7 +81,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
-        self.w.image = ImageView((15,15,80,80), scale='fit')
+        self.w.image = ImageView((15, 15, 80, 80), scale='fit')
         if image:
             self.w.image.setImage(imageObject=image)
 

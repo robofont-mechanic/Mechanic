@@ -29,7 +29,7 @@ class GithubRepo(object):
 
         postEvent('repositoryWillRead', repository=self)
 
-        if not hasattr(self,'data'):
+        if not hasattr(self, 'data'):
             try:
                 if self.extension_path:
                     plist_path = os.path.join(self.extension_path, 'info.plist')

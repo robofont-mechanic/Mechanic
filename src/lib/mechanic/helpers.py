@@ -5,18 +5,21 @@ from mojo.extensions import getExtensionDefault, setExtensionDefault
 class Font(object):
     """Convenience class for returning NSAttributedStrings."""
     @staticmethod
-    def regular(size): return {NSFontAttributeName:NSFont.systemFontOfSize_(size)}
+    def regular(size):
+        return {NSFontAttributeName: NSFont.systemFontOfSize_(size)}
 
     @staticmethod
-    def bold(size): return {NSFontAttributeName:NSFont.boldSystemFontOfSize_(size)}
+    def bold(size):
+        return {NSFontAttributeName: NSFont.boldSystemFontOfSize_(size)}
 
     @classmethod
-    def string(self,text="",size=13,style="regular",mutable=False):
-        if mutable == True:
-            str = NSMutableAttributedString
+    def string(self, text="", size=13, style="regular", mutable=False):
+        if mutable:
+            s = NSMutableAttributedString
         else:
-            str = NSAttributedString
-        return str.alloc().initWithString_attributes_(text, getattr(self,style)(size))
+            s = NSAttributedString
+        weight = getattr(self, style)(size)
+        return s.alloc().initWithString_attributes_(text, weight)
 
 
 class Version(object):
@@ -67,10 +70,10 @@ class Version(object):
 
 class Storage(object):
     """Convenience class for storing extension settings."""
-    defaults = {"ignore": {}, 
-                "check_on_startup": True, 
-                "cache": {}, 
-                "cached_at": 0.0, 
+    defaults = {"ignore": {},
+                "check_on_startup": True,
+                "cache": {},
+                "cached_at": 0.0,
                 "ignore_patch_updates": False}
     defaultKey = "com.jackjennings.mechanic"
 

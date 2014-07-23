@@ -73,7 +73,8 @@ class Extension(object):
             return plistlib.readPlist(self.config_path())
 
     def read_repository(self):
-        return self.read_config_key('com.robofontmechanic.repository') or self.read_config_key('repository')
+        return self.read_config_key('com.robofontmechanic.repository') or \
+            self.read_config_key('repository')
 
     def read_config_key(self, key):
         if hasattr(self.config, key):
@@ -89,12 +90,12 @@ class Extension(object):
         extension_path = self.read_config_key('extensionPath')
         repository = self.read_repository()
         if repository:
-            return GithubRepo(repository, 
+            return GithubRepo(repository,
                               name=self.name,
                               extension_path=extension_path)
 
 
-class Registry(object):    
+class Registry(object):
     registry_url = "http://www.robofontmechanic.com/api/v1/registry.json"
 
     def __init__(self, url=None):
@@ -135,7 +136,7 @@ class Updates(object):
         ignore = Storage.get('ignore')
         for name in ExtensionBundle.allExtensions():
             extension = Extension(name=name)
-            if (not extension.bundle.name in ignore and
+            if (extension.bundle.name not in ignore and
                     extension.is_configured()):
                 try:
                     if not extension.is_current_version():
@@ -166,4 +167,3 @@ class Updates(object):
         local = Version(update.config.version)
         remote = Version(update.remote.version)
         return remote.major > local.major or remote.minor > remote.minor
-
