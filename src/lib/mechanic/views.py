@@ -12,9 +12,8 @@ from mechanic.tabs import *
 class UpdateNotificationWindow(BaseWindow):
     window_title = "Extension Updates"
 
-    explanation = "If you don't want to install now, choose Extensions > Mechanic > Updates when you're ready to install."
-    no_updates_title = 'Mechanic'
-    no_updates = 'All updateable extensions are up to date.'
+    explanation = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
+    up_to_date = 'All extensions are up to date.'
     updates_available = "Updates are available for %d of your extensions."
 
     @classmethod
@@ -37,7 +36,7 @@ class UpdateNotificationWindow(BaseWindow):
 
         # TODO: Make this use exceptions
         if self.updater.unreachable:
-            print "%s: Couldn't connect to the internet" % self.no_updates_title
+            print "Mechanic: Couldn't connect to the internet"
             return
 
         if self.updates:
@@ -57,7 +56,7 @@ class UpdateNotificationWindow(BaseWindow):
 
             self.w.open()
         else:
-            print "%s: %s" % (self.no_updates_title, self.no_updates)
+            print "Mechanic: %s" % self.up_to_date
 
     def cancel(self, sender):
         self.w.close()
