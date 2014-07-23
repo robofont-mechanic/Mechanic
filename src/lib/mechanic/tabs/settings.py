@@ -12,6 +12,8 @@ from mechanic.tabs.base import BaseTab
 class SettingsTab(BaseTab):
     title = "Settings"
     image = "prefToolbarMisc"
+    identifier = "settings"
+    
     updates_label = "Check for updates on startup"
     minor_updates_label = "Ignore patch updates on startup"
     check_on_startup = Storage.get("check_on_startup")

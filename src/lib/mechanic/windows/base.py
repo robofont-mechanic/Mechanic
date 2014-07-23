@@ -32,17 +32,17 @@ class BaseWindow(BaseWindowController):
 
     def open(self):
         if self.toolbar.items:
-            self.createToolbar()
-            self.addTabs()
-            self.setActivePane(self.first_tab)
+            self.create_toolbar()
+            self.add_tabs()
+            self.set_active_pane(self.first_tab)
         self.w.open()
 
-    def createToolbar(self):
+    def create_toolbar(self):
         self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
                           toolbarItems=self.toolbar.items,
                           addStandardItems=False)
 
-    def setActivePane(self, pane):
+    def set_active_pane(self, pane):
         current_index = self.w.tabs.get()
         index = self.toolbar.index_of(pane)
         if not self.w.isVisible():
@@ -52,10 +52,10 @@ class BaseWindow(BaseWindowController):
         self.w.tabs[index].view.setWindowSize()
         self.w.tabs[index].view.activate()
 
-    def toolbarSelect(self, sender):
-        self.setActivePane(sender.itemIdentifier())
+    def toolbar_select(self, sender):
+        self.set_active_pane(sender.itemIdentifier())
 
-    def addTabs(self):
+    def add_tabs(self):
         self.w.tabs = Tabs((0, 0, -0, -0),
                            [item['label'] for item in self.toolbar.items],
                            showTabs=False)
@@ -79,15 +79,15 @@ class Toolbar(object):
         self.items = []
         self.window = window
     
-    def index_of(self, label):
+    def index_of(self, identifier):
         return next((index for index, item
                            in enumerate(self.items)
-                           if item['label'] == label), 0)
+                           if item['itemIdentifier'] == identifier), 0)
 
     def add_item(self, view):
-        item = dict(itemIdentifier=view.title,
+        item = dict(itemIdentifier=view.identifier,
                     label=view.title,
-                    callback=self.window.toolbarSelect,
+                    callback=self.window.toolbar_select,
                     imageNamed=view.image,
                     selectable=True,
                     view=view)

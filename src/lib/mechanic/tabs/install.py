@@ -13,6 +13,8 @@ from mechanic.tabs.base import BaseTab
 class InstallTab(BaseTab):
     title = "Install"
     image = "toolbarRun"
+    identifier = "install"
+    
     tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
     

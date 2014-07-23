@@ -11,6 +11,7 @@ from mechanic.tabs.base import BaseTab
 class UpdatesTab(BaseTab):
     title = "Update"
     image = "toolbarScriptReload"
+    identifier = "updates"
 
     def setup(self):
         self.addList()
