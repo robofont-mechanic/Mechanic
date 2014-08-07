@@ -45,6 +45,8 @@ Once you have added the required keys to your `info.plist` file, you can registe
 
 ### Versioning with Tags (recommended)
 
+**This versioning system will be deprecated in the near future. Versioning with info.plist (below) is the prefered method at this time.**
+
 If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
 
 In order for Mechanic to recognize your extension, add a `repository` key to your `info.plist` file:
