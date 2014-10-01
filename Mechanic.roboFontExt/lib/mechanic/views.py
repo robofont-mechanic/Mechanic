@@ -134,7 +134,7 @@ class UpdateNotificationWindow(BaseWindowController):
                 new_extension.bundle.install()
             except:
                 # ToDo: Make this report different errors
-                print "Mechanic: Couldn't download %s" % remote_cell['name']
+                print "Mechanic: Couldn't download %s" % extension.bundle.name
             
         self.progress.close()
         
