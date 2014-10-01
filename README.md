@@ -35,15 +35,17 @@ Mechanic has a website that lists all of the [available extensions](http://robof
 Mechanic for Developers
 -----------------------
 
-If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up: with git tags, or through `info.plist`.
+If you are already hosting your code on GitHub, support for Mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up: with git tags, or through `info.plist`.
 
 Either way:
-* Mechanic assumes that you are releasing on the master branch.
+* Mechanic assumes that the release version of your code lives on the `master` branch.
 * Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
 
 Once you have added the required keys to your `info.plist` file, you can register your extension from within the Mechanic interface in RoboFont.
 
 ### Versioning with Tags (recommended)
+
+**This versioning system will be deprecated in the near future. Versioning with info.plist (below) is the prefered method at this time.**
 
 If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
 
