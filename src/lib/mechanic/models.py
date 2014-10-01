@@ -94,6 +94,10 @@ class Extension(object):
                               name=self.name,
                               extension_path=extension_path)
 
+    def may_update(self):
+        ignore = Storage.get('ignore')
+        return self.bundle.name not in ignore and self.is_configured()
+
 
 class Registry(object):
     registry_url = "http://www.robofontmechanic.com/api/v1/registry.json"
@@ -133,16 +137,11 @@ class Updates(object):
 
     def _fetchUpdates(self):
         updates = []
-        ignore = Storage.get('ignore')
-        for name in ExtensionBundle.allExtensions():
-            extension = Extension(name=name)
-            if (extension.bundle.name not in ignore and
-                    extension.is_configured()):
-                try:
-                    if not extension.is_current_version():
-                        updates.append(extension)
-                except:
-                    self.unreachable = True
+        extensions = [e for e in Extension.allExtensions() if e.may_update()]
+        try:
+            updates = [e for e in extensions if not e.is_current_version()]
+        except:
+            self.unreachable = True
         self._setCached(updates)
         return updates
 
