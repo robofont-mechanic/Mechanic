@@ -16,7 +16,7 @@ class Extension(object):
     ticks_per_download = 4
 
     @classmethod
-    def allExtensions(cls):
+    def all(cls):
         return [cls(name=n) for n in ExtensionBundle.allExtensions()]
 
     def __init__(self, name=None, path=None):
@@ -36,28 +36,22 @@ class Extension(object):
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
 
-        postEvent('extensionWillUpdate', extension=new_extension)
+        postEvent('extensionWillUpdate')
 
         if extension_path is None:
             extension_path = self.remote.download()
 
         Extension(path=extension_path).install()
 
-        postEvent('extensionDidUpdate', extension=new_extension)
+        postEvent('extensionDidUpdate')
 
     def install(self):
         # TODO: Make this a noop if path isn't present
-        postEvent('extensionWillInstall', extension=new_extension)
+        postEvent('extensionWillInstall')
 
-        self.uninstall_duplicates()
         self.bundle.install()
 
-        postEvent('extensionDidInstall', extension=new_extension)
-
-    def uninstall_duplicates(self):
-        existing_extension = ExtensionBundle(name=self.name)
-        if existing_extension.bundleExists():
-            existing_extension.bundle.deinstall()
+        postEvent('extensionDidInstall')
 
     def is_current_version(self):
         """Return if extension is at curent version"""
@@ -137,7 +131,7 @@ class Updates(object):
 
     def _fetchUpdates(self):
         updates = []
-        extensions = [e for e in Extension.allExtensions() if e.may_update()]
+        extensions = [e for e in Extension.all() if e.may_update()]
         try:
             updates = [e for e in extensions if not e.is_current_version()]
         except:

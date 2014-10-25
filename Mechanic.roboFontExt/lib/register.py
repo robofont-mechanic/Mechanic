@@ -1,3 +1,3 @@
 from mechanic.views import MechanicWindow
 
-MechanicWindow('Register')
+MechanicWindow('register')
