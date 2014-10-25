@@ -20,5 +20,10 @@ class MechanicObserver:
             Storage.set('last_run', time.time())
 
 
-Storage.setDefaults()
+Storage.set_defaults(ignore={},
+                     check_on_startup=True,
+                     cache={},
+                     cached_at=0.0,
+                     ignore_patch_updates=False)
+
 MechanicObserver()
