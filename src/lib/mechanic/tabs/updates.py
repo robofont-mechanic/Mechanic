@@ -37,7 +37,7 @@ class UpdatesTab(BaseTab):
         self.updateUpdatedAt()
 
     def updateUpdatedAt(self):
-        updated = Updates().updatedAt()
+        updated = Updates.last_checked()
         if updated:
             self.updatedAt.set("Last checked: %s" % time.strftime('%d %b %Y, %H:%M', time.localtime(updated)))
         else:

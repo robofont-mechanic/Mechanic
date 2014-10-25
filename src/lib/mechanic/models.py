@@ -112,11 +112,20 @@ class Registry(object):
 
 class Updates(object):
 
+    @classmethod
+    def last_checked(cls):
+        return Storage.get('last_checked_at')
+
+    @classmethod
+    def checked_recently(cls):
+        last_run = cls.last_checked()
+        return last_run is not None and last_run > time.time() - (60 * 60)
+
     def __init__(self):
         self.unreachable = False
 
     def all(self, force=False, skip_patch_updates=False):
-        if force or self.updatedAt() < time.time() - (60 * 60):
+        if force or not self.__class__.checked_recently():
             updates = self._fetchUpdates()
         else:
             updates = self._getCached()
@@ -126,17 +135,15 @@ class Updates(object):
 
         return updates
 
-    def updatedAt(self):
-        return Storage.get('cached_at')
-
     def _fetchUpdates(self):
         updates = []
         extensions = [e for e in Extension.all() if e.may_update()]
         try:
             updates = [e for e in extensions if not e.is_current_version()]
+            self._setCached(updates)
+            Storage.set('last_checked_at', time.time())
         except:
             self.unreachable = True
-        self._setCached(updates)
         return updates
 
     def _getCached(self):
@@ -150,7 +157,6 @@ class Updates(object):
         return extensions
 
     def _setCached(self, extensions):
-        Storage.set('cached_at', time.time())
         cache = {}
         for extension in extensions:
             cache[extension.bundle.name] = extension.remote.version
