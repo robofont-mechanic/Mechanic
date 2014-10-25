@@ -77,7 +77,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     def showDetails(self, sender):
         self.w.close()
-        MechanicWindow('update')
+        MechanicWindow('updates')
 
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
