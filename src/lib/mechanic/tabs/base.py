@@ -1,6 +1,8 @@
 from AppKit import *
 from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, Button
 
+from mechanic.font import Font
+
 
 class BaseTab(VanillaBaseObject):
     nsViewClass = NSView

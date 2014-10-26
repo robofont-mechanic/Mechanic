@@ -3,7 +3,6 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.helpers import *
 from mechanic.storage import Storage
 from mechanic.lists import *
 from mechanic.models import Extension

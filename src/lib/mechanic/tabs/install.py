@@ -4,7 +4,6 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.helpers import *
 from mechanic.lists import *
 from mechanic.models import Extension, GithubRepo, Registry
 from mechanic.tabs.base import BaseTab
@@ -18,7 +17,7 @@ class InstallTab(BaseTab):
     tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
     
-    def setup(self):        
+    def setup(self):
         self.addList()
         self.uninstall_button = Button((-290,-35,100,20), "Uninstall",
                                        callback=self.uninstall)

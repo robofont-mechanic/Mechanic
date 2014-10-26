@@ -2,7 +2,6 @@ import time
 from vanilla import *
 from vanilla.dialogs import getFile
 
-from mechanic.helpers import *
 from mechanic.lists import *
 from mechanic.models import Updates
 from mechanic.tabs.base import BaseTab
