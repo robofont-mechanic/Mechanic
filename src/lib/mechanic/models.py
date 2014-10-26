@@ -105,7 +105,7 @@ class Registry(object):
         response.raise_for_status()
         return response.json()
 
-    def add(self, data):
+    def add(self, **data):
         response = requests.post(self.registry_url, data=data)
         return response
 

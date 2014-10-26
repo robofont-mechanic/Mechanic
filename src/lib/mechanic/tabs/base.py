@@ -1,5 +1,5 @@
 from AppKit import *
-from vanilla import VanillaBaseObject
+from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, Button
 
 
 class BaseTab(VanillaBaseObject):
