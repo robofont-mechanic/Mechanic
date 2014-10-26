@@ -5,7 +5,8 @@ from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.lists import *
-from mechanic.models import Extension, Registry
+from mechanic.models import Extension
+from mechanic.registry import Registry
 from mechanic.font import Font
 from mechanic.tabs.base import BaseTab
 

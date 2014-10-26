@@ -5,8 +5,10 @@ from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.lists import *
-from mechanic.models import Extension, GithubRepo, Registry
+from mechanic.models import Extension
+from mechanic.registry import Registry
 from mechanic.tabs.base import BaseTab
+from mechanic.repositories.github import GithubRepo
 
 
 class InstallTab(BaseTab):
