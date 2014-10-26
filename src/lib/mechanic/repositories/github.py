@@ -39,10 +39,11 @@ class GithubRepo(object):
                         plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
                         response = GithubRequest(plist_url).get()
                         plist = plistlib.readPlistFromString(response.content)
-                        self.zip = self.zip_url % {'repo': self.repo}
                         self.version = plist['version']
+                        self.zip = self.zip_url % {'repo': self.repo}
                     elif self._get_tags():
-                        self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
+                        self.tags.sort(key=lambda s: Version(s["name"]),
+                                       reverse=True)
                         self.zip = self.tags[0]['zipball_url']
                         self.version = self.tags[0]['name']
                     else:
