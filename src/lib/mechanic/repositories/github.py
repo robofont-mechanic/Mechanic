@@ -10,7 +10,6 @@ from zipfile import ZipFile
 from version import Version
 
 from mechanic.storage import Storage
-from mechanic.cached_request import CachedRequest
 
 
 class GithubRepo(object):
@@ -38,7 +37,7 @@ class GithubRepo(object):
                 if self.extension_path:
                     plist_path = os.path.join(self.extension_path, 'info.plist')
                     plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-                    response = CachedRequest(plist_url).get()
+                    response = GithubRequest(plist_url).get()
                     plist = plistlib.readPlistFromString(response.content)
                     self.zip = self.zip_url % {'repo': self.repo}
                     self.version = plist['version']
@@ -122,7 +121,7 @@ class GithubRepo(object):
 
     def _get_tags(self):
         url = self.tags_url % {'repo': self.repo}
-        response = CachedRequest(url).get()
+        response = GithubRequest(url).get()
         self.tags = response.json()
         return self.tags
 
@@ -130,6 +129,41 @@ class GithubRepo(object):
         if os.path.exists(self.tmp_path):
             shutil.rmtree(self.tmp_path)
         mkdir_p(self.tmp_path)
+
+
+class GithubRequest(object):
+
+    __cache = {}
+
+    def __init__(self, url):
+        self.url = url
+
+    def get(self):
+        return self.cache_response(self.url, self.get_cached(self.url))
+
+    def get_cached(self, url):
+        cached_response = self.cache.get(url, None)
+        if cached_response is not None:
+            etag = self.get_etag(cached_response)
+            response = requests.get(url, headers={'If-None-Match': etag})
+            if response.status_code is 304:
+                response = cached_response
+        else:
+            response = requests.get(url)
+        response.raise_for_status()
+        return response
+
+    def cache_response(self, url, response):
+        if self.get_etag(response):
+            self.cache[url] = response
+        return response
+
+    def get_etag(self, response):
+        return response.headers['ETag']
+
+    @property
+    def cache(self):
+        return self.__class__.__cache
 
 
 def mkdir_p(path):
