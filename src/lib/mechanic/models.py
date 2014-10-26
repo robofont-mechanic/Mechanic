@@ -22,13 +22,8 @@ class Extension(object):
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
-        self.path = self.bundle.bundlePath()
         self.config = None
         self.remote = None
-        self.configure_remote()
-
-    def configure_remote(self):
-        """Set config attribute from info.plist contents."""
         self.config = self.read_config()
         if self.config is not None:
             self.remote = self.initialize_remote()
@@ -60,11 +55,11 @@ class Extension(object):
         return Version(self.remote.version) <= Version(self.config['version'])
 
     def has_configuration(self):
-        return os.path.exists(self.config_path())
+        return os.path.exists(self.config_path)
 
     def read_config(self):
         if self.has_configuration():
-            return plistlib.readPlist(self.config_path())
+            return plistlib.readPlist(self.config_path)
 
     def read_repository(self):
         return self.read_config_key('com.robofontmechanic.repository') or \
@@ -74,12 +69,6 @@ class Extension(object):
         if hasattr(self.config, key):
             return self.config[key]
 
-    def config_path(self):
-        return os.path.join(self.path, 'info.plist')
-
-    def is_configured(self):
-        return self.remote is not None
-
     def initialize_remote(self):
         extension_path = self.read_config_key('extensionPath')
         repository = self.read_repository()
@@ -88,9 +77,22 @@ class Extension(object):
                               name=self.name,
                               extension_path=extension_path)
 
+    @property
     def may_update(self):
         ignore = Storage.get('ignore')
-        return self.bundle.name not in ignore and self.is_configured()
+        return self.bundle.name not in ignore and self.is_configured
+
+    @property
+    def is_configured(self):
+        return self.remote is not None
+
+    @property
+    def config_path(self):
+        return os.path.join(self.path, 'info.plist')
+
+    @property
+    def path(self):
+        return self.bundle.bundlePath()
 
 
 class Updates(object):
@@ -120,7 +122,7 @@ class Updates(object):
 
     def _fetchUpdates(self):
         updates = []
-        extensions = [e for e in Extension.all() if e.may_update()]
+        extensions = [e for e in Extension.all() if e.may_update]
         try:
             updates = [e for e in extensions if not e.is_current_version()]
             self._setCached(updates)
@@ -134,7 +136,7 @@ class Updates(object):
         extensions = []
         for cached in cache.iteritems():
             extension = Extension(name=cached[0])
-            if extension.is_configured():
+            if extension.is_configured:
                 extension.remote.version = cached[1]
                 extensions.append(extension)
         return extensions
