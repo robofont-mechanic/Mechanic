@@ -2,12 +2,12 @@ import os
 import plistlib
 import time
 
-from mojo.events import postEvent
 from mojo.extensions import ExtensionBundle
 from version import Version
 
 from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
+from mechanic.event import Event
 
 
 class Extension(object):
@@ -31,22 +31,16 @@ class Extension(object):
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
 
-        postEvent('extensionWillUpdate')
+        with Event(self, 'extension', 'update'):
+            if extension_path is None:
+                extension_path = self.remote.download()
 
-        if extension_path is None:
-            extension_path = self.remote.download()
-
-        Extension(path=extension_path).install()
-
-        postEvent('extensionDidUpdate')
+            Extension(path=extension_path).install()
 
     def install(self):
         # TODO: Make this a noop if path isn't present
-        postEvent('extensionWillInstall')
-
-        self.bundle.install()
-
-        postEvent('extensionDidInstall')
+        with Event(self, 'extension', 'install'):
+            self.bundle.install()
 
     def is_current_version(self):
         """Return if extension is at curent version"""

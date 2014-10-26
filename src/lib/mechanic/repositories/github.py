@@ -10,6 +10,7 @@ from zipfile import ZipFile
 from version import Version
 
 from mechanic.storage import Storage
+from mechanic.event import Event
 
 
 class GithubRepo(object):
@@ -30,28 +31,25 @@ class GithubRepo(object):
     def get(self):
         """Return the version and location of remote extension."""
 
-        postEvent('repositoryWillRead', repository=self)
-
-        if not hasattr(self, 'data'):
-            try:
-                if self.extension_path:
-                    plist_path = os.path.join(self.extension_path, 'info.plist')
-                    plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-                    response = GithubRequest(plist_url).get()
-                    plist = plistlib.readPlistFromString(response.content)
-                    self.zip = self.zip_url % {'repo': self.repo}
-                    self.version = plist['version']
-                elif self._get_tags():
-                    self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
-                    self.zip = self.tags[0]['zipball_url']
-                    self.version = self.tags[0]['name']
-                else:
-                    self.zip = self.zip_url % {'repo': self.repo}
-            except requests.exceptions.HTTPError:
-                print "Couldn't get information about %s from %s" % (self.name, self.repo)
-                self.version = '0.0.0'
-
-        postEvent('repositoryDidRead', repository=self)
+        with Event(self, 'repository', 'read'):
+            if not hasattr(self, 'data'):
+                try:
+                    if self.extension_path:
+                        plist_path = os.path.join(self.extension_path, 'info.plist')
+                        plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
+                        response = GithubRequest(plist_url).get()
+                        plist = plistlib.readPlistFromString(response.content)
+                        self.zip = self.zip_url % {'repo': self.repo}
+                        self.version = plist['version']
+                    elif self._get_tags():
+                        self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
+                        self.zip = self.tags[0]['zipball_url']
+                        self.version = self.tags[0]['name']
+                    else:
+                        self.zip = self.zip_url % {'repo': self.repo}
+                except requests.exceptions.HTTPError:
+                    print "Couldn't get information about %s from %s" % (self.name, self.repo)
+                    self.version = '0.0.0'
 
     def setup_download(self):
         """Clear extension tmp dir, open download stream and local file."""
@@ -72,26 +70,24 @@ class GithubRepo(object):
 
         folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
 
-        postEvent('repositoryWillExtractDownload', repository=self)
+        with Event(self, 'repository', 'extractDownload'):
 
-        if self.extension_path:
-            path = os.path.join(folder, self.extension_path)
-        else: 
-            if self.filename:
-                match = '*%s' % self.filename
-            else:
-                match = '*%s.roboFontExt' % self.name
+            if self.extension_path:
+                path = os.path.join(folder, self.extension_path)
+            else: 
+                if self.filename:
+                    match = '*%s' % self.filename
+                else:
+                    match = '*%s.roboFontExt' % self.name
 
-            # TODO: Make this use a generator
-            matches = []
-            for root, dirnames, filenames in os.walk(self.tmp_path):
-                for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
-                    matches.append(os.path.join(root, dirname))
+                # TODO: Make this use a generator
+                matches = []
+                for root, dirnames, filenames in os.walk(self.tmp_path):
+                    for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
+                        matches.append(os.path.join(root, dirname))
 
-            exact = fnmatch.filter(matches, match)
-            path = (exact and exact[0]) or None
-
-        postEvent('repositoryDidExtractDownload', repository=self)
+                exact = fnmatch.filter(matches, match)
+                path = (exact and exact[0]) or None
 
         return path
 
@@ -100,24 +96,21 @@ class GithubRepo(object):
 
         postEvent('repositoryWillDownload', repository=self)
 
-        self.setup_download()
+        with Event(self, 'repository', 'download'):
 
-        try:
-            for content in self.stream_content:
-                self.file.write(content)
-                postEvent('repositoryDidDownloadChunk', 
-                          repository=self, 
-                          size=self.content_length,
-                          downloaded=self.file.tell())
-            postEvent('repositoryDidDownload', repository=self)
-            return self.extract_file()
-        except:
-            # ToDo: Make this report different errors
-            postEvent('repositoryFailedDownload', repository=self)
-            print "Mechanic: Couldn't download %s" % self.name
-        finally:
-            self.stream.close()
-            self.file.close()
+            self.setup_download()
+
+            try:
+                for content in self.stream_content:
+                    self.file.write(content)
+                    postEvent('repositoryDidDownloadChunk',
+                              repository=self,
+                              size=self.content_length,
+                              downloaded=self.file.tell())
+                return self.extract_file()
+            finally:
+                self.stream.close()
+                self.file.close()
 
     def _get_tags(self):
         url = self.tags_url % {'repo': self.repo}
