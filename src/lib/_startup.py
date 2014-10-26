@@ -4,9 +4,8 @@ from mechanic.observer import UpdateObserver
 
 
 Storage.set_defaults(ignore={},
-                     check_on_startup=True,
                      cache={},
-                     cached_at=0.0,
+                     check_on_startup=True,
                      ignore_patch_updates=False,
                      registries=[default_registry])
 
