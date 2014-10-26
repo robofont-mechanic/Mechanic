@@ -7,7 +7,7 @@ from version import Version
 
 from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
-from mechanic.event import Event
+from mechanic.event import evented
 
 
 class Extension(object):
@@ -28,19 +28,19 @@ class Extension(object):
         if self.config is not None:
             self.remote = self.initialize_remote()
 
+    @evented('extension', 'update')
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
 
-        with Event(self, 'extension', 'update'):
-            if extension_path is None:
-                extension_path = self.remote.download()
+        if extension_path is None:
+            extension_path = self.remote.download()
 
-            Extension(path=extension_path).install()
+        Extension(path=extension_path).install()
 
+    @evented('extension', 'install')
     def install(self):
         # TODO: Make this a noop if path isn't present
-        with Event(self, 'extension', 'install'):
-            self.bundle.install()
+        self.bundle.install()
 
     def is_current_version(self):
         """Return if extension is at curent version"""

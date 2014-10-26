@@ -1,7 +1,23 @@
 from mojo.events import postEvent
 
 
-class Event(object):
+class evented(object):
+
+    def __init__(self, subject, verb):
+        self.subject = subject
+        self.verb = verb
+
+    def __call__(self, f):
+        decorator = self
+
+        def wrapped(self, *args, **kwargs):
+            with EventDispatcher(self, decorator.subject, decorator.verb):
+                return f(self, *args, **kwargs)
+
+        return wrapped
+
+
+class EventDispatcher(object):
 
     def __init__(self, object_, subject, verb):
         self.object = object_
