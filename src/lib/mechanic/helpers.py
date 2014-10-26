@@ -22,52 +22,6 @@ class Font(object):
         return s.alloc().initWithString_attributes_(text, weight)
 
 
-class Version(object):
-    """Convenience class for comparing version strings."""
-    major = 0
-    minor = 0
-    patch = 0
-
-    def __init__(self, v):
-        self.major = 0
-        self.minor = 0
-        self.patch = 0
-
-        try:
-            version = map(int, str(v).split('.'))
-            self.major = version[0]
-            self.minor = version[1]
-            self.patch = version[2]
-        except:
-            pass
-
-    def __str__(self):
-        return "%s.%s.%s" % (self.major, self.minor, self.patch)
-
-    def __iter__(self):
-        return iter((self.major, self.minor, self.patch))
-
-    def __eq__(self, other):
-        return str(self) == str(other)
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __gt__(self, other):
-        if isinstance(other, str):
-            other = Version(other)
-        return list(self) > list(other)
-
-    def __lt__(self, other):
-        return not self.__gt__(other)
-
-    def __ge__(self, other):
-        return self.__gt__(other) or self.__eq__(other)
-
-    def __le__(self, other):
-        return self.__lt__(other) or self.__eq__(other)
-
-
 class Storage(object):
     """Convenience class for storing extension settings."""
 

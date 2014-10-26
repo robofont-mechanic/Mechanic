@@ -7,8 +7,9 @@ import requests
 
 from mojo.events import postEvent
 from zipfile import ZipFile
+from version import Version
 
-from mechanic.helpers import Version, Storage
+from mechanic.helpers import Storage
 from mechanic.cached_request import CachedRequest
 
 
