@@ -7,7 +7,7 @@ from mojo.events import postEvent
 from mojo.extensions import ExtensionBundle
 from version import Version
 
-from mechanic.helpers import Storage
+from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
 
 

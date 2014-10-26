@@ -1,4 +1,4 @@
-from mechanic.helpers import Storage
+from mechanic.storage import Storage
 from mechanic.observer import UpdateObserver
 
 

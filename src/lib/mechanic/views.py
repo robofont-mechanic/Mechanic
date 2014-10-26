@@ -4,6 +4,7 @@ from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.helpers import *
+from mechanic.storage import Storage
 from mechanic.models import Extension, GithubRepo, Registry, Updates
 from mechanic.windows.base import BaseWindow
 from mechanic.tabs import *
