@@ -1,5 +1,4 @@
 import os
-import plistlib
 import time
 
 from mojo.extensions import ExtensionBundle
@@ -8,7 +7,7 @@ from version import Version
 from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
 from mechanic.event import evented
-
+from mechanic.configuration import Configuration
 
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
@@ -22,11 +21,8 @@ class Extension(object):
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
-        self.config = None
-        self.remote = None
-        self.config = self.read_config()
-        if self.config is not None:
-            self.remote = self.initialize_remote()
+        self.config = Configuration(self.config_path)
+        self.remote = self.initialize_remote()
 
     @evented()
     def update(self, extension_path=None):
@@ -48,32 +44,17 @@ class Extension(object):
 
     def is_current_version(self):
         """Return if extension is at curent version"""
+        # TODO: This requires too much knowledge about the GithubRepo class.
+        # Accessing version should fetch the data internally.
         if not self.remote.version:
             self.remote.read()
         return Version(self.remote.version) <= Version(self.config['version'])
 
-    def has_configuration(self):
-        return os.path.exists(self.config_path)
-
-    def read_config(self):
-        if self.has_configuration():
-            return plistlib.readPlist(self.config_path)
-
-    def read_repository(self):
-        return self.read_config_key('com.robofontmechanic.repository') or \
-            self.read_config_key('repository')
-
-    def read_config_key(self, key):
-        if hasattr(self.config, key):
-            return self.config[key]
-
     def initialize_remote(self):
-        extension_path = self.read_config_key('extensionPath')
-        repository = self.read_repository()
-        if repository:
-            return GithubRepo(repository,
+        if self.repository:
+            return GithubRepo(self.repository,
                               name=self.name,
-                              extension_path=extension_path)
+                              extension_path=self.extension_path)
 
     @property
     def may_update(self):
@@ -91,6 +72,15 @@ class Extension(object):
     @property
     def path(self):
         return self.bundle.bundlePath()
+
+    @property
+    def repository(self):
+        return self.config.get('com.robofontmechanic.repository') or \
+            self.config.get('repository')
+
+    @property
+    def extension_path(self):
+        return self.config.get('extensionPath')
 
 
 class Updates(object):
