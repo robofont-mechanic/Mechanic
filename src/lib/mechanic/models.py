@@ -9,6 +9,7 @@ from mechanic.repositories.github import GithubRepo
 from mechanic.event import evented
 from mechanic.configuration import Configuration
 
+
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
 
@@ -42,14 +43,6 @@ class Extension(object):
     def uninstall(self):
         self.bundle.deinstall()
 
-    def is_current_version(self):
-        """Return if extension is at curent version"""
-        # TODO: This requires too much knowledge about the GithubRepo class.
-        # Accessing version should fetch the data internally.
-        if not self.remote.version:
-            self.remote.read()
-        return Version(self.remote.version) <= Version(self.config['version'])
-
     def initialize_remote(self):
         if self.repository:
             return GithubRepo(self.repository,
@@ -57,9 +50,21 @@ class Extension(object):
                               extension_path=self.extension_path)
 
     @property
+    def is_current_version(self):
+        """Return if extension is at curent version"""
+        # TODO: This requires too much knowledge about the GithubRepo class.
+        # Accessing version should fetch the data internally.
+        if not self.remote.version:
+            self.remote.read()
+        return Version(self.remote.version) <= self.version
+
+    @property
     def may_update(self):
-        ignore = Storage.get('ignore')
-        return self.bundle.name not in ignore and self.is_configured
+        return not self.is_ignored and self.is_configured
+
+    @property
+    def is_ignored(self):
+        return self.bundle.name in Storage.get('ignore')
 
     @property
     def is_configured(self):
@@ -81,6 +86,10 @@ class Extension(object):
     @property
     def extension_path(self):
         return self.config.get('extensionPath')
+
+    @property
+    def version(self):
+        return Version(self.config['version'])
 
 
 class Updates(object):
@@ -112,7 +121,7 @@ class Updates(object):
         updates = []
         extensions = [e for e in Extension.all() if e.may_update]
         try:
-            updates = [e for e in extensions if not e.is_current_version()]
+            updates = [e for e in extensions if not e.is_current_version]
             self._setCached(updates)
             Storage.set('last_checked_at', time.time())
         except:
