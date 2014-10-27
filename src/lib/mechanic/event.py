@@ -3,16 +3,19 @@ from mojo.events import postEvent
 
 class evented(object):
 
-    def __init__(self, subject, verb):
+    def __init__(self, subject=None, verb=None):
         self.subject = subject
         self.verb = verb
 
-    def __call__(self, f):
+    def __call__(self, fn):
         decorator = self
 
         def wrapped(self, *args, **kwargs):
-            with EventDispatcher(self, decorator.subject, decorator.verb):
-                return f(self, *args, **kwargs)
+            subject = decorator.subject or self.__class__.__name__
+            verb = decorator.verb or fn.__name__
+
+            with EventDispatcher(self, subject, verb):
+                return fn(self, *args, **kwargs)
 
         return wrapped
 
@@ -34,6 +37,14 @@ class EventDispatcher(object):
             self.post('did')
 
     def post(self, tense):
-        parts = [self.subject, tense.capitalize(), self.verb.capitalize()]
-        event_name = ''.join(parts)
-        postEvent(event_name)
+        postEvent(self.event_name(tense), **{self.subject: self.object})
+
+    def event_name(self, tense):
+        return ''.join(self.event_name_parts(tense))
+
+    def event_name_parts(self, tense):
+        return [
+               self.subject.lower(),
+               tense.capitalize(),
+               self.verb.capitalize()
+               ]

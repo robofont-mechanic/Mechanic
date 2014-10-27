@@ -28,7 +28,7 @@ class Extension(object):
         if self.config is not None:
             self.remote = self.initialize_remote()
 
-    @evented('extension', 'update')
+    @evented()
     def update(self, extension_path=None):
         """Download and install the latest version of the extension."""
 
@@ -37,10 +37,14 @@ class Extension(object):
 
         Extension(path=extension_path).install()
 
-    @evented('extension', 'install')
+    @evented()
     def install(self):
         # TODO: Make this a noop if path isn't present
         self.bundle.install()
+
+    @evented()
+    def uninstall(self):
+        self.bundle.deinstall()
 
     def is_current_version(self):
         """Return if extension is at curent version"""

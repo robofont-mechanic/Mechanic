@@ -5,7 +5,6 @@ import fnmatch
 import errno
 import requests
 
-from mojo.events import postEvent
 from zipfile import ZipFile
 from version import Version
 
@@ -28,7 +27,7 @@ class GithubRepo(object):
             self.name = name
         self.version = None
 
-    @evented('repository', 'read')
+    @evented('repository')
     def read(self):
         """Return the version and location of remote extension."""
 
@@ -90,7 +89,7 @@ class GithubRepo(object):
 
         return path
 
-    @evented('repository', 'download')
+    @evented('repository')
     def download(self):
         """Download remote version of extension."""
 

@@ -28,7 +28,7 @@ class BaseWindow(BaseWindowController):
         addObserver(self, "print_info", event_name)
 
     def print_info(self, info):
-        print info
+        pass
 
     def open(self):
         if self.toolbar.items:
