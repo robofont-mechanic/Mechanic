@@ -30,7 +30,7 @@ class InstallTab(BaseTab):
     def addList(self):
         posSize = (20,20,-20,-50)
         self.installationList = InstallationList(posSize,
-                                                 [], 
+                                                 [],
                                                  selectionCallback=self.update_buttons,
                                                  allowsMultipleSelection=True,
                                                  doubleClickCallback=self.open_repo)
@@ -78,7 +78,7 @@ class InstallTab(BaseTab):
         self.progress = self.startProgress('Updating', ticks)
 
         for remote_cell in installable:
-            remote = GithubRepo(remote_cell['repository'], 
+            remote = GithubRepo(remote_cell['repository'],
                                 name=remote_cell['name'],
                                 filename=remote_cell['filename'])
             extension_path = remote.download()
@@ -95,9 +95,9 @@ class InstallTab(BaseTab):
 
         for extension in uninstallable:
             self.progress.update('Uninstalling %s...' % extension.name)
-            extension.deinstall()
+            Extension(path=extension.bundlePath()).uninstall()
 
-        self.installationList.refresh()    
+        self.installationList.refresh()
         self.progress.close()
         self.update_buttons()
 
@@ -120,11 +120,12 @@ class InstallTab(BaseTab):
         self.install_button.setTitle(label)
 
     def _uninstallable(self):
-        list = self.installationList.get()
+        available = self.installationList.get()
         selections = self.installationList.getSelection()
         uninstallable = []
         for selection in selections:
-            extension = ExtensionBundle(name=list[selection]['filename'].split("/")[-1])
+            name = available[selection]['filename'].split("/")[-1]
+            extension = ExtensionBundle(name=name)
             if extension.bundleExists():
                 uninstallable.append(extension)
         return uninstallable
