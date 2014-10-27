@@ -49,7 +49,7 @@ class Extension(object):
     def is_current_version(self):
         """Return if extension is at curent version"""
         if not self.remote.version:
-            self.remote.get()
+            self.remote.read()
         return Version(self.remote.version) <= Version(self.config['version'])
 
     def has_configuration(self):
