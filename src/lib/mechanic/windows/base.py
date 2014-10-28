@@ -74,11 +74,11 @@ class BaseWindow(BaseWindowController):
 
 
 class Toolbar(object):
-    
+
     def __init__(self, window):
         self.items = []
         self.window = window
-    
+
     def index_of(self, identifier):
         return next((index for index, item
                            in enumerate(self.items)
