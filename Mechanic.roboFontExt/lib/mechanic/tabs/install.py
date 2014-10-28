@@ -4,10 +4,11 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.helpers import *
 from mechanic.lists import *
-from mechanic.models import Extension, GithubRepo, Registry
+from mechanic.models import Extension
+from mechanic.registry import Registry
 from mechanic.tabs.base import BaseTab
+from mechanic.repositories.github import GithubRepo
 
 
 class InstallTab(BaseTab):
@@ -18,7 +19,7 @@ class InstallTab(BaseTab):
     tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
     
-    def setup(self):        
+    def setup(self):
         self.addList()
         self.uninstall_button = Button((-290,-35,100,20), "Uninstall",
                                        callback=self.uninstall)
@@ -29,7 +30,7 @@ class InstallTab(BaseTab):
     def addList(self):
         posSize = (20,20,-20,-50)
         self.installationList = InstallationList(posSize,
-                                                 [], 
+                                                 [],
                                                  selectionCallback=self.update_buttons,
                                                  allowsMultipleSelection=True,
                                                  doubleClickCallback=self.open_repo)
@@ -77,7 +78,7 @@ class InstallTab(BaseTab):
         self.progress = self.startProgress('Updating', ticks)
 
         for remote_cell in installable:
-            remote = GithubRepo(remote_cell['repository'], 
+            remote = GithubRepo(remote_cell['repository'],
                                 name=remote_cell['name'],
                                 filename=remote_cell['filename'])
             extension_path = remote.download()
@@ -94,9 +95,9 @@ class InstallTab(BaseTab):
 
         for extension in uninstallable:
             self.progress.update('Uninstalling %s...' % extension.name)
-            extension.deinstall()
+            Extension(path=extension.bundlePath()).uninstall()
 
-        self.installationList.refresh()    
+        self.installationList.refresh()
         self.progress.close()
         self.update_buttons()
 
@@ -119,11 +120,12 @@ class InstallTab(BaseTab):
         self.install_button.setTitle(label)
 
     def _uninstallable(self):
-        list = self.installationList.get()
+        available = self.installationList.get()
         selections = self.installationList.getSelection()
         uninstallable = []
         for selection in selections:
-            extension = ExtensionBundle(name=list[selection]['filename'].split("/")[-1])
+            name = available[selection]['filename'].split("/")[-1]
+            extension = ExtensionBundle(name=name)
             if extension.bundleExists():
                 uninstallable.append(extension)
         return uninstallable

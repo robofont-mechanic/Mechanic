@@ -3,10 +3,12 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.helpers import *
-from mechanic.models import Extension, GithubRepo, Registry, Updates
+from mechanic.font import Font
+from mechanic.storage import Storage
+from mechanic.models import Extension, Updates
 from mechanic.windows.base import BaseWindow
 from mechanic.tabs import *
+from mechanic.repositories.github import GithubRepo
 
 
 class UpdateNotificationWindow(BaseWindow):
@@ -77,7 +79,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     def showDetails(self, sender):
         self.w.close()
-        MechanicWindow('update')
+        MechanicWindow('updates')
 
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")

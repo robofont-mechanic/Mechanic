@@ -3,7 +3,7 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.helpers import *
+from mechanic.storage import Storage
 from mechanic.lists import *
 from mechanic.models import Extension
 from mechanic.tabs.base import BaseTab
@@ -30,7 +30,7 @@ class SettingsTab(BaseTab):
                                            callback=self.saveIgnorePatchUpdates)
 
     def addList(self):
-        configured = [e for e in Extension.all() if e.is_configured()]
+        configured = [e for e in Extension.all() if e.is_configured]
         self.settingsList = SettingsList((20,75,-20,-20),
                                          configured,
                                          editCallback=self.update)

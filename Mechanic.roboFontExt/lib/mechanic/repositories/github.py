@@ -5,11 +5,11 @@ import fnmatch
 import errno
 import requests
 
-from mojo.events import postEvent
 from zipfile import ZipFile
+from version import Version
 
-from mechanic.helpers import Version, Storage
-from mechanic.cached_request import CachedRequest
+from mechanic.storage import Storage
+from mechanic.event import evented
 
 
 class GithubRepo(object):
@@ -27,22 +27,22 @@ class GithubRepo(object):
             self.name = name
         self.version = None
 
-    def get(self):
+    @evented('repository')
+    def read(self):
         """Return the version and location of remote extension."""
-
-        postEvent('repositoryWillRead', repository=self)
 
         if not hasattr(self, 'data'):
             try:
                 if self.extension_path:
                     plist_path = os.path.join(self.extension_path, 'info.plist')
                     plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-                    response = CachedRequest(plist_url).get()
+                    response = GithubRequest(plist_url).get()
                     plist = plistlib.readPlistFromString(response.content)
-                    self.zip = self.zip_url % {'repo': self.repo}
                     self.version = plist['version']
+                    self.zip = self.zip_url % {'repo': self.repo}
                 elif self._get_tags():
-                    self.tags.sort(key=lambda s: list(Version(s["name"])), reverse=True)
+                    self.tags.sort(key=lambda s: Version(s["name"]),
+                                   reverse=True)
                     self.zip = self.tags[0]['zipball_url']
                     self.version = self.tags[0]['name']
                 else:
@@ -51,19 +51,17 @@ class GithubRepo(object):
                 print "Couldn't get information about %s from %s" % (self.name, self.repo)
                 self.version = '0.0.0'
 
-        postEvent('repositoryDidRead', repository=self)
-
     def setup_download(self):
         """Clear extension tmp dir, open download stream and local file."""
-        self.get()
-        self.tmp_path = os.path.join("/", "tmp", "Mechanic", self.repo)
+        self.read()
         self._flush_tmp_path()
-        filepath = os.path.join(self.tmp_path, "%s.zip" % os.path.basename(self.zip))
+        filepath = os.path.join(self.tmp_path, os.path.basename(self.zip))
         self.file = open(filepath, "wb")
         self.stream = requests.get(self.zip, stream=True)
         self.stream_content = self.stream.iter_content(chunk_size=8192)
         self.content_length = self.stream.headers['content-length']
 
+    @evented('repository', 'extractDownload')
     def extract_file(self):
         """Extract downloaded zip file and return extension path."""
         zip_file = ZipFile(self.file.name)
@@ -71,8 +69,6 @@ class GithubRepo(object):
         os.remove(self.file.name)
 
         folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
-
-        postEvent('repositoryWillExtractDownload', repository=self)
 
         if self.extension_path:
             path = os.path.join(folder, self.extension_path)
@@ -91,37 +87,34 @@ class GithubRepo(object):
             exact = fnmatch.filter(matches, match)
             path = (exact and exact[0]) or None
 
-        postEvent('repositoryDidExtractDownload', repository=self)
-
         return path
 
+    @evented('repository')
     def download(self):
         """Download remote version of extension."""
-
-        postEvent('repositoryWillDownload', repository=self)
 
         self.setup_download()
 
         try:
             for content in self.stream_content:
-                self.file.write(content)
-                postEvent('repositoryDidDownloadChunk', 
-                          repository=self, 
-                          size=self.content_length,
-                          downloaded=self.file.tell())
-            postEvent('repositoryDidDownload', repository=self)
-            return self.extract_file()
-        except:
-            # ToDo: Make this report different errors
-            postEvent('repositoryFailedDownload', repository=self)
-            print "Mechanic: Couldn't download %s" % self.name
+                self.download_chunk(content)
         finally:
             self.stream.close()
             self.file.close()
 
+        return self.extract_file()
+
+    @evented('repository', 'downloadChunk')
+    def download_chunk(self, content):
+        self.file.write(content)
+
+    @property
+    def tmp_path(self):
+        return os.path.join("/", "tmp", "Mechanic", self.repo)
+
     def _get_tags(self):
         url = self.tags_url % {'repo': self.repo}
-        response = CachedRequest(url).get()
+        response = GithubRequest(url).get()
         self.tags = response.json()
         return self.tags
 
@@ -129,6 +122,41 @@ class GithubRepo(object):
         if os.path.exists(self.tmp_path):
             shutil.rmtree(self.tmp_path)
         mkdir_p(self.tmp_path)
+
+
+class GithubRequest(object):
+
+    __cache = {}
+
+    def __init__(self, url):
+        self.url = url
+
+    def get(self):
+        return self.cache_response(self.url, self.get_cached(self.url))
+
+    def get_cached(self, url):
+        cached_response = self.cache.get(url, None)
+        if cached_response is not None:
+            etag = self.get_etag(cached_response)
+            response = requests.get(url, headers={'If-None-Match': etag})
+            if response.status_code is 304:
+                response = cached_response
+        else:
+            response = requests.get(url)
+        response.raise_for_status()
+        return response
+
+    def cache_response(self, url, response):
+        if self.get_etag(response):
+            self.cache[url] = response
+        return response
+
+    def get_etag(self, response):
+        return response.headers['ETag']
+
+    @property
+    def cache(self):
+        return self.__class__.__cache
 
 
 def mkdir_p(path):

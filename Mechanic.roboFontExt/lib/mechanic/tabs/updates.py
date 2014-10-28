@@ -2,7 +2,6 @@ import time
 from vanilla import *
 from vanilla.dialogs import getFile
 
-from mechanic.helpers import *
 from mechanic.lists import *
 from mechanic.models import Updates
 from mechanic.tabs.base import BaseTab
@@ -37,7 +36,7 @@ class UpdatesTab(BaseTab):
         self.updateUpdatedAt()
 
     def updateUpdatedAt(self):
-        updated = Updates().updatedAt()
+        updated = Updates.last_checked()
         if updated:
             self.updatedAt.set("Last checked: %s" % time.strftime('%d %b %Y, %H:%M', time.localtime(updated)))
         else:

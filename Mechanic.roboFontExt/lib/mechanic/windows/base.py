@@ -28,7 +28,7 @@ class BaseWindow(BaseWindowController):
         addObserver(self, "print_info", event_name)
 
     def print_info(self, info):
-        print info
+        pass
 
     def open(self):
         if self.toolbar.items:
@@ -74,11 +74,11 @@ class BaseWindow(BaseWindowController):
 
 
 class Toolbar(object):
-    
+
     def __init__(self, window):
         self.items = []
         self.window = window
-    
+
     def index_of(self, identifier):
         return next((index for index, item
                            in enumerate(self.items)
