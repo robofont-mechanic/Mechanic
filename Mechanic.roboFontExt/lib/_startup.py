@@ -1,4 +1,4 @@
-from mechanic import default_registry
+from mechanic.env import default_registry
 from mechanic.storage import Storage
 from mechanic.observer import UpdateObserver
 

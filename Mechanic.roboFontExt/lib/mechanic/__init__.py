@@ -8,4 +8,4 @@ if lib_path not in sys.path:
 
 __all__ = ["models", "views", "helpers"]
 
-default_registry = "http://www.robofontmechanic.com/api/v1/registry.json"
+default_registry = "http://www.robofontmechanic.com"

@@ -118,6 +118,8 @@ class Updates(object):
         return updates
 
     def _fetchUpdates(self):
+        print "Mechanic: checking for updates..."
+
         updates = []
         extensions = [e for e in Extension.all() if e.may_update]
         try:

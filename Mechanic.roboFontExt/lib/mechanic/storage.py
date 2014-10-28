@@ -1,31 +1,33 @@
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 
+from mechanic.env import environment
+
 
 class Storage(object):
     """Convenience class for storing extension settings."""
 
-    defaultKey = "com.jackjennings.mechanic"
+    namespace = "com.jackjennings.mechanic"
 
     @classmethod
-    def generate_key(cls, key):
-        return "%s.%s" % (cls.defaultKey, key)
+    def generate_key(cls, base):
+        return '.'.join((cls.namespace, environment, base))
 
     @classmethod
-    def get(cls, key):
-        default = cls.generate_key(key)
-        return getExtensionDefault(default, fallback=None)
+    def get(cls, base):
+        key = cls.generate_key(base)
+        return getExtensionDefault(key, fallback=None)
 
     @classmethod
-    def set(cls, key, value):
-        default = cls.generate_key(key)
-        setExtensionDefault(default, value)
+    def set(cls, base, value):
+        key = cls.generate_key(base)
+        setExtensionDefault(key, value)
         return value
 
     @classmethod
-    def delete(cls, key):
-        default = cls.generate_key(key)
-        value = cls.get(key)
-        setExtensionDefault(default, None)
+    def delete(cls, base):
+        key = cls.generate_key(base)
+        value = cls.get(base)
+        setExtensionDefault(key, None)
         return value
 
     @classmethod

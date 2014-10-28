@@ -31,8 +31,6 @@ class UpdateNotificationWindow(BaseWindow):
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
 
-        print "Mechanic: checking for updates..."
-
         skip_patch = bool(Storage.get('ignore_patch_updates'))
         self.updater = Updates()
         self.updates = self.updater.all(force, skip_patch_updates=skip_patch)

@@ -15,7 +15,6 @@ class BaseWindow(BaseWindowController):
         self.watch("repositoryDidRead")
 
         self.watch("repositoryWillDownload")#, 'Downloading %s...' % extension.bundle.name
-        self.watch("repositoryDidDownloadChunk")
         self.watch("repositoryDidDownload")
 
         self.watch("repositoryWillExtractDownload")#, 'Extracting %s...' % extension.bundle.name
