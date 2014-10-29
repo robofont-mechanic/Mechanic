@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>addToMenu</key>
@@ -50,16 +50,14 @@
 	<string>http://ja.ckjennin.gs</string>
 	<key>html</key>
 	<true/>
-	<key>launchAtStartUp</key>
-	<integer>1</integer>
+	<key>launchAtStartup</key>
+	<true/>
 	<key>mainScript</key>
 	<string>_startup.py</string>
 	<key>name</key>
 	<string>Mechanic</string>
-	<key>repository</key>
-	<string>jackjennings/Mechanic</string>
 	<key>timeStamp</key>
-	<real>1414526851.243871</real>
+	<real>1414613170.995072</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>
