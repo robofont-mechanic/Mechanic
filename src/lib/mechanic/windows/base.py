@@ -1,6 +1,5 @@
 from vanilla import Window, Tabs
 from defconAppKit.windows.baseWindow import BaseWindowController
-from mojo.events import addObserver
 
 
 class BaseWindow(BaseWindowController):
@@ -33,7 +32,7 @@ class BaseWindow(BaseWindowController):
         if self.toolbar.items:
             self.create_toolbar()
             self.add_tabs()
-            self.set_active_pane(self.first_tab)
+            self.set_active_tab(self.first_tab)
         self.w.open()
 
     def create_toolbar(self):
@@ -41,7 +40,7 @@ class BaseWindow(BaseWindowController):
                           toolbarItems=self.toolbar.items,
                           addStandardItems=False)
 
-    def set_active_pane(self, pane):
+    def set_active_tab(self, pane):
         current_index = self.w.tabs.get()
         index = self.toolbar.index_of(pane)
         if not self.w.isVisible():
@@ -52,7 +51,7 @@ class BaseWindow(BaseWindowController):
         self.w.tabs[index].view.activate()
 
     def toolbar_select(self, sender):
-        self.set_active_pane(sender.itemIdentifier())
+        self.set_active_tab(sender.itemIdentifier())
 
     def add_tabs(self):
         self.w.tabs = Tabs((0, 0, -0, -0),
