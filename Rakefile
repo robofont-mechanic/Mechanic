@@ -15,9 +15,7 @@ rule BUNDLE + "/info.plist" => SRC + "/info.yml" do |t|
   data['launchAtStartup'] = File.exists? STARTUP
   data['mainScript'] = data['launchAtStartup'] ? STARTUP.pathmap("%f") : ''
   data['timeStamp'] = Time.now.to_f
-  data['addToMenu'] = MENU_SCRIPTS.pathmap("%f").to_a.collect do |item|
-    MenuItem.new(item).to_hash
-  end
+  data['addToMenu'] = MENU_SCRIPTS.to_a.collect {|i| MenuItem.new(i).to_hash}
   data.save_plist t.name
 end
 
@@ -25,31 +23,43 @@ directory BUNDLE
 
 task plist: %W[Mechanic.roboFontExt/info.plist]
 
-task default: [:plist]
+task build: [:plist]
 
 class MenuItem
-  
+
+  attr_accessor :item
+
   def initialize item
     @item = item
-    @name = item.pathmap("%n")
-    @key = ''
-    
-    @name.match('_([A-Z])$') do |m|
-      @key = m[1]
-      @name.gsub!(/#{m[0]}$/, '')
-    end
   end
-  
-  def preferred_name
-    ActiveSupport::Inflector.titleize(@name)
+
+  def key
+    m = name.match('_([A-Z])$')
+    m ? m[1] : ''
   end
-  
+
+  def name
+    item.pathmap("%n")
+  end
+
+  def sanitized_name
+    name.gsub(/_#{key}/, '')
+  end
+
+  def title
+    ActiveSupport::Inflector.titleize(sanitized_name)
+  end
+
+  def path
+    item.pathmap("%f")
+  end
+
   def to_hash
     {
-      path: @item,
-      preferredName: self.preferred_name,
-      shortKey: @key
+      path: path,
+      preferredName: title,
+      shortKey: key
     }
   end
-  
+
 end
