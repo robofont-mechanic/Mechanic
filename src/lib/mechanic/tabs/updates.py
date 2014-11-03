@@ -49,7 +49,7 @@ class UpdatesTab(BaseTab):
         self.updateUpdateButtonLabel()
 
     def updateUpdateButtonLabel(self, sender=None):
-        count = len(self.updateableList.get_selected())
+        count = len(self.updateableList.selected)
         self.updateButton.enable(count is not 0)
         if count is 0:
             update_label = "Update"
@@ -60,7 +60,7 @@ class UpdatesTab(BaseTab):
         self.updateButton.setTitle(update_label)
 
     def update(self, sender):
-        installable = self.updateableList.get_checked_extensions()
+        installable = self.updateableList.selected_extensions
         ticks = len(installable) * 3
         self.progress = self.startProgress('Updating', ticks)
 

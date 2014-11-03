@@ -30,16 +30,18 @@ class UpdatesList(ExtensionList):
         kwargs['columnDescriptions'] = self.__columns
         super(UpdatesList, self).__init__(*args, **kwargs)
 
-    def get_checked_extensions(self):
-        return [e['self'] for e in self.get_selected()]
-
     def refresh(self, force=False):
         updater = Updates()
         updates = updater.all(force)
         if not updater.unreachable:
             self.set(updates)
 
-    def get_selected(self):
+    @property
+    def selected_extensions(self):
+        return [e['self'] for e in self.selected]
+
+    @property
+    def selected(self):
         return [row for row in self.get() if row['install']]
 
 
