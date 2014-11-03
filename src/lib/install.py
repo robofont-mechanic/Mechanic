@@ -1,3 +1,4 @@
-from mechanic.views import MechanicWindow
+from mechanic.windows.main import MechanicWindow
+
 
 MechanicWindow('install')

@@ -1,14 +1,11 @@
 from AppKit import NSImage
 from vanilla import *
 from vanilla.dialogs import getFile
-from mojo.extensions import ExtensionBundle
 
 from mechanic.font import Font
 from mechanic.storage import Storage
 from mechanic.models import Extension, Updates
 from mechanic.windows.base import BaseWindow
-from mechanic.tabs import *
-from mechanic.repositories.github import GithubRepo
 
 
 class UpdateNotificationWindow(BaseWindow):
@@ -33,7 +30,8 @@ class UpdateNotificationWindow(BaseWindow):
 
         skip_patch = bool(Storage.get('ignore_patch_updates'))
         self.updater = Updates()
-        self.updates = self.updater.all(force, skip_patch_updates=skip_patch)
+        self.updates = self.updater.all(force,
+                                        skip_patch_updates=skip_patch)
 
         # TODO: Make this use exceptions
         if self.updater.unreachable:
@@ -66,7 +64,7 @@ class UpdateNotificationWindow(BaseWindow):
     def cancel(self, sender):
         self.w.close()
 
-    def update(self, sender):            
+    def update(self, sender):
         ticks = len(self.updates) * Extension.ticks_per_download
         self.progress = self.startProgress('Updating', ticks)
 
@@ -84,17 +82,3 @@ class UpdateNotificationWindow(BaseWindow):
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
         if image:
             self.w.image.setImage(imageObject=image)
-
-
-class MechanicWindow(BaseWindow):
-    window_title = "Mechanic"
-
-    def __init__(self, *args, **kwargs):
-        super(MechanicWindow, self).__init__(*args, **kwargs)
-
-        self.toolbar.add_item(InstallTab)
-        self.toolbar.add_item(UpdatesTab)
-        self.toolbar.add_item(RegisterTab)
-        self.toolbar.add_item(SettingsTab)
-
-        self.open()
