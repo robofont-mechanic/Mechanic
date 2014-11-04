@@ -10,24 +10,6 @@ class BaseWindow(BaseWindowController):
                         autosaveName=self.__class__.__name__,
                         title=self.window_title)
 
-        self.watch("repositoryWillRead")#, 'Getting %s...' % extension.config.repository
-        self.watch("repositoryDidRead")
-
-        self.watch("repositoryWillDownload")#, 'Downloading %s...' % extension.bundle.name
-        self.watch("repositoryDidDownload")
-
-        self.watch("repositoryWillExtractDownload")#, 'Extracting %s...' % extension.bundle.name
-        self.watch("repositoryDidExtractDownload") #
-
-        self.watch("extensionWillInstall")#, 'Installing %s...' % extension.bundle.name
-        self.watch("extensionDidInstall")
-
-    def watch(self, event_name, message=None):
-        addObserver(self, "print_info", event_name)
-
-    def print_info(self, info):
-        pass
-
     def open(self):
         if self.toolbar.items:
             self.create_toolbar()

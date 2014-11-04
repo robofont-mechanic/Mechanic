@@ -80,12 +80,12 @@ class Extension(object):
 
     @property
     def repository(self):
-        return self.config.get('com.robofontmechanic.repository') or \
-            self.config.get('repository')
+        return self.config.namespaced('repository') or \
+            self.config.deprecated('repository')
 
     @property
     def extension_path(self):
-        return self.config.get('extensionPath')
+        return self.config.deprecated('extensionPath')
 
     @property
     def version(self):
@@ -96,12 +96,11 @@ class Updates(object):
 
     @classmethod
     def last_checked(cls):
-        return Storage.get('last_checked_at')
+        return Storage.get('last_checked_at') or 0
 
     @classmethod
     def checked_recently(cls):
-        last_run = cls.last_checked()
-        return last_run is not None and last_run > time.time() - (60 * 60)
+        return cls.last_checked() > time.time() - (60 * 60)
 
     def __init__(self):
         self.unreachable = False
