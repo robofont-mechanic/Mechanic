@@ -1,5 +1,6 @@
 import requests
 
+from mechanic.env import default_registry
 from mechanic.storage import Storage
 
 
@@ -18,4 +19,4 @@ class Registry(object):
 
     @property
     def url(self):
-        return Storage.get('registries')[0] + "/api/v1/registry.json"
+        return default_registry + "/api/v1/registry.json"
