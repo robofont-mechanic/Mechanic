@@ -3,7 +3,7 @@ from vanilla import *
 from vanilla.dialogs import getFile
 
 from mechanic.lists import *
-from mechanic.models import Updates
+from mechanic.update import Updates
 from mechanic.tabs.base import BaseTab
 
 

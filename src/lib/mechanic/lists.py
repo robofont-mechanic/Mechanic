@@ -2,7 +2,7 @@ from AppKit import *
 from vanilla import List, CheckBoxListCell, Group
 from mojo.extensions import ExtensionBundle
 
-from mechanic.models import Updates
+from mechanic.update import Updates
 from mechanic.storage import Storage
 
 

@@ -4,7 +4,8 @@ from vanilla.dialogs import getFile
 
 from mechanic.font import Font
 from mechanic.storage import Storage
-from mechanic.models import Extension, Updates
+from mechanic.extension import Extension
+from mechanic.update import Updates
 from mechanic.windows.base import BaseWindow
 
 
