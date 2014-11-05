@@ -35,7 +35,7 @@ class RoboFontEvent(object):
                        self.subject.lower(),
                        tense.capitalize(),
                        self.verb.capitalize()
-                       ]
+                       ])
 
 
 class EventDispatcher(object):
