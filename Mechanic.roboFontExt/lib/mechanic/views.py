@@ -6,7 +6,7 @@ from mojo.extensions import ExtensionBundle
 from mechanic.font import Font
 from mechanic.storage import Storage
 from mechanic.models import Extension, Updates
-from mechanic.windows.base import BaseWindow
+from mechanic.ui.windows.base import BaseWindow
 from mechanic.tabs import *
 from mechanic.repositories.github import GithubRepo
 

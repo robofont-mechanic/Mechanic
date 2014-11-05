@@ -7,7 +7,7 @@ from mechanic.ui.font import Font
 from mechanic.storage import Storage
 from mechanic.extension import Extension
 from mechanic.update import Updates
-from mechanic.windows.base import BaseWindow
+from mechanic.ui.windows.base import BaseWindow
 
 
 class UpdateNotificationWindow(BaseWindow):

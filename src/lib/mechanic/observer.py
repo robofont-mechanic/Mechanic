@@ -1,5 +1,5 @@
 from mojo.events import addObserver
-from mechanic.windows.notification import UpdateNotificationWindow
+from mechanic.ui.windows.notification import UpdateNotificationWindow
 from mechanic.update import Updates
 
 

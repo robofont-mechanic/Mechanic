@@ -1,4 +1,4 @@
-from mechanic.windows.base import BaseWindow
+from mechanic.ui.windows.base import BaseWindow
 from mechanic.ui.tabs import *
 
 
