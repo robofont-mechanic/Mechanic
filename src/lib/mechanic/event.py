@@ -20,31 +20,39 @@ class evented(object):
         return wrapped
 
 
-class EventDispatcher(object):
+class RoboFontEvent(object):
 
     def __init__(self, object_, subject, verb):
         self.object = object_
         self.subject = subject
         self.verb = verb
 
+    def __call__(self, tense):
+        postEvent(self.name(tense), **{self.subject: self.object})
+
+    def name(self, tense):
+        return ''.join([
+                       self.subject.lower(),
+                       tense.capitalize(),
+                       self.verb.capitalize()
+                       ]
+
+
+class EventDispatcher(object):
+
+    adapter = RoboFontEvent
+
+    def __init__(self, *args):
+        self.event = self.adapter(*args)
+
     def __enter__(self):
-        self.post('will')
+        self.event('will')
 
     def __exit__(self, error_type, value, trace):
         if error_type is not None:
-            self.post('failed')
+            self.event('failed')
         else:
-            self.post('did')
+            self.event('did')
 
-    def post(self, tense):
-        postEvent(self.event_name(tense), **{self.subject: self.object})
-
-    def event_name(self, tense):
-        return ''.join(self.event_name_parts(tense))
-
-    def event_name_parts(self, tense):
-        return [
-               self.subject.lower(),
-               tense.capitalize(),
-               self.verb.capitalize()
-               ]
+    def __call__(self, tense):
+        self.event(tense)
