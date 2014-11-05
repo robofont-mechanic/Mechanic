@@ -16,6 +16,7 @@ class ExtensionList(List):
                 'install': True,
                 'check_for_updates': check,
                 'self': extension}
+
         return super(ExtensionList, self)._wrapItem(item)
 
 
@@ -26,9 +27,9 @@ class UpdatesList(ExtensionList):
                  {"title": "Extension", "key": "name", "width": 300, "editable": False},
                  {"title": "Version", "key": "remote_version", "width": 60, "editable": False}]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, posSize, **kwargs):
         kwargs['columnDescriptions'] = self.__columns
-        super(UpdatesList, self).__init__(*args, **kwargs)
+        super(UpdatesList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):
         updater = Updates()
@@ -60,7 +61,7 @@ class SettingsList(ExtensionList):
 class InstallationList(List):
     """Return an ExtensionList for installation window."""
 
-    def __init__(self, posSize, registry, **kwargs):
+    def __init__(self, posSize, **kwargs):
         columns = [{"title": "Installed",
                     "key": "installed",
                     "width": 25,
@@ -72,12 +73,12 @@ class InstallationList(List):
                     "editable": False,
                     "formatter": ExtensionDescriptionFormatter.alloc().init()}]
 
-        extension_cells = sorted(registry, key=lambda k: k[u'name'].lower())
         super(InstallationList, self).__init__(posSize,
-                                               extension_cells,
+                                               [],
                                                rowHeight=39.0,
                                                columnDescriptions=columns,
                                                showColumnTitles=False,
+                                               allowsMultipleSelection=True,
                                                **kwargs)
 
     def _wrapItem(self, extension):
@@ -101,6 +102,12 @@ class InstallationList(List):
 
     def refresh(self):
         self.set(self.get())
+
+    @property
+    def selected(self):
+        list_ = self.get()
+        selections = self.getSelection()
+        return [list_[s] for s in selections]
 
 
 class InstalledStatusCell(NSActionCell):

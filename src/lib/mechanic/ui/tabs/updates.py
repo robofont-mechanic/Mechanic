@@ -2,6 +2,7 @@ import time
 from vanilla import *
 from vanilla.dialogs import getFile
 
+from mechanic.ui import progress
 from mechanic.ui.lists import *
 from mechanic.update import Updates
 from mechanic.ui.tabs.base import BaseTab
@@ -13,19 +14,27 @@ class UpdatesTab(BaseTab):
     identifier = "updates"
 
     def setup(self):
-        self.addList()
+        self.updateableList = UpdatesList((20,20,-20,-50),
+                                          editCallback=self.updateUpdateButtonLabel)
         self.addUpdatedAt()
         self.addUpdateButton()
+
+    @progress.each('installable')
+    @progress.tick('repositoryWillDownload',
+                   'Downloading {repository.repo}')
+    @progress.tick('repositoryWillExtractDownload',
+                   'Extracting {repository.repo}')
+    @progress.tick('extensionWillInstall',
+                   'Installing {extension.bundle.name}')
+    def update(self, sender):
+        for extension in self.installable:
+            extension.update()
+
+        self.updateList(True)
 
     def activate(self):
         self.parent.w.setDefaultButton(self.updateButton)
         self.updateList()
-
-    def addList(self): 
-        posSize = (20,20,-20,-50)
-        self.updateableList = UpdatesList(posSize,
-                                          [],
-                                          editCallback=self.updateUpdateButtonLabel)
 
     def updateList(self, force=False):
         self.updateableList.refresh(force=force)
@@ -59,13 +68,6 @@ class UpdatesTab(BaseTab):
             update_label = "Install %d Updates" % count
         self.updateButton.setTitle(update_label)
 
-    def update(self, sender):
-        installable = self.updateableList.selected_extensions
-        ticks = len(installable) * 3
-        self.progress = self.startProgress('Updating', ticks)
-
-        for extension in installable:
-            extension.update()
-
-        self.updateList(True)
-        self.progress.close()
+    @property
+    def installable(self):
+        return self.updateableList.selected_extensions

@@ -89,3 +89,7 @@ class Extension(object):
     @property
     def version(self):
         return Version(self.config['version'])
+
+    @property
+    def installed(self):
+        return self.bundle.bundleExists()

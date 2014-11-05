@@ -1,4 +1,10 @@
+import re
+
 from mojo.events import postEvent
+
+
+def to_camelcase(s):
+    return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
 
 class evented(object):
@@ -11,7 +17,7 @@ class evented(object):
         decorator = self
 
         def wrapped(self, *args, **kwargs):
-            subject = decorator.subject or self.__class__.__name__
+            subject = decorator.subject or self.__class__.__name__.lower()
             verb = decorator.verb or fn.__name__
 
             with EventDispatcher(self, subject, verb):
@@ -31,11 +37,7 @@ class RoboFontEvent(object):
         postEvent(self.name(tense), **{self.subject: self.object})
 
     def name(self, tense):
-        return ''.join([
-                       self.subject.lower(),
-                       tense.capitalize(),
-                       self.verb.capitalize()
-                       ])
+        return to_camelcase('_'.join([self.subject, tense, self.verb]))
 
 
 class EventDispatcher(object):
@@ -48,8 +50,8 @@ class EventDispatcher(object):
     def __enter__(self):
         self.event('will')
 
-    def __exit__(self, error_type, value, trace):
-        if error_type is not None:
+    def __exit__(self, error, value, trace):
+        if error is not None:
             self.event('failed')
         else:
             self.event('did')

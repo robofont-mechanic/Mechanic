@@ -63,3 +63,7 @@ class BaseTab(VanillaBaseObject):
 
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
+
+    @property
+    def w(self):
+        return self.parent.w

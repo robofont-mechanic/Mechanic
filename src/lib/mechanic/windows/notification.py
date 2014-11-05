@@ -2,6 +2,7 @@ from AppKit import NSImage
 from vanilla import *
 from vanilla.dialogs import getFile
 
+from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
 from mechanic.extension import Extension
@@ -20,11 +21,6 @@ class UpdateNotificationWindow(BaseWindow):
     def with_new_thread(cls):
         import threading
         threading.Thread(target=cls).start()
-
-    @property
-    def title(self):
-        return Font.string(text=self.updates_available % len(self.updates),
-                           style="bold")
 
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
@@ -62,13 +58,14 @@ class UpdateNotificationWindow(BaseWindow):
         else:
             print "Mechanic: %s" % self.up_to_date
 
-    def cancel(self, sender):
-        self.w.close()
-
+    @progress.each('updates')
+    @progress.tick('repositoryWillDownload',
+                   'Downloading {repository.repo}')
+    @progress.tick('repositoryWillExtractDownload',
+                   'Extracting {repository.repo}')
+    @progress.tick('extensionWillInstall',
+                   'Installing {extension.bundle.name}')
     def update(self, sender):
-        ticks = len(self.updates) * Extension.ticks_per_download
-        self.progress = self.startProgress('Updating', ticks)
-
         for extension in self.updates:
             extension.update()
 
@@ -78,8 +75,16 @@ class UpdateNotificationWindow(BaseWindow):
         self.w.close()
         MechanicWindow('updates')
 
+    def cancel(self, sender):
+        self.w.close()
+
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
         if image:
             self.w.image.setImage(imageObject=image)
+
+    @property
+    def title(self):
+        return Font.string(text=self.updates_available % len(self.updates),
+                           style="bold")

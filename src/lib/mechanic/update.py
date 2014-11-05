@@ -3,6 +3,7 @@ import time
 from version import Version
 
 from mechanic.storage import Storage
+from mechanic.extension import Extension
 
 
 class Updates(object):
