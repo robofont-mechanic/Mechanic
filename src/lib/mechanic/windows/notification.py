@@ -2,7 +2,7 @@ from AppKit import NSImage
 from vanilla import *
 from vanilla.dialogs import getFile
 
-from mechanic.font import Font
+from mechanic.ui.font import Font
 from mechanic.storage import Storage
 from mechanic.extension import Extension
 from mechanic.update import Updates

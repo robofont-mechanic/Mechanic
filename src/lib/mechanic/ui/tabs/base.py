@@ -2,7 +2,7 @@ from AppKit import *
 from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, \
     Button, Group
 
-from mechanic.font import Font
+from mechanic.ui.font import Font
 
 
 class BaseTab(VanillaBaseObject):
