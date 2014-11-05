@@ -58,14 +58,14 @@
 	<string>http://ja.ckjennin.gs</string>
 	<key>html</key>
 	<true/>
-	<key>launchAtStartup</key>
+	<key>launchAtStartUp</key>
 	<true/>
 	<key>mainScript</key>
-	<string>_startup.py</string>
+	<string></string>
 	<key>name</key>
 	<string>Mechanic</string>
 	<key>timeStamp</key>
-	<real>1415214868.494646</real>
+	<real>1415215308.1894898</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>

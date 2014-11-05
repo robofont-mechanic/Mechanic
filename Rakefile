@@ -25,7 +25,7 @@ file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
   require 'yaml'
   data = YAML.load_file t.source
   data['html'] = Dir.exists? "Mechanic.roboFontExt/html"
-  data['launchAtStartup'] = File.exists? STARTUP
+  data['launchAtStartUp'] = File.exists? STARTUP
   data['mainScript'] = data['launchAtStartup'] ? STARTUP.pathmap("%f") : ''
   data['timeStamp'] = Time.now.to_f
   data['addToMenu'] = FileList.new("Mechanic.roboFontExt/lib/*.py") do |fl|
