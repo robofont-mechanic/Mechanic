@@ -23,22 +23,25 @@ end
 file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
   require 'plist'
   require 'yaml'
+  
+  menu_items = FileList.new("Mechanic.roboFontExt/lib/*.py") do |fl|
+    fl.exclude(STARTUP)
+  end
+  
+  puts menu_items
+  
   data = YAML.load_file t.source
   data['html'] = Dir.exists? "Mechanic.roboFontExt/html"
   data['launchAtStartUp'] = File.exists? STARTUP
   data['mainScript'] = data['launchAtStartup'] ? STARTUP.pathmap("%f") : ''
   data['timeStamp'] = Time.now.to_f
-  data['addToMenu'] = FileList.new("Mechanic.roboFontExt/lib/*.py") do |fl|
-    fl.exclude(/^_/)
-  end.to_a.collect {|i| MenuItem.new(i).to_hash}
+  data['addToMenu'] = menu_items.to_a.collect {|i| MenuItem.new(i).to_hash}
   data.save_plist t.name
 end
 
 directory "Mechanic.roboFontExt"
 
-task source: "Mechanic.roboFontExt"
-
-task plist: %W[Mechanic.roboFontExt/info.plist]
+task plist: %W[Mechanic.roboFontExt Mechanic.roboFontExt/info.plist]
 
 task build: [:source, :plist]
 
