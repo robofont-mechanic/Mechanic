@@ -6,7 +6,7 @@ from mojo.extensions import ExtensionBundle
 from mechanic.storage import Storage
 from mechanic.ui.lists import *
 from mechanic.extension import Extension
-from mechanic.tabs.base import BaseTab
+from mechanic.ui.tabs.base import BaseTab
 
 
 class SettingsTab(BaseTab):

@@ -7,7 +7,7 @@ from mojo.extensions import ExtensionBundle
 from mechanic.ui.lists import *
 from mechanic.extension import Extension
 from mechanic.registry import Registry
-from mechanic.tabs.base import BaseTab
+from mechanic.ui.tabs.base import BaseTab
 from mechanic.repositories.github import GithubRepo
 
 

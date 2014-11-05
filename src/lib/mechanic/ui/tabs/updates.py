@@ -4,7 +4,7 @@ from vanilla.dialogs import getFile
 
 from mechanic.ui.lists import *
 from mechanic.update import Updates
-from mechanic.tabs.base import BaseTab
+from mechanic.ui.tabs.base import BaseTab
 
 
 class UpdatesTab(BaseTab):

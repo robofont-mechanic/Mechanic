@@ -1,5 +1,5 @@
 from mechanic.windows.base import BaseWindow
-from mechanic.tabs import *
+from mechanic.ui.tabs import *
 
 
 class MechanicWindow(BaseWindow):
