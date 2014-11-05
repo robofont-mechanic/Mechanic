@@ -1,4 +1,5 @@
 require 'rake'
+require 'rake/clean'
 require 'active_support'
 
 SRC = "src"
@@ -24,18 +25,14 @@ file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
   require 'plist'
   require 'yaml'
   
-  menu_items = FileList.new("Mechanic.roboFontExt/lib/*.py") do |fl|
-    fl.exclude(STARTUP)
-  end
-  
-  puts menu_items
+  menu_scripts = FileList["Mechanic.roboFontExt/lib/*.py"].exclude(STARTUP)
   
   data = YAML.load_file t.source
   data['html'] = Dir.exists? "Mechanic.roboFontExt/html"
   data['launchAtStartUp'] = File.exists? STARTUP
   data['mainScript'] = data['launchAtStartup'] ? STARTUP.pathmap("%f") : ''
   data['timeStamp'] = Time.now.to_f
-  data['addToMenu'] = menu_items.to_a.collect {|i| MenuItem.new(i).to_hash}
+  data['addToMenu'] = menu_scripts.to_a.collect {|i| MenuItem.new(i).to_hash}
   data.save_plist t.name
 end
 
