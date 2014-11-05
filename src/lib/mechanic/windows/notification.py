@@ -13,10 +13,6 @@ from mechanic.windows.base import BaseWindow
 class UpdateNotificationWindow(BaseWindow):
     window_title = "Extension Updates"
 
-    explanation = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
-    up_to_date = 'All extensions are up to date.'
-    updates_available = "Updates are available for %d of your extensions."
-
     @classmethod
     def with_new_thread(cls):
         import threading
@@ -40,8 +36,7 @@ class UpdateNotificationWindow(BaseWindow):
 
             self.w.title = TextBox((105, 20, -20, 20), self.title)
 
-            explanation = Font.string(text=self.explanation, size=11)
-            self.w.explanation = TextBox((105, 45, -20, 50), explanation)
+            self.w.explanation = TextBox((105, 45, -20, 50), self.explanation)
 
             self.w.updateButton = Button((-150, -40, 130, 20),
                                          "Install Updates",
@@ -51,12 +46,12 @@ class UpdateNotificationWindow(BaseWindow):
                                          callback=self.cancel)
             self.w.showDetailsButton = Button((105, -40, 110, 20),
                                               "Show Details",
-                                              callback=self.showDetails)
+                                              callback=self.show_details)
             self.w.setDefaultButton(self.w.updateButton)
 
             self.w.open()
         else:
-            print "Mechanic: %s" % self.up_to_date
+            print "Mechanic: All extensions are up to date."
 
     @progress.each('updates')
     @progress.tick('repositoryWillDownload',
@@ -71,7 +66,7 @@ class UpdateNotificationWindow(BaseWindow):
 
         self.progress.close()
 
-    def showDetails(self, sender):
+    def show_details(self, sender):
         self.w.close()
         MechanicWindow('updates')
 
@@ -86,5 +81,11 @@ class UpdateNotificationWindow(BaseWindow):
 
     @property
     def title(self):
-        return Font.string(text=self.updates_available % len(self.updates),
+        text = "Updates are available for %d of your extensions."
+        return Font.string(text=text % len(self.updates),
                            style="bold")
+
+    @property
+    def explanation(self):
+        text = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
+        Font.string(text=text, size=11)
