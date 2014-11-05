@@ -4,11 +4,11 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.lists import *
-from mechanic.models import Extension
+from mechanic.ui.lists import *
+from mechanic.extension import Extension
 from mechanic.registry import Registry
-from mechanic.font import Font
-from mechanic.tabs.base import BaseTab
+from mechanic.ui.font import Font
+from mechanic.ui.tabs.base import BaseTab
 
 
 class RegisterTab(BaseTab):

@@ -1,3 +1,4 @@
-from mechanic.views import MechanicWindow
+from mechanic.ui.windows.main import MechanicWindow
+
 
 MechanicWindow('register')

@@ -2,7 +2,7 @@ from AppKit import *
 from vanilla import List, CheckBoxListCell, Group
 from mojo.extensions import ExtensionBundle
 
-from mechanic.models import Updates
+from mechanic.update import Updates
 from mechanic.storage import Storage
 
 
@@ -16,6 +16,7 @@ class ExtensionList(List):
                 'install': True,
                 'check_for_updates': check,
                 'self': extension}
+
         return super(ExtensionList, self)._wrapItem(item)
 
 
@@ -26,12 +27,9 @@ class UpdatesList(ExtensionList):
                  {"title": "Extension", "key": "name", "width": 300, "editable": False},
                  {"title": "Version", "key": "remote_version", "width": 60, "editable": False}]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, posSize, **kwargs):
         kwargs['columnDescriptions'] = self.__columns
-        super(UpdatesList, self).__init__(*args, **kwargs)
-
-    def get_checked_extensions(self):
-        return [e['self'] for e in self.get_selected()]
+        super(UpdatesList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):
         updater = Updates()
@@ -39,7 +37,12 @@ class UpdatesList(ExtensionList):
         if not updater.unreachable:
             self.set(updates)
 
-    def get_selected(self):
+    @property
+    def selected_extensions(self):
+        return [e['self'] for e in self.selected]
+
+    @property
+    def selected(self):
         return [row for row in self.get() if row['install']]
 
 
@@ -58,7 +61,7 @@ class SettingsList(ExtensionList):
 class InstallationList(List):
     """Return an ExtensionList for installation window."""
 
-    def __init__(self, posSize, registry, **kwargs):
+    def __init__(self, posSize, **kwargs):
         columns = [{"title": "Installed",
                     "key": "installed",
                     "width": 25,
@@ -70,12 +73,12 @@ class InstallationList(List):
                     "editable": False,
                     "formatter": ExtensionDescriptionFormatter.alloc().init()}]
 
-        extension_cells = sorted(registry, key=lambda k: k[u'name'].lower())
         super(InstallationList, self).__init__(posSize,
-                                               extension_cells,
+                                               [],
                                                rowHeight=39.0,
                                                columnDescriptions=columns,
                                                showColumnTitles=False,
+                                               allowsMultipleSelection=True,
                                                **kwargs)
 
     def _wrapItem(self, extension):
@@ -100,43 +103,54 @@ class InstallationList(List):
     def refresh(self):
         self.set(self.get())
 
+    @property
+    def selected(self):
+        list_ = self.get()
+        selections = self.getSelection()
+        return [list_[s] for s in selections]
+
 
 class InstalledStatusCell(NSActionCell):
 
     def drawWithFrame_inView_(self, frame, view):
-        value = self.objectValue()
-        if value:
-            image = self.drawInstalledIndicator()
+        if self.objectValue():
+            image = InstalledIndicator()
             size = image.size()
             x = frame.origin.x + (frame.size.width - size.width) / 2 + 2
             y = frame.origin.y + (frame.size.height - size.height) / 2 - 1
-            image.drawAtPoint_fromRect_operation_fraction_((x, y), ((0, 0), (9, 9)), NSCompositeSourceOver, 1.0)
+            image.drawAtPoint_fromRect_operation_fraction_((x, y),
+                                                           ((0, 0), (9, 9)),
+                                                           NSCompositeSourceOver,
+                                                           1.0)
 
-    def drawInstalledIndicator(self):
+
+def InstalledIndicator():
+    image = NSImage.imageNamed_('installedIndicator')
+
+    if image is None:
+        width = 9
+        height = 9
+        image = NSImage.alloc().initWithSize_((width, height))
+        image.lockFocus()
+
+        path = NSBezierPath.bezierPathWithOvalInRect_(((0, 0), (9, 9)))
+        path.addClip()
+
+        color1 = NSColor.colorWithCalibratedWhite_alpha_(0.0, 0.4)
+        color2 = NSColor.colorWithCalibratedWhite_alpha_(0.0, 0.1)
+
+        color1.set()
+        path.fill()
+
+        color2.set()
+        path.setLineWidth_(2)
+        path.stroke()
+
+        image.unlockFocus()
+        image.setName_('installedIndicator')
         image = NSImage.imageNamed_('installedIndicator')
-        if image is None:
-            width = 9
-            height = 9
-            image = NSImage.alloc().initWithSize_((width, height))
-            image.lockFocus()
 
-            path = NSBezierPath.bezierPathWithOvalInRect_(((0, 0), (9, 9)))
-            path.addClip()
-
-            color1 = NSColor.colorWithCalibratedWhite_alpha_(0.0, 0.4)
-            color2 = NSColor.colorWithCalibratedWhite_alpha_(0.0, 0.1)
-
-            color1.set()
-            path.fill()
-
-            color2.set()
-            path.setLineWidth_(2)
-            path.stroke()
-
-            image.unlockFocus()
-            image.setName_('installedIndicator')
-            image = NSImage.imageNamed_('installedIndicator')
-        return image
+    return image
 
 
 class ExtensionDescriptionFormatter(NSFormatter):

@@ -4,9 +4,9 @@ from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.storage import Storage
-from mechanic.lists import *
-from mechanic.models import Extension
-from mechanic.tabs.base import BaseTab
+from mechanic.ui.lists import *
+from mechanic.extension import Extension
+from mechanic.ui.tabs.base import BaseTab
 
 
 class SettingsTab(BaseTab):

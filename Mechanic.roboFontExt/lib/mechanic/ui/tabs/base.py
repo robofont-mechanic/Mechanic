@@ -2,7 +2,7 @@ from AppKit import *
 from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, \
     Button, Group
 
-from mechanic.font import Font
+from mechanic.ui.font import Font
 
 
 class BaseTab(VanillaBaseObject):
@@ -63,3 +63,7 @@ class BaseTab(VanillaBaseObject):
 
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
+
+    @property
+    def w(self):
+        return self.parent.w

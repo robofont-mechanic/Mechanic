@@ -1,9 +1,9 @@
 from mojo.events import addObserver
-from mechanic.views import UpdateNotificationWindow
-from mechanic.models import Updates
+from mechanic.ui.windows.notification import UpdateNotificationWindow
+from mechanic.update import Updates
 
 
-class UpdateObserver:
+class UpdateObserver(object):
     """Observe application launch to check for updates"""
 
     def __init__(self, *events):

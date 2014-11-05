@@ -2,10 +2,8 @@ import os
 import sys
 
 
-lib_path = os.path.join(os.path.dirname(__file__), "modules")
-if lib_path not in sys.path:
-    sys.path.append(lib_path)
-
-__all__ = ["models", "views", "helpers"]
-
-default_registry = "http://www.robofontmechanic.com"
+mechanic_path = os.path.dirname(__file__)
+lib_path = os.path.abspath(os.path.join(mechanic_path, ".."))
+packages_path = os.path.join(lib_path, "packages")
+if packages_path not in sys.path:
+    sys.path.append(packages_path)

@@ -61,8 +61,8 @@ class GithubRepo(object):
         self.stream_content = self.stream.iter_content(chunk_size=8192)
         self.content_length = self.stream.headers['content-length']
 
-    @evented('repository', 'extractDownload')
-    def extract_file(self):
+    @evented('repository')
+    def extract_download(self):
         """Extract downloaded zip file and return extension path."""
         zip_file = ZipFile(self.file.name)
         zip_file.extractall(self.tmp_path)
@@ -102,7 +102,7 @@ class GithubRepo(object):
             self.stream.close()
             self.file.close()
 
-        return self.extract_file()
+        return self.extract_download()
 
     @evented('repository', 'downloadChunk')
     def download_chunk(self, content):

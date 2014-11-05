@@ -1,39 +1,30 @@
 from AppKit import NSImage
 from vanilla import *
 from vanilla.dialogs import getFile
-from mojo.extensions import ExtensionBundle
 
-from mechanic.font import Font
+from mechanic.ui import progress
+from mechanic.ui.font import Font
 from mechanic.storage import Storage
-from mechanic.models import Extension, Updates
+from mechanic.extension import Extension
+from mechanic.update import Updates
 from mechanic.ui.windows.base import BaseWindow
-from mechanic.tabs import *
-from mechanic.repositories.github import GithubRepo
 
 
 class UpdateNotificationWindow(BaseWindow):
     window_title = "Extension Updates"
-
-    explanation = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
-    up_to_date = 'All extensions are up to date.'
-    updates_available = "Updates are available for %d of your extensions."
 
     @classmethod
     def with_new_thread(cls):
         import threading
         threading.Thread(target=cls).start()
 
-    @property
-    def title(self):
-        return Font.string(text=self.updates_available % len(self.updates),
-                           style="bold")
-
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
 
         skip_patch = bool(Storage.get('ignore_patch_updates'))
         self.updater = Updates()
-        self.updates = self.updater.all(force, skip_patch_updates=skip_patch)
+        self.updates = self.updater.all(force,
+                                        skip_patch_updates=skip_patch)
 
         # TODO: Make this use exceptions
         if self.updater.unreachable:
@@ -45,8 +36,7 @@ class UpdateNotificationWindow(BaseWindow):
 
             self.w.title = TextBox((105, 20, -20, 20), self.title)
 
-            explanation = Font.string(text=self.explanation, size=11)
-            self.w.explanation = TextBox((105, 45, -20, 50), explanation)
+            self.w.explanation = TextBox((105, 45, -20, 50), self.explanation)
 
             self.w.updateButton = Button((-150, -40, 130, 20),
                                          "Install Updates",
@@ -56,28 +46,32 @@ class UpdateNotificationWindow(BaseWindow):
                                          callback=self.cancel)
             self.w.showDetailsButton = Button((105, -40, 110, 20),
                                               "Show Details",
-                                              callback=self.showDetails)
+                                              callback=self.show_details)
             self.w.setDefaultButton(self.w.updateButton)
 
             self.w.open()
         else:
-            print "Mechanic: %s" % self.up_to_date
+            print "Mechanic: All extensions are up to date."
 
-    def cancel(self, sender):
-        self.w.close()
-
-    def update(self, sender):            
-        ticks = len(self.updates) * Extension.ticks_per_download
-        self.progress = self.startProgress('Updating', ticks)
-
+    @progress.each('updates')
+    @progress.tick('repositoryWillDownload',
+                   'Downloading {repository.repo}')
+    @progress.tick('repositoryWillExtractDownload',
+                   'Extracting {repository.repo}')
+    @progress.tick('extensionWillInstall',
+                   'Installing {extension.bundle.name}')
+    def update(self, sender):
         for extension in self.updates:
             extension.update()
 
         self.progress.close()
 
-    def showDetails(self, sender):
+    def show_details(self, sender):
         self.w.close()
         MechanicWindow('updates')
+
+    def cancel(self, sender):
+        self.w.close()
 
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
@@ -85,16 +79,13 @@ class UpdateNotificationWindow(BaseWindow):
         if image:
             self.w.image.setImage(imageObject=image)
 
+    @property
+    def title(self):
+        text = "Updates are available for %d of your extensions."
+        return Font.string(text=text % len(self.updates),
+                           style="bold")
 
-class MechanicWindow(BaseWindow):
-    window_title = "Mechanic"
-
-    def __init__(self, *args, **kwargs):
-        super(MechanicWindow, self).__init__(*args, **kwargs)
-
-        self.toolbar.add_item(InstallTab)
-        self.toolbar.add_item(UpdatesTab)
-        self.toolbar.add_item(RegisterTab)
-        self.toolbar.add_item(SettingsTab)
-
-        self.open()
+    @property
+    def explanation(self):
+        text = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
+        Font.string(text=text, size=11)

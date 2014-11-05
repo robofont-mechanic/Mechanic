@@ -6,6 +6,14 @@
 	<array>
 		<dict>
 			<key>path</key>
+			<string>_startup.py</string>
+			<key>preferredName</key>
+			<string>Startup</string>
+			<key>shortKey</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>path</key>
 			<string>install.py</string>
 			<key>preferredName</key>
 			<string>Install</string>
@@ -57,7 +65,7 @@
 	<key>name</key>
 	<string>Mechanic</string>
 	<key>timeStamp</key>
-	<real>1414974062.967368</real>
+	<real>1415214868.494646</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>
