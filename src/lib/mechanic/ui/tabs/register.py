@@ -51,7 +51,7 @@ class RegisterTab(BaseTab):
         if extension.bundle.bundleExists():
             self.extensionName.set(extension.bundle.name)
             self.extensionFilename.set(os.path.basename(extension.path))
-            self.extensionRepository.set(extension.config.repository)
+            self.extensionRepository.set(extension.repository)
 
     def register(self, sender):
         self.progress = self.startProgress('Sending to registry server...')

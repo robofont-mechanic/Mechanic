@@ -1,5 +1,5 @@
 from AppKit import *
-from vanilla import List, CheckBoxListCell, Group
+from vanilla import List, CheckBoxListCell
 from mojo.extensions import ExtensionBundle
 
 from mechanic.update import Updates

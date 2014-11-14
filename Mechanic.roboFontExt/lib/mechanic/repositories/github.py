@@ -135,14 +135,18 @@ class GithubRequest(object):
         return self.cache_response(self.url, self.get_cached(self.url))
 
     def get_cached(self, url):
+        headers = {}
         cached_response = self.cache.get(url, None)
+
         if cached_response is not None:
             etag = self.get_etag(cached_response)
-            response = requests.get(url, headers={'If-None-Match': etag})
-            if response.status_code is 304:
-                response = cached_response
-        else:
-            response = requests.get(url)
+            headers['If-None-Match'] = etag
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 304:
+            response = cached_response
+
         response.raise_for_status()
         return response
 
