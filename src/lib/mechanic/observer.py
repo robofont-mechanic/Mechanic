@@ -1,16 +1,12 @@
 from mojo.events import addObserver
-from mechanic.ui.windows.notification import UpdateNotificationWindow
-from mechanic.update import Update
 
 
-class UpdateObserver(object):
-    """Observe application launch to check for updates"""
+class Observer(object):
 
-    def __init__(self, *events):
+    def add(self, method, *events):
         for event in events:
-            addObserver(self, 'check_for_updates', event)
+            addObserver(self, method, event)
 
-    def check_for_updates(self, info):
-        """Open updates window unless ran in last hour"""
-        if not Update.checked_recently():
-            UpdateNotificationWindow.with_new_thread()
+    def remove(self, *events):
+        for event in events:
+            removeObserver(self, event)
