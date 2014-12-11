@@ -4,18 +4,18 @@ from vanilla.dialogs import getFile
 
 from mechanic.ui import progress
 from mechanic.ui.lists import *
-from mechanic.update import Updates
+from mechanic.update import Update
 from mechanic.ui.tabs.base import BaseTab
 
 
 class UpdatesTab(BaseTab):
-    title = "Update"
+    title = "Updates"
     image = "toolbarScriptReload"
     identifier = "updates"
 
     def setup(self):
-        self.updateableList = UpdatesList((20,20,-20,-50),
-                                          editCallback=self.updateUpdateButtonLabel)
+        self.updateableList = UpdateList((20,20,-20,-50),
+                                         editCallback=self.updateUpdateButtonLabel)
         self.addUpdatedAt()
         self.addUpdateButton()
 
@@ -45,9 +45,10 @@ class UpdatesTab(BaseTab):
         self.updateUpdatedAt()
 
     def updateUpdatedAt(self):
-        updated = Updates.last_checked()
+        updated = Update.last_checked()
         if updated:
-            self.updatedAt.set("Last checked: %s" % time.strftime('%d %b %Y, %H:%M', time.localtime(updated)))
+            fmt = time.strftime('%d %b %Y, %H:%M', time.localtime(updated))
+            self.updatedAt.set("Last checked: %s" % fmt)
         else:
             self.updatedAt.set('')
 

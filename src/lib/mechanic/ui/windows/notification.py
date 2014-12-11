@@ -6,7 +6,7 @@ from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
 from mechanic.extension import Extension
-from mechanic.update import Updates
+from mechanic.update import Update
 from mechanic.ui.windows.base import BaseWindow
 
 
@@ -21,13 +21,11 @@ class UpdateNotificationWindow(BaseWindow):
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
 
-        skip_patch = bool(Storage.get('ignore_patch_updates'))
-        self.updater = Updates()
-        self.updates = self.updater.all(force,
-                                        skip_patch_updates=skip_patch)
+        skip_patches = bool(Storage.get('ignore_patch_updates'))
 
-        # TODO: Make this use exceptions
-        if self.updater.unreachable:
+        try:
+            self.updates = Update.all(force, skip_patches=skip_patches)
+        except Update.ConnectionError:
             print "Mechanic: Couldn't connect to the internet"
             return
 
@@ -76,8 +74,7 @@ class UpdateNotificationWindow(BaseWindow):
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
-        if image:
-            self.w.image.setImage(imageObject=image)
+        self.w.image.setImage(imageObject=image)
 
     @property
     def title(self):

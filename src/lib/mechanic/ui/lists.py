@@ -2,40 +2,45 @@ from AppKit import *
 from vanilla import List, CheckBoxListCell
 from mojo.extensions import ExtensionBundle
 
-from mechanic.update import Updates
+from mechanic.update import Update
 from mechanic.storage import Storage
+from mechanic.ui.formatter.version import VersionFormatter
 
 
 class ExtensionList(List):
 
     def _wrapItem(self, extension):
-        check = extension.bundle.name not in Storage.get('ignore')
         item = {'name': extension.bundle.name,
                 'local_version': extension.config['version'],
-                'remote_version': extension.remote.version,
                 'install': True,
-                'check_for_updates': check,
+                'check_for_updates': not extension.is_ignored,
                 'self': extension}
 
         return super(ExtensionList, self)._wrapItem(item)
 
 
-class UpdatesList(ExtensionList):
+class UpdateList(ExtensionList):
     """Return an ExtensionList for updates window."""
 
     __columns = [{"title": "Install", "key": "install", "width": 40, "editable": True, "cell": CheckBoxListCell()},
                  {"title": "Extension", "key": "name", "width": 300, "editable": False},
-                 {"title": "Version", "key": "remote_version", "width": 60, "editable": False}]
+                 {"title": "Version", "key": "remote_version", "width": 60, "editable": False, "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
         kwargs['columnDescriptions'] = self.__columns
-        super(UpdatesList, self).__init__(posSize, [], **kwargs)
+        super(UpdateList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):
-        updater = Updates()
-        updates = updater.all(force)
-        if not updater.unreachable:
-            self.set(updates)
+        try:
+            self.set(Update.all(force))
+        except Update.ConnectionError:
+            print "Mechanic: Couldn't connect to the internet"
+            return
+
+    def _wrapItem(self, extension):
+        item = super(UpdateList, self)._wrapItem(extension)
+        item['remote_version'] = extension.remote.version
+        return item
 
     @property
     def selected_extensions(self):
@@ -51,7 +56,7 @@ class SettingsList(ExtensionList):
 
     __columns = [{"title": "Check", "key": "check_for_updates", "width": 40, "editable": True, "cell": CheckBoxListCell()},
                  {"title": "Extension", "key": "name", "width": 300, "editable": False},
-                 {"title": "Version", "key": "local_version", "editable": False}]
+                 {"title": "Version", "key": "local_version", "editable": False, "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, *args, **kwargs):
         kwargs['columnDescriptions'] = self.__columns
