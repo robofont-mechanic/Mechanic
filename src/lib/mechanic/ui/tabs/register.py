@@ -2,9 +2,7 @@ import os
 import requests
 from vanilla import *
 from vanilla.dialogs import getFile
-from mojo.extensions import ExtensionBundle
 
-from mechanic.ui.lists import *
 from mechanic.extension import Extension
 from mechanic.registry import Registry
 from mechanic.ui.font import Font
@@ -15,7 +13,7 @@ class RegisterTab(BaseTab):
     title = "Register"
     image = "toolbarScriptOpen"
     identifier = "register"
-    
+
     tabSize = (500, 225)
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 

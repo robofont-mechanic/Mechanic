@@ -1,11 +1,9 @@
 from AppKit import *
 from vanilla import *
 from vanilla.dialogs import getFile
-from mojo.extensions import ExtensionBundle
 
 from mechanic.storage import Storage
-from mechanic.ui.lists import *
-from mechanic.extension import Extension
+from mechanic.ui.lists.settings import SettingsList
 from mechanic.ui.tabs.base import BaseTab
 
 
@@ -13,7 +11,7 @@ class SettingsTab(BaseTab):
     title = "Settings"
     image = "prefToolbarMisc"
     identifier = "settings"
-    
+
     updates_label = "Check for updates on startup"
     minor_updates_label = "Ignore patch updates on startup"
     check_on_startup = Storage.get("check_on_startup")
@@ -30,9 +28,7 @@ class SettingsTab(BaseTab):
                                            callback=self.saveIgnorePatchUpdates)
 
     def addList(self):
-        configured = [e for e in Extension.all() if e.is_configured]
         self.settingsList = SettingsList((20,75,-20,-20),
-                                         configured,
                                          editCallback=self.update)
 
     def saveCheckForUpdates(self, sender):

@@ -1,10 +1,9 @@
 import time
 from vanilla import *
-from vanilla.dialogs import getFile
 
-from mechanic.ui import progress
-from mechanic.ui.lists import *
 from mechanic.update import Update
+from mechanic.ui import progress
+from mechanic.ui.lists.update import UpdateList
 from mechanic.ui.tabs.base import BaseTab
 
 

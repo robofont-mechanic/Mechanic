@@ -5,12 +5,12 @@ from vanilla import *
 from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
-from mechanic.ui.lists import *
 from mechanic.extension import Extension
 from mechanic.registry import Registry
-from mechanic.ui.tabs.base import BaseTab
 from mechanic.repositories.github import GithubRepo
 from mechanic.ui import progress
+from mechanic.ui.tabs.base import BaseTab
+from mechanic.ui.lists.installation import InstallationList
 
 
 class InstallTab(BaseTab):
