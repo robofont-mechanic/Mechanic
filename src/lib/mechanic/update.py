@@ -1,12 +1,13 @@
 import time
 
-from version import Version
-
+from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.extension import Extension
 
 
-class Updates(object):
+class Update(object):
+
+    class ConnectionError(Exception): pass
 
     @classmethod
     def last_checked(cls):
@@ -16,50 +17,49 @@ class Updates(object):
     def checked_recently(cls):
         return cls.last_checked() > time.time() - (60 * 60)
 
-    def __init__(self):
-        self.unreachable = False
-
-    def all(self, force=False, skip_patch_updates=False):
-        if force or not self.__class__.checked_recently():
-            updates = self._fetchUpdates()
+    @classmethod
+    def all(cls, force=False, skip_patches=False):
+        if force or not cls.checked_recently():
+            updates = cls._fetch_updates()
         else:
-            updates = self._getCached()
+            updates = cls._get_cached()
 
-        if skip_patch_updates:
-            updates = filter(self._filterPatchUpdates, updates)
+        if skip_patches:
+            updates = filter(cls._filter_patch_updates, updates)
 
         return updates
 
-    def _fetchUpdates(self):
+    @classmethod
+    def _fetch_updates(cls):
         print "Mechanic: checking for updates..."
 
-        updates = []
-        extensions = [e for e in Extension.all() if e.may_update]
         try:
-            updates = [e for e in extensions if not e.is_current_version]
-            self._setCached(updates)
-            Storage.set('last_checked_at', time.time())
+            updates = [e for e in Extension.all() if e.should_update]
         except:
-            self.unreachable = True
+            raise Update.ConnectionError
+
+        cls._set_cached(updates)
+        Storage.set('last_checked_at', time.time())
+
         return updates
 
-    def _getCached(self):
-        cache = Storage.get('cache')
+    @classmethod
+    def _get_cached(cls):
         extensions = []
-        for cached in cache.iteritems():
-            extension = Extension(name=cached[0])
-            if extension.is_configured:
-                extension.remote.version = cached[1]
+        for name, version in Storage.get('update_cache').items():
+            extension = Extension(name=name)
+            if extension.installed and extension.is_configured:
+                extension.remote.version = version
                 extensions.append(extension)
         return extensions
 
-    def _setCached(self, extensions):
-        cache = {}
-        for extension in extensions:
-            cache[extension.bundle.name] = extension.remote.version
-        Storage.set('cache', cache)
+    @classmethod
+    def _set_cached(cls, extensions):
+        cache = {e.filename : str(e.remote.version) for e in extensions}
+        Storage.set('update_cache', cache)
 
-    def _filterPatchUpdates(self, update):
+    @classmethod
+    def _filter_patch_updates(cls, update):
         local = Version(update.config.version)
         remote = Version(update.remote.version)
         return remote.major > local.major or remote.minor > remote.minor
