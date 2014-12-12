@@ -44,6 +44,23 @@ task build: [:source, :plist]
 
 task default: :build
 
+task :demo do
+  sh "robofont -p '#{File.expand_path('./bin/demo.py')}'"
+end
+
+task :screenshot do
+  require 'chunky_png'
+  cd 'screenshots'
+  install = ChunkyPNG::Image.from_file "install.png"
+  updates = ChunkyPNG::Image.from_file "updates.png"
+  width = install.width + 100
+  height = install.width + 25
+  composite = ChunkyPNG::Image.new width, height, ChunkyPNG::Color::TRANSPARENT
+  composite.compose! install, 0, 0
+  composite.compose! updates, width - updates.width, height - updates.height
+  composite.save 'mechanic.png'
+end
+
 class MenuItem
 
   attr_accessor :item

@@ -5,7 +5,7 @@ Mechanic provides an interface in RoboFont for installing and updating extension
 
 https://github.com/jackjennings/Mechanic
 
-![mechanic preview](http://ja.ckjennin.gs/public/images/Mechanic-preview.png)
+![mechanic preview](screenshots/mechanic.png)
 
 Requirements
 ------------

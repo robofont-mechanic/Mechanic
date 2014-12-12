@@ -6,6 +6,9 @@ from mechanic.storage import Storage
 
 class Registry(object):
 
+    def __init__(self, base_url=default_registry):
+        self.base_url = base_url
+
     def all(self):
         print "Mechanic: fetching extensions from %s..." % self.url
 
@@ -19,4 +22,4 @@ class Registry(object):
 
     @property
     def url(self):
-        return default_registry + "/api/v1/registry.json"
+        return self.base_url + "/api/v1/registry.json"

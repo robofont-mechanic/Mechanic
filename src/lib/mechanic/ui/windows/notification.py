@@ -11,6 +11,7 @@ from mechanic.ui.windows.base import BaseWindow
 
 
 class UpdateNotificationWindow(BaseWindow):
+    window_size = (520, 130)
     window_title = "Extension Updates"
 
     @classmethod
@@ -21,10 +22,8 @@ class UpdateNotificationWindow(BaseWindow):
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
 
-        skip_patches = bool(Storage.get('ignore_patch_updates'))
-
         try:
-            self.updates = Update.all(force, skip_patches=skip_patches)
+            self.updates = self.get_updates(force)
         except Update.ConnectionError:
             print "Mechanic: Couldn't connect to the internet"
             return
@@ -76,6 +75,10 @@ class UpdateNotificationWindow(BaseWindow):
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
         self.w.image.setImage(imageObject=image)
 
+    def get_updates(self, force):
+        skip_patches = bool(Storage.get('ignore_patch_updates'))
+        return Update.all(force, skip_patches=skip_patches)
+
     @property
     def title(self):
         text = "Updates are available for %d of your extensions."
@@ -85,4 +88,4 @@ class UpdateNotificationWindow(BaseWindow):
     @property
     def explanation(self):
         text = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
-        Font.string(text=text, size=11)
+        return Font.string(text=text, size=11)

@@ -3,10 +3,11 @@ from defconAppKit.windows.baseWindow import BaseWindowController
 
 
 class BaseWindow(BaseWindowController):
+    window_size = (500, 300)
 
     def __init__(self, active="Install"):
         self.first_tab = active
-        self.w = Window((500,300),
+        self.w = Window(self.window_size,
                         autosaveName=self.__class__.__name__,
                         title=self.window_title)
 
@@ -44,6 +45,11 @@ class BaseWindow(BaseWindowController):
 
     def set_window_size(self, tab):
         self.w.resize(tab.tabSize[0], tab.tabSize[1], False)
+
+    @property
+    def current_tab(self):
+        index = self.w.tabs.get()
+        return self.w.tabs[index]
 
     @property
     def toolbar(self):
