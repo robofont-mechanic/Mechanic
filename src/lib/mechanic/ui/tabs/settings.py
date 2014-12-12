@@ -16,12 +16,12 @@ class SettingsTab(BaseTab):
     minor_updates_label = "Ignore patch updates on startup"
 
     def setup(self):
-        self.list = SettingsList((0, 60, -0, -0))
+        self.content.list = SettingsList((0, 60, -0, -0))
 
-        self.startup = SettingCheckBox((0, 0, -0, 0),
-                                       self.updates_label,
-                                       "check_on_startup")
+        self.content.startup = SettingCheckBox((0, 0, -0, 0),
+                                               self.updates_label,
+                                               "check_on_startup")
 
-        self.patches = SettingCheckBox((0, 25, -0, 0),
-                                       self.minor_updates_label,
-                                       "ignore_patch_updates")
+        self.content.patches = SettingCheckBox((0, 25, -0, 0),
+                                               self.minor_updates_label,
+                                               "ignore_patch_updates")

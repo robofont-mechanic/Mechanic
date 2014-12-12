@@ -13,19 +13,19 @@ class UpdatesTab(BaseTab):
     identifier = "updates"
 
     def setup(self):
-        self.list = UpdateList((0, 0, -0, -40),
-                               editCallback=self.update_interface)
+        self.content.list = UpdateList((0, 0, -0, -40),
+                                       editCallback=self.update_interface)
 
-        self.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
-                                                  sizeStyle="small")
+        self.content.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
+                                                          sizeStyle="small")
 
-        self.update_button = UpdateButton((-140, -22, 140, 20),
-                                          callback=self.install_updates)
+        self.content.update_button = UpdateButton((-140, -22, 140, 20),
+                                                  callback=self.install_updates)
 
         self.update_interface()
 
     def activate(self):
-        self.parent.w.setDefaultButton(self.update_button)
+        self.parent.w.setDefaultButton(self.content.update_button)
         self.update_list()
 
     @progress.each('installable')
@@ -42,16 +42,16 @@ class UpdatesTab(BaseTab):
         self.update_list(True)
 
     def update_list(self, force=False):
-        self.list.refresh(force=force)
+        self.content.list.refresh(force=force)
         self.update_interface()
 
     def update_interface(self, sender=None):
-        self.updated_at_text.update()
-        self.update_button.update(len(self.list.selected))
+        self.content.updated_at_text.update()
+        self.content.update_button.update(len(self.content.list.selected))
 
     @property
     def installable(self):
-        return self.list.selected_extensions
+        return self.content.list.selected_extensions
 
 
 class UpdateButton(Button):
