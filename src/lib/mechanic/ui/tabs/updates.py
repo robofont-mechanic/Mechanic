@@ -13,12 +13,15 @@ class UpdatesTab(BaseTab):
     identifier = "updates"
 
     def setup(self):
-        self.list = UpdateList((20,20,-20,-50),
+        self.list = UpdateList((0, 0, -0, -40),
                                editCallback=self.update_interface)
-        self.updated_at_text = UpdatedTimeTextBox((20,-31,-20,20),
+
+        self.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
                                                   sizeStyle="small")
-        self.update_button = UpdateButton((-160,-35,140,20),
+
+        self.update_button = UpdateButton((-140, -22, 140, 20),
                                           callback=self.install_updates)
+
         self.update_interface()
 
     def activate(self):

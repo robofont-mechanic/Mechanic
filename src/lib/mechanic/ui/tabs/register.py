@@ -14,26 +14,42 @@ class RegisterTab(BaseTab):
     image = "toolbarScriptOpen"
     identifier = "register"
 
-    tabSize = (500, 225)
+    tabSize = (500, 240)
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
     def setup(self):
-        indent = 105
+        indent = 90
 
-        self.extensionNameLabel = TextBox((15,18,80,22), "Name:", alignment="right")
-        self.extensionName = EditText((indent,15,-20,22), placeholder="My Extension")
+        self.extensionNameLabel = TextBox((0, 3, 80, 22),
+                                          "Name:",
+                                          alignment="right")
 
-        self.extensionFilenameLabel = TextBox((15,58,80,22), "Filename:", alignment="right")
-        self.extensionFilename = EditText((indent,55,-20,22), placeholder="MyExtension.roboFontExt")
+        self.extensionName = EditText((indent, 0, -0, 22),
+                                      placeholder="My Extension")
 
-        self.extensionRepositoryLabel = TextBox((15,98,80,22), "Repository:", alignment="right")
-        self.extensionRepository = EditText((indent,95,-20,22), placeholder="username/MyExtension")
+        self.extensionFilenameLabel = TextBox((0, 43, 80, 22),
+                                              "Filename:",
+                                              alignment="right")
 
-        self.explanatoryText = TextBox((105,130,-20,50), self.explanation)
+        self.extensionFilename = EditText((indent, 40, -0, 22),
+                                          placeholder="MyExtension.roboFontExt")
 
-        self.importButton = Button((-250,-35,80,20), "Import",
+        self.extensionRepositoryLabel = TextBox((0, 83, 80, 22),
+                                                "Repository:",
+                                                alignment="right")
+
+        self.extensionRepository = EditText((indent, 80, -0, 22),
+                                            placeholder="username/MyExtension")
+
+        self.explanatoryText = TextBox((indent, 115, -0, 50),
+                                       self.explanation)
+
+        self.importButton = Button((-230, -22, 80, 20),
+                                   "Import",
                                    callback=self.getExt)
-        self.registerButton = Button((-160,-35,140,20), "Register",
+
+        self.registerButton = Button((-140, -22, 140, 20),
+                                     "Register",
                                      callback=self.register)
 
     def activate(self):

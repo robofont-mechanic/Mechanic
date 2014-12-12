@@ -3,6 +3,7 @@ from defconAppKit.windows.baseWindow import BaseWindowController
 
 
 class BaseWindow(BaseWindowController):
+    padding = (20, 20, 20, 20)
 
     def __init__(self, active="Install"):
         self.first_tab = active
@@ -36,9 +37,9 @@ class BaseWindow(BaseWindowController):
         self.set_active_tab(sender.itemIdentifier())
 
     def add_tabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0),
-                           [item['label'] for item in self.toolbar.items],
-                           showTabs=False)
+        size = ( self.padding[0],  self.padding[1],
+                -self.padding[2], -self.padding[3])
+        self.w.tabs = Tabs(size, self.toolbar.labels, showTabs=False)
 
         for index, item in enumerate(self.toolbar.items):
             tab = self.w.tabs[index]
@@ -72,3 +73,7 @@ class Toolbar(object):
                     selectable=True,
                     view=view)
         self.items.append(item)
+
+    @property
+    def labels(self):
+        return [item['label'] for item in self.items]

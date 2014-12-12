@@ -17,18 +17,23 @@ class InstallTab(BaseTab):
     title = "Install"
     image = "toolbarRun"
     identifier = "install"
-    
+
     tabSize = (500, 400)
     disabledText = "Couldn't connect to the registry server..."
-    
+
     def setup(self):
-        self.list = InstallationList((20,20,-20,-50),
+        self.list = InstallationList((0, 0, -0, -40),
                                      selectionCallback=self.update_buttons,
                                      doubleClickCallback=self.open_repo)
-        self.uninstall_button = Button((-290,-35,100,20), "Uninstall",
+
+        self.uninstall_button = Button((-270, -22, 100, 20),
+                                       "Uninstall",
                                        callback=self.uninstall)
-        self.install_button = Button((-180,-35,160,20), "Install Extension",
+
+        self.install_button = Button((-160, -22, 160, 20),
+                                     "Install Extension",
                                      callback=self.install)
+
         self.update_buttons()
 
 

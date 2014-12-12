@@ -17,19 +17,18 @@ class SettingsTab(BaseTab):
     check_on_startup = Storage.get("check_on_startup")
 
     def setup(self):                
-        self.addList()
-        self.checkForUpdates = CheckBox((20,15,-20,20),
+        self.list = SettingsList((0, 60, -0, -0),
+                                 editCallback=self.update)
+
+        self.checkForUpdates = CheckBox((0, 0, -0, 0),
                                         self.updates_label,
                                         value=Storage.get("check_on_startup"),
                                         callback=self.saveCheckForUpdates)
-        self.ignorePatchUpdates = CheckBox((20,40,-20,20),
+
+        self.ignorePatchUpdates = CheckBox((0, 25, -0, 0),
                                            self.minor_updates_label,
                                            value=Storage.get("ignore_patch_updates"),
                                            callback=self.saveIgnorePatchUpdates)
-
-    def addList(self):
-        self.settingsList = SettingsList((20,75,-20,-20),
-                                         editCallback=self.update)
 
     def saveCheckForUpdates(self, sender):
         Storage.set("check_on_startup", 
@@ -41,7 +40,7 @@ class SettingsTab(BaseTab):
 
     def update(self, sender):
         ignore = Storage.get("ignore")
-        for row in self.settingsList.get():
+        for row in self.list.get():
             if not row["check_for_updates"]:
                 ignore[row["name"]] = True
             elif row["name"] in ignore:
