@@ -30,7 +30,7 @@ class BaseWindow(BaseWindowController):
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
         self.w.tabs[current_index].view.deactivate()
-        self.w.tabs[index].view.setWindowSize()
+        self.set_window_size(self.w.tabs[index].view)
         self.w.tabs[index].view.activate()
 
     def toolbar_select(self, sender):
@@ -44,6 +44,9 @@ class BaseWindow(BaseWindowController):
         for index, item in enumerate(self.toolbar.items):
             tab = self.w.tabs[index]
             tab.view = item['view']((0,0,-0,-0), self)
+
+    def set_window_size(self, tab):
+        self.w.resize(tab.tabSize[0], tab.tabSize[1], False)
 
     @property
     def toolbar(self):

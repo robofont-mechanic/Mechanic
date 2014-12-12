@@ -24,9 +24,6 @@ class BaseTab(VanillaBaseObject):
     def deactivate(self):
         pass
 
-    def setWindowSize(self):
-        self.w.resize(self.tabSize[0], self.tabSize[1], False)
-
     def disable(self):
         if not hasattr(self, 'disabledOverlay'):
             colorTile = NSImage.alloc().initWithSize_((10, 10))
