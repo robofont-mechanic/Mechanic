@@ -25,7 +25,7 @@ class BaseTab(VanillaBaseObject):
         pass
 
     def setWindowSize(self):
-        self.parent.w.resize(self.tabSize[0], self.tabSize[1], False)
+        self.w.resize(self.tabSize[0], self.tabSize[1], False)
 
     def disable(self):
         if not hasattr(self, 'disabledOverlay'):
@@ -52,17 +52,20 @@ class BaseTab(VanillaBaseObject):
         return self.parent.startProgress(*args, **kwargs)
 
     def closeNotificationSheet(self, sender):
-        self.parent.w.notification.close()
+        self.w.notification.close()
 
     def showNotificationSheet(self, text, size=(300, 80)):
-        self.parent.w.notification = Sheet(size, self.parent.w)
-        self.parent.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.parent.w.notification.closeButton = Button((-115,-37,100,22), 'Close', callback=self.closeNotificationSheet)
-        self.parent.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
-        self.parent.w.notification.open()
+        self.w.notification = Sheet(size, self.parent.w)
+        self.w.notification.text = TextBox((15, 15, -50, -15), text)
+        self.w.notification.closeButton = Button((-115,-37,100,22), 'Close', callback=self.closeNotificationSheet)
+        self.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
+        self.w.notification.open()
 
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
+
+    def set_default_button(self, button):
+        self.w.setDefaultButton(self.update_button)
 
     @property
     def w(self):
