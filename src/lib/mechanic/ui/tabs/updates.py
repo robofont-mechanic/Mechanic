@@ -32,7 +32,7 @@ class UpdatesTab(BaseTab):
                    'Extracting {repository.repo}')
     @progress.tick('extensionWillInstall',
                    'Installing {extension.bundle.name}')
-    def install_updates(self, sender):
+    def install_updates(self, sender=None):
         for extension in self.installable:
             extension.update()
 
