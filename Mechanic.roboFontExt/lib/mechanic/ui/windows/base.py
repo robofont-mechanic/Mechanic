@@ -3,10 +3,11 @@ from defconAppKit.windows.baseWindow import BaseWindowController
 
 
 class BaseWindow(BaseWindowController):
+    window_size = (500, 300)
 
     def __init__(self, active="Install"):
         self.first_tab = active
-        self.w = Window((500,300),
+        self.w = Window(self.window_size,
                         autosaveName=self.__class__.__name__,
                         title=self.window_title)
 
@@ -29,20 +30,26 @@ class BaseWindow(BaseWindowController):
             self.w.getNSWindow().toolbar().setSelectedItemIdentifier_(pane)
         self.w.tabs.set(index)
         self.w.tabs[current_index].view.deactivate()
-        self.w.tabs[index].view.setWindowSize()
+        self.set_window_size(self.w.tabs[index].view)
         self.w.tabs[index].view.activate()
 
     def toolbar_select(self, sender):
         self.set_active_tab(sender.itemIdentifier())
 
     def add_tabs(self):
-        self.w.tabs = Tabs((0, 0, -0, -0),
-                           [item['label'] for item in self.toolbar.items],
-                           showTabs=False)
+        self.w.tabs = Tabs((0, 0, -0, -0), self.toolbar.labels, showTabs=False)
 
         for index, item in enumerate(self.toolbar.items):
             tab = self.w.tabs[index]
-            tab.view = item['view']((0,0,-0,-0), self)
+            tab.view = item['view']((0, 0, -0, -0), self)
+
+    def set_window_size(self, tab):
+        self.w.resize(tab.tabSize[0], tab.tabSize[1], False)
+
+    @property
+    def current_tab(self):
+        index = self.w.tabs.get()
+        return self.w.tabs[index]
 
     @property
     def toolbar(self):
@@ -72,3 +79,7 @@ class Toolbar(object):
                     selectable=True,
                     view=view)
         self.items.append(item)
+
+    @property
+    def labels(self):
+        return [item['label'] for item in self.items]

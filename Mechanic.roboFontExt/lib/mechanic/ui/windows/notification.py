@@ -6,11 +6,12 @@ from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
 from mechanic.extension import Extension
-from mechanic.update import Updates
+from mechanic.update import Update
 from mechanic.ui.windows.base import BaseWindow
 
 
 class UpdateNotificationWindow(BaseWindow):
+    window_size = (520, 130)
     window_title = "Extension Updates"
 
     @classmethod
@@ -21,13 +22,9 @@ class UpdateNotificationWindow(BaseWindow):
     def __init__(self, force=False):
         super(UpdateNotificationWindow, self).__init__()
 
-        skip_patch = bool(Storage.get('ignore_patch_updates'))
-        self.updater = Updates()
-        self.updates = self.updater.all(force,
-                                        skip_patch_updates=skip_patch)
-
-        # TODO: Make this use exceptions
-        if self.updater.unreachable:
+        try:
+            self.updates = self.get_updates(force)
+        except Update.ConnectionError:
             print "Mechanic: Couldn't connect to the internet"
             return
 
@@ -76,8 +73,11 @@ class UpdateNotificationWindow(BaseWindow):
     def create_image(self):
         image = NSImage.imageNamed_("ExtensionIcon")
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
-        if image:
-            self.w.image.setImage(imageObject=image)
+        self.w.image.setImage(imageObject=image)
+
+    def get_updates(self, force):
+        skip_patches = bool(Storage.get('ignore_patch_updates'))
+        return Update.all(force, skip_patches=skip_patches)
 
     @property
     def title(self):
@@ -88,4 +88,4 @@ class UpdateNotificationWindow(BaseWindow):
     @property
     def explanation(self):
         text = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
-        Font.string(text=text, size=11)
+        return Font.string(text=text, size=11)
