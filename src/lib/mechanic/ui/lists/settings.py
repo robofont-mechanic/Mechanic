@@ -14,17 +14,16 @@ class SettingsList(ExtensionList):
                  {"title": "Version", "key": "local_version", "editable": False, "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
-        kwargs['columnDescriptions'] = self.__columns
-        kwargs['editCallback'] = self.save
+        kwargs.update({
+            'columnDescriptions': self.__columns,
+            'editCallback': self.save
+        })
+
         configured = [e for e in Extension.all() if e.is_configured]
+
         super(SettingsList, self).__init__(posSize, configured, **kwargs)
 
     def save(self, sender):
-        ignore = Storage.get("ignore")
-        for row in self.get():
-            if not row["check_for_updates"]:
-                ignore[row["name"]] = True
-            elif row["name"] in ignore:
-                del ignore[row["name"]]
-        print ignore
+        rows = self.get()
+        ignore = {r["name"]: True for r in rows if not r["check_for_updates"]}
         Storage.set('ignore', ignore)
