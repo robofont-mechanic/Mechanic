@@ -13,6 +13,7 @@ class BaseTab(VanillaBaseObject):
     def __init__(self, posSize, parent=None):
         self._setupView(self.nsViewClass, posSize)
         self.parent = parent
+        self.content = Group((20, 20, -20, -20))
         self.setup()
 
     def setup(self):
@@ -24,9 +25,6 @@ class BaseTab(VanillaBaseObject):
     def deactivate(self):
         pass
 
-    def setWindowSize(self):
-        self.parent.w.resize(self.tabSize[0], self.tabSize[1], False)
-
     def disable(self):
         if not hasattr(self, 'disabledOverlay'):
             colorTile = NSImage.alloc().initWithSize_((10, 10))
@@ -36,12 +34,12 @@ class BaseTab(VanillaBaseObject):
             NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
             colorTile.unlockFocus()
 
-            self.disabledOverlay = Group((0,0,-0,-0))
+            self.disabledOverlay = Group((0, 0, -0, -0))
             self.disabledOverlay.background = ImageView((0, 0, 0, 0), scale="fit")
             self.disabledOverlay.background.setImage(imageObject=colorTile)
 
             disabledText = Font.string(self.disabledText)
-            self.disabledOverlay.disabledText = TextBox((0,120,-0,-0), self.disabledText, alignment="center")
+            self.disabledOverlay.disabledText = TextBox((0, 120, -0, -0), self.disabledText, alignment="center")
             self.disabledOverlay.disabledText._nsObject.setTextColor_(NSColor.whiteColor())
 
     def enable(self):
@@ -52,17 +50,20 @@ class BaseTab(VanillaBaseObject):
         return self.parent.startProgress(*args, **kwargs)
 
     def closeNotificationSheet(self, sender):
-        self.parent.w.notification.close()
+        self.w.notification.close()
 
     def showNotificationSheet(self, text, size=(300, 80)):
-        self.parent.w.notification = Sheet(size, self.parent.w)
-        self.parent.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.parent.w.notification.closeButton = Button((-115,-37,100,22), 'Close', callback=self.closeNotificationSheet)
-        self.parent.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
-        self.parent.w.notification.open()
+        self.w.notification = Sheet(size, self.parent.w)
+        self.w.notification.text = TextBox((15, 15, -50, -15), text)
+        self.w.notification.closeButton = Button((-115, -37, 100, 22), 'Close', callback=self.closeNotificationSheet)
+        self.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
+        self.w.notification.open()
 
     def showConnectionErrorSheet(self):
         self.showNotificationSheet(self.disabledText)
+
+    def set_default_button(self, button):
+        self.w.setDefaultButton(self.update_button)
 
     @property
     def w(self):

@@ -3,6 +3,7 @@ import requests
 from vanilla import *
 from vanilla.dialogs import getFile
 
+from mechanic.env import default_registry
 from mechanic.extension import Extension
 from mechanic.registry import Registry
 from mechanic.ui.font import Font
@@ -46,7 +47,7 @@ class RegisterTab(BaseTab):
 
         self.content.import_button = Button((-230, -22, 80, 20),
                                             "Import",
-                                            callback=self.getExt)
+                                            callback=self.get_extension)
 
         self.content.register_button = Button((-140, -22, 140, 20),
                                               "Register",
@@ -55,12 +56,12 @@ class RegisterTab(BaseTab):
     def activate(self):
         self.parent.w.setDefaultButton(self.content.register_button)
 
-    def getExt(self, sender):
-        getFile(fileTypes=['roboFontExt'], 
-                parentWindow=self.parent.w, 
-                resultCallback=self.importExt)
+    def get_extension(self, sender):
+        getFile(fileTypes=['roboFontExt'],
+                parentWindow=self.parent.w,
+                resultCallback=self.import_extension)
 
-    def importExt(self, file):
+    def import_extension(self, file):
         extension = Extension(path=file[0])
         if extension.bundle.bundleExists():
             self.content.extensionName.set(extension.bundle.name)
@@ -70,12 +71,13 @@ class RegisterTab(BaseTab):
     def register(self, sender):
         self.progress = self.startProgress('Sending to registry server...')
         try:
-            response = Registry().add(name=self.content.extensionName.get(),
-                                      filename=self.content.extensionFilename.get(),
-                                      repository=self.content.extensionRepository.get())
+            registry = Registry(default_registry)
+            response = registry.add(name=self.content.extensionName.get(),
+                                    filename=self.content.extensionFilename.get(),
+                                    repository=self.content.extensionRepository.get())
             self.progress.close()
             response.raise_for_status()
-            self.showNotificationSheet('%s was added.' % self.extensionName.get())
+            self.showNotificationSheet('%s was added.' % self.content.extensionName.get())
             self.content.extensionName.set('')
             self.content.extensionFilename.set('')
             self.content.extensionRepository.set('')

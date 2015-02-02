@@ -37,7 +37,7 @@ class InstallTab(BaseTab):
         self.update_buttons()
 
 
-    @progress.each('list.selected')
+    @progress.each('content.list.selected')
     @progress.tick('repositoryWillDownload',
                    'Downloading {repository.repo}')
     @progress.tick('repositoryWillExtractDownload',
@@ -65,14 +65,15 @@ class InstallTab(BaseTab):
         self.update_buttons()
 
     def activate(self):
-        self.updateList()
+        self.update_list()
 
-    def updateList(self):
+    def update_list(self):
         if not self.content.list.get():
             try:
-                extensions = Registry().all()
+                extensions = Registry.all()
                 self.enable()
             except:
+                # TODO: Make this only except the real error
                 extensions = []
                 self.disable()
             self.content.list.set(extensions)
