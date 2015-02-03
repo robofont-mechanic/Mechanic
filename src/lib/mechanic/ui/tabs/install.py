@@ -80,7 +80,7 @@ class InstallTab(BaseTab):
         else:
             self.content.list.refresh()
 
-        self.w.setDefaultButton(self.content.install_button)
+        self.set_default_button(self.content.install_button)
 
     def disable(self):
         self.content.list.enable(False)

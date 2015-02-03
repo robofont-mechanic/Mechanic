@@ -63,7 +63,7 @@ class BaseTab(VanillaBaseObject):
         self.showNotificationSheet(self.disabledText)
 
     def set_default_button(self, button):
-        self.w.setDefaultButton(self.update_button)
+        self.w.setDefaultButton(button)
 
     @property
     def w(self):

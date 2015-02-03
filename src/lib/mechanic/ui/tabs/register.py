@@ -54,7 +54,7 @@ class RegisterTab(BaseTab):
                                               callback=self.register)
 
     def activate(self):
-        self.parent.w.setDefaultButton(self.content.register_button)
+        self.set_default_button(self.content.register_button)
 
     def get_extension(self, sender):
         getFile(fileTypes=['roboFontExt'],

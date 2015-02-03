@@ -25,7 +25,7 @@ class UpdatesTab(BaseTab):
         self.update_interface()
 
     def activate(self):
-        self.parent.w.setDefaultButton(self.content.update_button)
+        self.set_default_button(self.content.update_button)
         self.update_list()
 
     @progress.each('installable')
