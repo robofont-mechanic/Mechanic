@@ -32,21 +32,21 @@ class BaseTab(VanillaBaseObject):
     def enable(self):
         self.overlay.show(False)
 
-    def startProgress(self, *args, **kwargs):
+    def start_progress(self, *args, **kwargs):
         return self.parent.startProgress(*args, **kwargs)
 
-    def closeNotificationSheet(self, sender):
+    def close_notification_sheet(self, sender):
         self.w.notification.close()
 
-    def showNotificationSheet(self, text, size=(300, 80)):
+    def show_notification_sheet(self, text, size=(300, 80)):
         self.w.notification = Sheet(size, self.parent.w)
         self.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.w.notification.closeButton = Button((-115, -37, 100, 22), 'Close', callback=self.closeNotificationSheet)
+        self.w.notification.closeButton = Button((-115, -37, 100, 22), 'Close', callback=self.close_notification_sheet)
         self.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
         self.w.notification.open()
 
-    def showConnectionErrorSheet(self):
-        self.showNotificationSheet(self.disabledText)
+    def show_connection_error_sheet(self):
+        self.show_notification_sheet(self.disabledText)
 
     def set_default_button(self, button):
         self.w.setDefaultButton(button)

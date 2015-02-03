@@ -69,7 +69,7 @@ class RegisterTab(BaseTab):
             self.content.extensionRepository.set(extension.repository)
 
     def register(self, sender):
-        self.progress = self.startProgress('Sending to registry server...')
+        self.progress = self.start_progress('Sending to registry server...')
         try:
             registry = Registry(default_registry)
             response = registry.add(name=self.content.extensionName.get(),
@@ -77,7 +77,7 @@ class RegisterTab(BaseTab):
                                     repository=self.content.extensionRepository.get())
             self.progress.close()
             response.raise_for_status()
-            self.showNotificationSheet('%s was added.' % self.content.extensionName.get())
+            self.show_notification_sheet('%s was added.' % self.content.extensionName.get())
             self.content.extensionName.set('')
             self.content.extensionFilename.set('')
             self.content.extensionRepository.set('')
@@ -85,7 +85,7 @@ class RegisterTab(BaseTab):
             errors = response.json()['error']
             if isinstance(errors, basestring): errors = [errors]
             errors = map(lambda e: '%s.' % e.capitalize(), errors)
-            self.showNotificationSheet('\n'.join(errors), size=(300,len(errors)*22 + 60))
+            self.show_notification_sheet('\n'.join(errors), size=(300,len(errors)*22 + 60))
         except requests.exceptions.ConnectionError:
             self.progress.close()
-            self.showConnectionErrorSheet()
+            self.show_connection_error_sheet()
