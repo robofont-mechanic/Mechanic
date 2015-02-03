@@ -6,6 +6,7 @@ from vanilla.dialogs import getFile
 from mechanic.env import default_registry
 from mechanic.extension import Extension
 from mechanic.registry import Registry
+from mechanic.ui.fields.text_field import TextField
 from mechanic.ui.font import Font
 from mechanic.ui.tabs.base import BaseTab
 
@@ -19,31 +20,20 @@ class RegisterTab(BaseTab):
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
     def setup(self):
-        indent = 90
+        self.content.name = TextField((0, 0),
+                                      "Name",
+                                      placeholder="My Extension")
 
-        self.content.extensionNameLabel = TextBox((0, 3, 80, 22),
-                                                  "Name:",
-                                                  alignment="right")
+        self.content.filename = TextField((0, 40),
+                                          "Filename",
+                                          placeholder="MyExtension.roboFontExt")
 
-        self.content.extensionName = EditText((indent, 0, -0, 22),
-                                              placeholder="My Extension")
+        self.content.repository = TextField((0, 80),
+                                            "Repository",
+                                            placeholder="username/MyExtension")
 
-        self.content.extensionFilenameLabel = TextBox((0, 43, 80, 22),
-                                                      "Filename:",
-                                                      alignment="right")
-
-        self.content.extensionFilename = EditText((indent, 40, -0, 22),
-                                                  placeholder="MyExtension.roboFontExt")
-
-        self.content.extensionRepositoryLabel = TextBox((0, 83, 80, 22),
-                                                        "Repository:",
-                                                        alignment="right")
-
-        self.content.extensionRepository = EditText((indent, 80, -0, 22),
-                                                    placeholder="username/MyExtension")
-
-        self.content.explanatoryText = TextBox((indent, 115, -0, 50),
-                                               self.explanation)
+        self.content.explanatory_text = TextBox((TextField.indent, 115, -0, 50),
+                                                self.explanation)
 
         self.content.import_button = Button((-230, -22, 80, 20),
                                             "Import",
@@ -64,23 +54,21 @@ class RegisterTab(BaseTab):
     def import_extension(self, file):
         extension = Extension(path=file[0])
         if extension.bundle.bundleExists():
-            self.content.extensionName.set(extension.bundle.name)
-            self.content.extensionFilename.set(extension.filename)
-            self.content.extensionRepository.set(extension.repository)
+            self.content.name.set(extension.bundle.name)
+            self.content.filename.set(extension.filename)
+            self.content.repository.set(extension.repository)
 
     def register(self, sender):
         self.progress = self.start_progress('Sending to registry server...')
         try:
             registry = Registry(default_registry)
-            response = registry.add(name=self.content.extensionName.get(),
-                                    filename=self.content.extensionFilename.get(),
-                                    repository=self.content.extensionRepository.get())
+            response = registry.add(name=self.content.name.get(),
+                                    filename=self.content.filename.get(),
+                                    repository=self.content.repository.get())
             self.progress.close()
             response.raise_for_status()
-            self.show_notification_sheet('%s was added.' % self.content.extensionName.get())
-            self.content.extensionName.set('')
-            self.content.extensionFilename.set('')
-            self.content.extensionRepository.set('')
+            self.show_notification_sheet('%s was added.' % self.content.name.get())
+            self.clear()
         except requests.exceptions.HTTPError as e:
             errors = response.json()['error']
             if isinstance(errors, basestring): errors = [errors]
@@ -89,3 +77,8 @@ class RegisterTab(BaseTab):
         except requests.exceptions.ConnectionError:
             self.progress.close()
             self.show_connection_error_sheet()
+
+    def clear(self):
+        self.content.name.set('')
+        self.content.filename.set('')
+        self.content.repository.set('')
