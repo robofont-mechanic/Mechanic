@@ -1,32 +1,32 @@
-from vanilla import List
 from mojo.extensions import ExtensionBundle
 
+from mechanic.ui.lists.base import BaseList
 from mechanic.ui.formatters.description import DescriptionFormatter
 from mechanic.ui.cells.circle import CircleCell
 
 
-class InstallationList(List):
+class InstallationList(BaseList):
     """Return an ExtensionList for installation window."""
 
-    def __init__(self, posSize, **kwargs):
-        columns = [{"title": "Installed",
-                    "key": "installed",
-                    "width": 25,
-                    "editable": False,
-                    "cell": CircleCell.alloc().init()},
-                   {"title": "Extension",
-                    "key": "extension",
-                    "width": 400,
-                    "editable": False,
-                    "formatter": DescriptionFormatter.alloc().init()}]
+    columns = [{"title": "Installed",
+                "key": "installed",
+                "width": 25,
+                "editable": False,
+                "cell": CircleCell.alloc().init()},
+               {"title": "Extension",
+                "key": "extension",
+                "width": 400,
+                "editable": False,
+                "formatter": DescriptionFormatter.alloc().init()}]
 
-        super(InstallationList, self).__init__(posSize,
-                                               [],
-                                               rowHeight=39.0,
-                                               columnDescriptions=columns,
-                                               showColumnTitles=False,
-                                               allowsMultipleSelection=True,
-                                               **kwargs)
+    def __init__(self, posSize, **kwargs):
+        kwargs.update({
+            'rowHeight': 39.0,
+            'showColumnTitles': False,
+            'allowsMultipleSelection': True,
+        })
+
+        super(InstallationList, self).__init__(posSize, [], **kwargs)
 
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]

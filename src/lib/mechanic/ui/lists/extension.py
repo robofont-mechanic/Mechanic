@@ -1,7 +1,7 @@
-from vanilla import List
+from mechanic.ui.lists.base import BaseList
 
 
-class ExtensionList(List):
+class ExtensionList(BaseList):
 
     def _wrapItem(self, extension):
         item = {'name': extension.bundle.name,
