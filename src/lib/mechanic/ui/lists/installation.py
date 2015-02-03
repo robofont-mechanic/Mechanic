@@ -16,7 +16,7 @@ class InstallationList(List):
                     "cell": CircleCell.alloc().init()},
                    {"title": "Extension",
                     "key": "extension",
-                    "width": 200,
+                    "width": 400,
                     "editable": False,
                     "formatter": DescriptionFormatter.alloc().init()}]
 
