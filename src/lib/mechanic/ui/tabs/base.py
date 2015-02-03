@@ -28,7 +28,6 @@ class BaseTab(VanillaBaseObject):
 
     def disable(self):
         self.overlay.show(True)
-        print self._getContentView()
 
     def enable(self):
         self.overlay.show(False)
