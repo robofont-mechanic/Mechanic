@@ -15,7 +15,7 @@ class RegisterTab(BaseTab):
     image = "toolbarScriptOpen"
     identifier = "register"
 
-    tabSize = (500, 240)
+    tab_size = (500, 240)
     explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
     def setup(self):

@@ -18,8 +18,8 @@ class InstallTab(BaseTab):
     image = "toolbarRun"
     identifier = "install"
 
-    tabSize = (500, 400)
-    disabledText = "Couldn't connect to the registry server..."
+    tab_size = (500, 400)
+    disabled_text = "Couldn't connect to the registry server..."
 
     def setup(self):
         self.content.list = InstallationList((0, 0, -0, -40),

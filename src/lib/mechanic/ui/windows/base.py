@@ -44,7 +44,7 @@ class BaseWindow(BaseWindowController):
             tab.view = item['view']((0, 0, -0, -0), self)
 
     def set_window_size(self, tab):
-        self.w.resize(tab.tabSize[0], tab.tabSize[1], False)
+        self.w.resize(tab.tab_size[0], tab.tab_size[1], False)
 
     @property
     def current_tab(self):
