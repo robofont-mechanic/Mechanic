@@ -1,8 +1,9 @@
-from AppKit import *
+from AppKit import NSView
 from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, \
     Button, Group
 
 from mechanic.ui.font import Font
+from mechanic.ui.overlay import Overlay
 
 
 class BaseTab(VanillaBaseObject):
@@ -14,7 +15,7 @@ class BaseTab(VanillaBaseObject):
         self._setupView(self.ns_view_class, dimensions)
         self.parent = parent
         self.content = Group((20, 20, -20, -20))
-        self.overlay = DisabledOverlay(self.disabled_text)
+        self.overlay = Overlay(self.disabled_text)
         self.setup()
 
     def setup(self):
@@ -41,7 +42,9 @@ class BaseTab(VanillaBaseObject):
     def show_notification_sheet(self, text, size=(300, 80)):
         self.w.notification = Sheet(size, self.parent.w)
         self.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.w.notification.closeButton = Button((-115, -37, 100, 22), 'Close', callback=self.close_notification_sheet)
+        self.w.notification.closeButton = Button((-115, -37, 100, 22),
+                                                 'Close',
+                                                 callback=self.close_notification_sheet)
         self.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
         self.w.notification.open()
 
@@ -54,38 +57,3 @@ class BaseTab(VanillaBaseObject):
     @property
     def w(self):
         return self.parent.w
-
-
-class DisabledOverlay(Group):
-
-    def __init__(self, text):
-        super(DisabledOverlay, self).__init__((0, 0, -0, -0))
-        self.background = Background((0, 0, -0, -0))
-        self.disabledText = CenteredText((0, 120, -0, 17), text)
-        self.show(False)
-
-
-class Background(ImageView):
-
-    def __init__(self, dimensions):
-        super(Background, self).__init__(dimensions, scale="fit")
-
-        colorTile = NSImage.alloc().initWithSize_((10, 10))
-        colorTile.lockFocus()
-        color = NSColor.colorWithCalibratedWhite_alpha_(0, 0.65)
-        color.set()
-        NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
-        colorTile.unlockFocus()
-
-        self.setImage(imageObject=colorTile)
-
-
-class CenteredText(TextBox):
-
-    nsTextFieldClass = NSTextField
-
-    def __init__(self, dimensions, text):
-        super(CenteredText, self).__init__(dimensions,
-                                           text,
-                                           alignment="center")
-        self._nsObject.setTextColor_(NSColor.whiteColor())
