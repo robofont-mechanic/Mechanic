@@ -1,5 +1,6 @@
 import time
 
+from mechanic import env
 from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.extension import Extension
@@ -15,7 +16,8 @@ class Update(object):
 
     @classmethod
     def checked_recently(cls):
-        return cls.last_checked() > time.time() - (60 * 60)
+        print type(env.updates_cache_interval)
+        return cls.last_checked() > time.time() - env.updates_cache_interval
 
     @classmethod
     def all(cls, force=False, skip_patches=False):
