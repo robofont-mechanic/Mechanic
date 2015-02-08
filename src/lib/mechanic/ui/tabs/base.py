@@ -49,7 +49,7 @@ class BaseTab(VanillaBaseObject):
         self.w.notification.open()
 
     def show_connection_error_sheet(self):
-        self.show_notification_sheet(self.disabledText)
+        self.show_notification_sheet(self.disabled_text)
 
     def set_default_button(self, button):
         self.w.setDefaultButton(button)
