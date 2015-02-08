@@ -1,6 +1,5 @@
 from AppKit import NSImage
 from vanilla import *
-from vanilla.dialogs import getFile
 
 from mechanic.ui import progress
 from mechanic.ui.font import Font

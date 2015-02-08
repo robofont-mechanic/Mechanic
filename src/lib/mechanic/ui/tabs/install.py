@@ -1,7 +1,6 @@
 import requests
 
 from vanilla import *
-from vanilla.dialogs import getFile
 from mojo.extensions import ExtensionBundle
 
 from mechanic.extension import Extension
