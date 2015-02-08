@@ -30,6 +30,7 @@ class Overlay(Group):
                                                        alignment="center")
             self._nsObject.setTextColor_(NSColor.whiteColor())
 
+
     def __init__(self, text):
         super(Overlay, self).__init__((0, 0, -0, -0))
         self.background = Overlay.Background((0, 0, -0, -0))

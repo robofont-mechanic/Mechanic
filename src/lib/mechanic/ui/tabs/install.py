@@ -91,11 +91,11 @@ class InstallTab(BaseTab):
         self.update_uninstall_button_label()
 
     def update_uninstall_button_label(self, sender=None):
-        self.content.uninstall_button._nsObject.setEnabled_(len(self.uninstallable) > 0)
+        self.content.uninstall_button.enable(len(self.uninstallable) > 0)
 
     def update_install_button_label(self, sender=None):
         selections = self.content.list.getSelection()
-        self.content.install_button._nsObject.setEnabled_(selections)
+        self.content.install_button.enable(selections)
         if len(selections) > 1:
             label = "Install %d Extensions" % len(selections)
         elif len(selections) is 1:
