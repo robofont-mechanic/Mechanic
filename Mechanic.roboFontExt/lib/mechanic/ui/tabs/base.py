@@ -1,19 +1,21 @@
-from AppKit import *
+from AppKit import NSView
 from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, \
     Button, Group
 
 from mechanic.ui.font import Font
+from mechanic.ui.overlay import Overlay
 
 
 class BaseTab(VanillaBaseObject):
-    nsViewClass = NSView
-    disabledText = "Couldn't connect to the Internet..."
-    tabSize = (500, 300)
+    ns_view_class = NSView
+    disabled_text = "Couldn't connect to the Internet..."
+    tab_size = (500, 300)
 
-    def __init__(self, posSize, parent=None):
-        self._setupView(self.nsViewClass, posSize)
+    def __init__(self, dimensions, parent=None):
+        self._setupView(self.ns_view_class, dimensions)
         self.parent = parent
         self.content = Group((20, 20, -20, -20))
+        self.overlay = Overlay(self.disabled_text)
         self.setup()
 
     def setup(self):
@@ -26,44 +28,31 @@ class BaseTab(VanillaBaseObject):
         pass
 
     def disable(self):
-        if not hasattr(self, 'disabledOverlay'):
-            colorTile = NSImage.alloc().initWithSize_((10, 10))
-            colorTile.lockFocus()
-            color = NSColor.colorWithCalibratedWhite_alpha_(0, 0.65)
-            color.set()
-            NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
-            colorTile.unlockFocus()
-
-            self.disabledOverlay = Group((0, 0, -0, -0))
-            self.disabledOverlay.background = ImageView((0, 0, 0, 0), scale="fit")
-            self.disabledOverlay.background.setImage(imageObject=colorTile)
-
-            disabledText = Font.string(self.disabledText)
-            self.disabledOverlay.disabledText = TextBox((0, 120, -0, -0), self.disabledText, alignment="center")
-            self.disabledOverlay.disabledText._nsObject.setTextColor_(NSColor.whiteColor())
+        self.overlay.show(True)
 
     def enable(self):
-        if hasattr(self, 'disabledOverlay'):
-            self.disabledOverlay._nsObject.removeFromSuperview()
+        self.overlay.show(False)
 
-    def startProgress(self, *args, **kwargs):
+    def start_progress(self, *args, **kwargs):
         return self.parent.startProgress(*args, **kwargs)
 
-    def closeNotificationSheet(self, sender):
+    def close_notification_sheet(self, sender):
         self.w.notification.close()
 
-    def showNotificationSheet(self, text, size=(300, 80)):
+    def show_notification_sheet(self, text, size=(300, 80)):
         self.w.notification = Sheet(size, self.parent.w)
         self.w.notification.text = TextBox((15, 15, -50, -15), text)
-        self.w.notification.closeButton = Button((-115, -37, 100, 22), 'Close', callback=self.closeNotificationSheet)
+        self.w.notification.closeButton = Button((-115, -37, 100, 22),
+                                                 'Close',
+                                                 callback=self.close_notification_sheet)
         self.w.notification.setDefaultButton(self.parent.w.notification.closeButton)
         self.w.notification.open()
 
-    def showConnectionErrorSheet(self):
-        self.showNotificationSheet(self.disabledText)
+    def show_connection_error_sheet(self):
+        self.show_notification_sheet(self.disabledText)
 
     def set_default_button(self, button):
-        self.w.setDefaultButton(self.update_button)
+        self.w.setDefaultButton(button)
 
     @property
     def w(self):

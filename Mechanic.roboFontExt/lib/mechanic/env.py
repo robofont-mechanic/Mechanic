@@ -3,15 +3,17 @@
     the compiled extension.
 """
 
-import os.path as p
-import ConfigParser
+import os.path as __p
+import ConfigParser as __cp
 
-config = ConfigParser.ConfigParser()
-config.read(p.abspath(p.join(p.dirname(__file__), '..', '..', '.env')))
+__f = __p.abspath(__p.join(__p.dirname(__file__), '..', '..', '.env'))
+__c = __cp.ConfigParser()
+__c.read(__f)
 
-for key, value in config.items('mechanic'):
+for key, value in __c.items('mechanic'):
     globals()[key] = value
 
-del config
-del ConfigParser
-del p
+del __c
+del __cp
+del __p
+del __f

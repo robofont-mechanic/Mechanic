@@ -9,12 +9,22 @@ from mechanic.ui.formatters.version import VersionFormatter
 class UpdateList(ExtensionList):
     """Return an ExtensionList for updates window."""
 
-    __columns = [{"title": "Install", "key": "install", "width": 40, "editable": True, "cell": CheckBoxListCell()},
-                 {"title": "Extension", "key": "name", "width": 300, "editable": False},
-                 {"title": "Version", "key": "remote_version", "width": 60, "editable": False, "formatter": VersionFormatter.alloc().init()}]
+    columns = [{"title": "Install",
+                "key": "install",
+                "width": 40,
+                "editable": True,
+                "cell": CheckBoxListCell()},
+               {"title": "Extension",
+                "key": "name",
+                "width": 300,
+                "editable": False},
+               {"title": "Version",
+                "key": "remote_version",
+                "width": 60,
+                "editable": False,
+                "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
-        kwargs['columnDescriptions'] = self.__columns
         super(UpdateList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):

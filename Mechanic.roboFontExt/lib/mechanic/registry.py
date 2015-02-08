@@ -14,13 +14,13 @@ class Registry(object):
         self.base_url = base_url
 
     def get(self):
-        print "Mechanic: fetching extensions from %s..." % self.url
+        print "Mechanic: fetching extensions from %s..." % self.base_url
         response = requests.get(self.url)
         response.raise_for_status()
         return response.json()
 
     def add(self, **data):
-        print "Mechanic: posting extension to %s..." % self.url
+        print "Mechanic: posting extension to %s..." % self.base_url
         response = requests.post(self.url, data=data)
         return response
 

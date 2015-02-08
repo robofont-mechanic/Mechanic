@@ -1,8 +1,8 @@
 import os
 
 from mojo.extensions import ExtensionBundle
-from version import Version
 
+from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
 from mechanic.event import evented
@@ -22,7 +22,6 @@ class Extension(object):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
         self.config = Configuration(self.config_path)
-        self.remote = self.initialize_remote()
 
     @evented()
     def update(self, extension_path=None):
@@ -35,31 +34,37 @@ class Extension(object):
 
     @evented()
     def install(self):
-        # TODO: Make this a noop if path isn't present
         self.bundle.install()
 
     @evented()
     def uninstall(self):
         self.bundle.deinstall()
 
-    def initialize_remote(self):
-        if self.repository:
-            return GithubRepo(self.repository,
-                              name=self.name,
-                              extension_path=self.extension_path)
+    @property
+    def remote(self):
+        if not self.repository:
+            return None
+
+        try:
+            return self.__remote
+        except AttributeError:
+            self.__remote = GithubRepo(self.repository,
+                                       name=self.name,
+                                       extension_path=self.extension_path)
+            return self.__remote
 
     @property
     def is_current_version(self):
         """Return if extension is at curent version"""
-        # TODO: This requires too much knowledge about the GithubRepo class.
-        # Accessing version should fetch the data internally.
-        if not self.remote.version:
-            self.remote.read()
-        return Version(self.remote.version) <= self.version
+        return self.remote.version <= self.version
 
     @property
     def may_update(self):
         return not self.is_ignored and self.is_configured
+
+    @property
+    def should_update(self):
+        return self.may_update and not self.is_current_version
 
     @property
     def is_ignored(self):
@@ -93,3 +98,7 @@ class Extension(object):
     @property
     def installed(self):
         return self.bundle.bundleExists()
+
+    @property
+    def filename(self):
+        return os.path.basename(self.bundle.bundlePath())

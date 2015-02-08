@@ -6,8 +6,8 @@ import errno
 import requests
 
 from zipfile import ZipFile
-from version import Version
 
+from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.event import evented
 
@@ -25,31 +25,28 @@ class GithubRepo(object):
         self.username, self.name = repo.split('/')
         if name is not None:
             self.name = name
-        self.version = None
 
     @evented('repository')
     def read(self):
         """Return the version and location of remote extension."""
-
-        if not hasattr(self, 'data'):
-            try:
-                if self.extension_path:
-                    plist_path = os.path.join(self.extension_path, 'info.plist')
-                    plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-                    response = GithubRequest(plist_url).get()
-                    plist = plistlib.readPlistFromString(response.content)
-                    self.version = plist['version']
-                    self.zip = self.zip_url % {'repo': self.repo}
-                elif self._get_tags():
-                    self.tags.sort(key=lambda s: Version(s["name"]),
-                                   reverse=True)
-                    self.zip = self.tags[0]['zipball_url']
-                    self.version = self.tags[0]['name']
-                else:
-                    self.zip = self.zip_url % {'repo': self.repo}
-            except requests.exceptions.HTTPError:
-                print "Couldn't get information about %s from %s" % (self.name, self.repo)
-                self.version = '0.0.0'
+        try:
+            if self.extension_path:
+                plist_path = os.path.join(self.extension_path, 'info.plist')
+                plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
+                response = GithubRequest(plist_url).get()
+                plist = plistlib.readPlistFromString(response.content)
+                self.version = plist['version']
+                self.zip = self.zip_url % {'repo': self.repo}
+            elif self._get_tags():
+                self.tags.sort(key=lambda s: Version(s["name"]),
+                               reverse=True)
+                self.zip = self.tags[0]['zipball_url']
+                self.version = self.tags[0]['name']
+            else:
+                self.zip = self.zip_url % {'repo': self.repo}
+        except requests.exceptions.HTTPError:
+            print "Couldn't get information about %s from %s" % (self.name, self.repo)
+            self.version = '0.0.0'
 
     def setup_download(self):
         """Clear extension tmp dir, open download stream and local file."""
@@ -64,15 +61,14 @@ class GithubRepo(object):
     @evented('repository')
     def extract_download(self):
         """Extract downloaded zip file and return extension path."""
-        zip_file = ZipFile(self.file.name)
-        zip_file.extractall(self.tmp_path)
+        ZipFile(self.file.name).extractall(self.tmp_path)
         os.remove(self.file.name)
 
         folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
 
         if self.extension_path:
             path = os.path.join(folder, self.extension_path)
-        else: 
+        else:
             if self.filename:
                 match = '*%s' % self.filename
             else:
@@ -80,7 +76,7 @@ class GithubRepo(object):
 
             # TODO: Make this use a generator
             matches = []
-            for root, dirnames, filenames in os.walk(self.tmp_path):
+            for root, dirnames, _ in os.walk(self.tmp_path):
                 for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
                     matches.append(os.path.join(root, dirname))
 
@@ -111,6 +107,18 @@ class GithubRepo(object):
     @property
     def tmp_path(self):
         return os.path.join("/", "tmp", "Mechanic", self.repo)
+
+    @property
+    def version(self):
+        if hasattr(self, '_version'):
+            return Version(self._version)
+        else:
+            self.read()
+            return self.version
+
+    @version.setter
+    def version(self, value):
+        self._version = value
 
     def _get_tags(self):
         url = self.tags_url % {'repo': self.repo}

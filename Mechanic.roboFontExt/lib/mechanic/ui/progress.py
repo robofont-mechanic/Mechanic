@@ -7,15 +7,15 @@ class each(object):
         self.countable = countable
 
     def __call__(self, fn):
-    
+
         try:
             ticks = fn.ticks
         except:
             ticks = 0
-    
+
         def wrapped(ui, *args, **kwargs):
             count = len(eval('ui.{}'.format(self.countable)))
-            ui.progress = ui.startProgress('', count * ticks)
+            ui.progress = ui.start_progress('', count * ticks)
             fn(ui, *args, **kwargs)
             ui.progress.close()
 
