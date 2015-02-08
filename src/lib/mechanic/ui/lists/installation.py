@@ -1,3 +1,5 @@
+import webbrowser
+
 from mojo.extensions import ExtensionBundle
 
 from mechanic.ui.lists.base import BaseList
@@ -24,6 +26,7 @@ class InstallationList(BaseList):
             'rowHeight': 39.0,
             'showColumnTitles': False,
             'allowsMultipleSelection': True,
+            'doubleClickCallback': self.open_repo
         })
 
         super(InstallationList, self).__init__(posSize, [], **kwargs)
@@ -49,6 +52,10 @@ class InstallationList(BaseList):
 
     def refresh(self):
         self.set(self.get())
+
+    def open_repo(self, sender):
+        for item in self.selected:
+            webbrowser.open('http://github.com/%s' % item['repository'])
 
     @property
     def selected(self):

@@ -1,4 +1,3 @@
-import webbrowser
 import requests
 
 from vanilla import *
@@ -23,8 +22,7 @@ class InstallTab(BaseTab):
 
     def setup(self):
         self.content.list = InstallationList((0, 0, -0, -40),
-                                             selectionCallback=self.update_buttons,
-                                             doubleClickCallback=self.open_repo)
+                                             selectionCallback=self.update_buttons)
 
         self.content.uninstall_button = Button((-270, -22, 100, 20),
                                                "Uninstall",
@@ -89,10 +87,6 @@ class InstallTab(BaseTab):
     def enable(self):
         self.content.list.enable(True)
         super(InstallTab, self).enable()
-
-    def open_repo(self, sender):
-        for item in self.content.list.selected:
-            webbrowser.open('http://github.com/%s' % item['repository'])
 
     def update_buttons(self, sender=None):
         self.update_install_button_label()
