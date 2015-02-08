@@ -1,5 +1,5 @@
 import time
-from vanilla import *
+from vanilla import Button, TextBox
 
 from mechanic.update import Update
 from mechanic.ui import progress

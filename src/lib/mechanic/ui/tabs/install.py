@@ -71,13 +71,13 @@ class InstallTab(BaseTab):
 
         self.set_default_button(self.content.install_button)
 
-    def disable(self, text=""):
+    def disable(self, *args, **kwargs):
         self.list.enable(False)
-        super(InstallTab, self).disable(text)
+        super(InstallTab, self).disable(*args, **kwargs)
 
-    def enable(self):
+    def enable(self, *args, **kwargs):
         self.list.enable(True)
-        super(InstallTab, self).enable(text)
+        super(InstallTab, self).enable(*args, **kwargs)
 
     def update_buttons(self, sender=None):
         self.update_install_button_label()
