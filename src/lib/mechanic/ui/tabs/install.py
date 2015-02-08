@@ -1,5 +1,4 @@
 from vanilla import *
-from mojo.extensions import ExtensionBundle
 
 from mechanic.extension import Extension
 from mechanic.registry import Registry
