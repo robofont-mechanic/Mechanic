@@ -1,6 +1,5 @@
 from AppKit import NSView
-from vanilla import VanillaBaseObject, Sheet, TextBox, ImageView, \
-    Button, Group
+from vanilla import VanillaBaseObject, Sheet, TextBox, Button, Group
 
 from mechanic.ui.font import Font
 from mechanic.ui.overlay import Overlay
@@ -8,14 +7,12 @@ from mechanic.ui.overlay import Overlay
 
 class BaseTab(VanillaBaseObject):
     ns_view_class = NSView
-    disabled_text = "Couldn't connect to the Internet..."
     tab_size = (500, 300)
 
     def __init__(self, dimensions, parent=None):
         self._setupView(self.ns_view_class, dimensions)
         self.parent = parent
         self.content = Group((20, 20, -20, -20))
-        self.overlay = Overlay(self.disabled_text)
         self.setup()
 
     def setup(self):
@@ -27,11 +24,14 @@ class BaseTab(VanillaBaseObject):
     def deactivate(self):
         pass
 
-    def disable(self):
-        self.overlay.show(True)
+    def disable(self, text=''):
+        if hasattr(self, 'overlay'):
+            del self.overlay
+        self.overlay = Overlay(text)
 
     def enable(self):
-        self.overlay.show(False)
+        if hasattr(self, 'overlay'):
+            del self.overlay
 
     def start_progress(self, *args, **kwargs):
         return self.parent.startProgress(*args, **kwargs)
@@ -49,7 +49,7 @@ class BaseTab(VanillaBaseObject):
         self.w.notification.open()
 
     def show_connection_error_sheet(self):
-        self.show_notification_sheet(self.disabled_text)
+        self.show_notification_sheet("Couldn't connect to the Internet...")
 
     def set_default_button(self, button):
         self.w.setDefaultButton(button)

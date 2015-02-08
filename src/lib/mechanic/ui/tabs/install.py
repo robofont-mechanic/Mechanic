@@ -16,11 +16,11 @@ class InstallTab(BaseTab):
     identifier = "install"
 
     tab_size = (500, 400)
-    disabled_text = "Couldn't connect to the registry server..."
 
     def setup(self):
-        self.content.list = InstallationList((0, 0, -0, -40),
-                                             selectionCallback=self.update_buttons)
+        # Can't use self.content here because of stacking issues with Overlay
+        self.list = InstallationList((20, 20, -20, -60),
+                                     selectionCallback=self.update_buttons)
 
         self.content.uninstall_button = Button((-270, -22, 100, 20),
                                                "Uninstall",
@@ -41,12 +41,12 @@ class InstallTab(BaseTab):
     @progress.tick('extensionWillInstall',
                    'Installing {extension.bundle.name}')
     def install(self, sender):
-        for item in self.content.list.selected:
+        for item in self.list.selected:
             Extension.install_remote(repository=item['repository'],
                                      name=item['name'],
                                      filename=item['filename'])
 
-        self.content.list.refresh()
+        self.list.refresh()
         self.update_buttons()
 
     @progress.each('uninstallable')
@@ -56,34 +56,28 @@ class InstallTab(BaseTab):
         for extension in self.uninstallable:
             extension.uninstall()
 
-        self.content.list.refresh()
+        self.list.refresh()
         self.update_buttons()
 
     def activate(self):
         self.update_list()
 
     def update_list(self):
-        if not self.content.list.get():
-            try:
-                extensions = Registry.all()
-                self.enable()
-            except:
-                # TODO: Make this only except the real error
-                extensions = []
-                self.disable()
-            self.content.list.set(extensions)
-        else:
-            self.content.list.refresh()
+        try:
+            self.list.set(Registry.all())
+            self.enable()
+        except requests.ConnectionError:
+            self.disable("Couldn't connect to the registry server...")
 
         self.set_default_button(self.content.install_button)
 
-    def disable(self):
-        self.content.list.enable(False)
-        super(InstallTab, self).disable()
+    def disable(self, text=""):
+        self.list.enable(False)
+        super(InstallTab, self).disable(text)
 
     def enable(self):
-        self.content.list.enable(True)
-        super(InstallTab, self).enable()
+        self.list.enable(True)
+        super(InstallTab, self).enable(text)
 
     def update_buttons(self, sender=None):
         self.update_install_button_label()
@@ -93,7 +87,7 @@ class InstallTab(BaseTab):
         self.content.uninstall_button.enable(len(self.uninstallable) > 0)
 
     def update_install_button_label(self, sender=None):
-        selections = self.content.list.getSelection()
+        selections = self.list.getSelection()
         self.content.install_button.enable(selections)
         if len(selections) > 1:
             label = "Install %d Extensions" % len(selections)
@@ -105,7 +99,7 @@ class InstallTab(BaseTab):
 
     @property
     def uninstallable(self):
-        filenames = [item['filename'] for item in self.content.list.selected]
+        filenames = [item['filename'] for item in self.list.selected]
         names = [filename.split("/")[-1] for filename in filenames]
         extensions = [Extension(name=name) for name in names]
         return [ext for ext in extensions if ext.installed]

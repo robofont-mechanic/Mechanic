@@ -35,4 +35,6 @@ class Overlay(Group):
         super(Overlay, self).__init__((0, 0, -0, -0))
         self.background = Overlay.Background((0, 0, -0, -0))
         self.disabledText = Overlay.CenteredText((0, 120, -0, 17), text)
-        self.show(False)
+
+    def __del__(self):
+        self._nsObject.removeFromSuperview()
