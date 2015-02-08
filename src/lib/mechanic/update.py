@@ -16,7 +16,6 @@ class Update(object):
 
     @classmethod
     def checked_recently(cls):
-        print type(env.updates_cache_interval)
         return cls.last_checked() > time.time() - env.updates_cache_interval
 
     @classmethod
