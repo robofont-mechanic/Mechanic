@@ -1,6 +1,6 @@
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 
-from mechanic.env import environment
+from mechanic import env
 
 
 class Storage(object):
@@ -10,7 +10,7 @@ class Storage(object):
 
     @classmethod
     def generate_key(cls, base):
-        return '.'.join((cls.namespace, environment, base))
+        return '.'.join((cls.namespace, env.environment, base))
 
     @classmethod
     def get(cls, base):

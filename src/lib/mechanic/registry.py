@@ -1,6 +1,6 @@
 import requests
 
-from mechanic.env import default_registry
+from mechanic import env
 
 
 class Registry(object):
@@ -9,7 +9,7 @@ class Registry(object):
 
     @classmethod
     def all(self):
-        return [extension for url in [default_registry]
+        return [extension for url in [env.default_registry]
                           for extension in Registry(url).extensions()]
 
     def __init__(self, base_url):
