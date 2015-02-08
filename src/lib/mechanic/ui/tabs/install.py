@@ -1,5 +1,3 @@
-import requests
-
 from vanilla import *
 from mojo.extensions import ExtensionBundle
 
@@ -66,10 +64,9 @@ class InstallTab(BaseTab):
         try:
             self.list.set(Registry.all())
             self.enable()
-        except requests.ConnectionError:
+            self.set_default_button(self.content.install_button)
+        except Registry.ConnectionError:
             self.disable("Couldn't connect to the registry server...")
-
-        self.set_default_button(self.content.install_button)
 
     def disable(self, *args, **kwargs):
         self.list.enable(False)
