@@ -14,7 +14,8 @@ class UpdatesTab(BaseTab):
 
     def setup(self):
         self.content.list = UpdateList((0, 0, -0, -40),
-                                       editCallback=self.update_interface)
+                                       editCallback=self.update_interface,
+                                       refreshCallback=self.update_interface)
 
         self.content.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
                                                           sizeStyle="small")
@@ -43,7 +44,6 @@ class UpdatesTab(BaseTab):
 
     def update_list(self, force=False):
         self.content.list.refresh(force=force)
-        self.update_interface()
 
     def update_interface(self, sender=None):
         self.content.updated_at_text.update()

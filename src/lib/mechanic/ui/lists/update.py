@@ -25,11 +25,16 @@ class UpdateList(ExtensionList):
                 "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
+        self.refresh_callback = kwargs.get('refreshCallback')
+        if self.refresh_callback:
+            del kwargs['refreshCallback']
         super(UpdateList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):
         try:
             self.set(Update.all(force))
+            if self.refresh_callback:
+                self.refresh_callback()
         except Update.ConnectionError:
             print "Mechanic: Couldn't connect to the internet"
             return
