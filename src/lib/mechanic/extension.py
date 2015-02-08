@@ -18,6 +18,11 @@ class Extension(object):
     def all(cls):
         return [cls(name=n) for n in ExtensionBundle.allExtensions()]
 
+    @classmethod
+    def install_remote(cls, repository, name, filename):
+        remote = GithubRepo(repository, name, filename)
+        return cls(path=remote.download()).install()
+
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)

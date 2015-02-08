@@ -6,7 +6,6 @@ from mojo.extensions import ExtensionBundle
 
 from mechanic.extension import Extension
 from mechanic.registry import Registry
-from mechanic.repositories.github import GithubRepo
 from mechanic.ui import progress
 from mechanic.ui.tabs.base import BaseTab
 from mechanic.ui.lists.installation import InstallationList
@@ -44,10 +43,9 @@ class InstallTab(BaseTab):
                    'Installing {extension.bundle.name}')
     def install(self, sender):
         for item in self.content.list.selected:
-            remote = GithubRepo(item['repository'],
-                                name=item['name'],
-                                filename=item['filename'])
-            Extension(path=remote.download()).install()
+            Extension.install_remote(repository=item['repository'],
+                                     name=item['name'],
+                                     filename=item['filename'])
 
         self.content.list.refresh()
         self.update_buttons()
