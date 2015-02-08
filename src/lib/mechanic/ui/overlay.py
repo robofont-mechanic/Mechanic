@@ -7,12 +7,14 @@ class Overlay(Group):
 
     class Background(ImageView):
 
+        opacity = 0.8
+
         def __init__(self, dimensions):
             super(Overlay.Background, self).__init__(dimensions, scale="fit")
 
             colorTile = NSImage.alloc().initWithSize_((10, 10))
             colorTile.lockFocus()
-            color = NSColor.colorWithCalibratedWhite_alpha_(0, 0.65)
+            color = NSColor.colorWithCalibratedWhite_alpha_(0, self.opacity)
             color.set()
             NSRectFillUsingOperation(((0, 0), (10, 10)), NSCompositeSourceOver)
             colorTile.unlockFocus()
