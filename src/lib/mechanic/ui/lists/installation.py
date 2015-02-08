@@ -1,7 +1,6 @@
 import webbrowser
 
-from mojo.extensions import ExtensionBundle
-
+from mechanic.extension import Extension
 from mechanic.ui.lists.base import BaseList
 from mechanic.ui.formatters.description import DescriptionFormatter
 from mechanic.ui.cells.circle import CircleCell
@@ -33,7 +32,7 @@ class InstallationList(BaseList):
 
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]
-        item = {'installed': ExtensionBundle(name=name).bundleExists(),
+        item = {'installed': Extension(name=name).installed,
                 'extension': extension}
         return super(InstallationList, self)._wrapItem(item)
 
