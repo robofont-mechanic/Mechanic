@@ -30,7 +30,7 @@ class InstallTab(BaseTab):
         self.update_buttons()
 
 
-    @progress.each('content.list.selected')
+    @progress.each('list.selected')
     @progress.tick('repositoryWillDownload',
                    'Downloading {repository.repo}')
     @progress.tick('repositoryWillExtractDownload',
