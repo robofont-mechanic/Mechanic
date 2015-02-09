@@ -1,4 +1,4 @@
 from mechanic.ui.windows.main import MechanicWindow
 
 
-MechanicWindow('settings')
+MechanicWindow().open('settings')

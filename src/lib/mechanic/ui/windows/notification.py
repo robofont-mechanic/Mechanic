@@ -20,8 +20,6 @@ class UpdateNotificationWindow(BaseWindow):
         threading.Thread(target=cls).start()
 
     def __init__(self, force=False):
-        super(UpdateNotificationWindow, self).__init__()
-
         try:
             self.updates = self.get_updates(force)
         except Update.ConnectionError:
