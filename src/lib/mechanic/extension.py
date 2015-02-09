@@ -7,6 +7,7 @@ from mechanic.storage import Storage
 from mechanic.repositories.github import GithubRepo
 from mechanic.event import evented
 from mechanic.configuration import Configuration
+from mechanic.lazy_property import lazy_property
 
 
 class Extension(object):
@@ -45,18 +46,11 @@ class Extension(object):
     def uninstall(self):
         self.bundle.deinstall()
 
-    @property
+    @lazy_property
     def remote(self):
-        if not self.repository:
-            return None
-
-        try:
-            return self.__remote
-        except AttributeError:
-            self.__remote = GithubRepo(self.repository,
-                                       name=self.name,
-                                       extension_path=self.extension_path)
-            return self.__remote
+        return GithubRepo(self.repository,
+                          name=self.name,
+                          extension_path=self.extension_path)
 
     @property
     def is_current_version(self):
@@ -77,7 +71,7 @@ class Extension(object):
 
     @property
     def is_configured(self):
-        return self.remote is not None
+        return self.repository is not None
 
     @property
     def config_path(self):
