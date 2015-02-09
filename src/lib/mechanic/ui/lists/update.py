@@ -9,6 +9,8 @@ from mechanic.ui.formatters.version import VersionFormatter
 class UpdateList(ExtensionList):
     """Return an ExtensionList for updates window."""
 
+    class ConnectionError(Exception): pass
+
     columns = [{"title": "Install",
                 "key": "install",
                 "width": 40,
@@ -36,8 +38,7 @@ class UpdateList(ExtensionList):
             if self.refresh_callback:
                 self.refresh_callback()
         except Update.ConnectionError:
-            print "Mechanic: Couldn't connect to the internet"
-            return
+            raise UpdateList.ConnectionError
 
     def _wrapItem(self, extension):
         item = super(UpdateList, self)._wrapItem(extension)

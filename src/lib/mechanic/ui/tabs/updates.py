@@ -13,9 +13,9 @@ class UpdatesTab(BaseTab):
     identifier = "updates"
 
     def setup(self):
-        self.content.list = UpdateList((0, 0, -0, -40),
-                                       editCallback=self.update_interface,
-                                       refreshCallback=self.update_interface)
+        self.list = UpdateList((20, 20, -20, -60),
+                               editCallback=self.update_interface,
+                               refreshCallback=self.update_interface)
 
         self.content.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
                                                           sizeStyle="small")
@@ -43,15 +43,27 @@ class UpdatesTab(BaseTab):
         self.update_list(True)
 
     def update_list(self, force=False):
-        self.content.list.refresh(force=force)
+        try:
+            self.list.refresh(force=force)
+            self.enable()
+        except UpdateList.ConnectionError:
+            self.disable("Couldn't connect to the internet...")
 
     def update_interface(self, sender=None):
         self.content.updated_at_text.update()
-        self.content.update_button.update(len(self.content.list.selected))
+        self.content.update_button.update(len(self.list.selected))
+
+    def disable(self, *args, **kwargs):
+        self.list.enable(False)
+        super(UpdatesTab, self).disable(*args, **kwargs)
+
+    def enable(self, *args, **kwargs):
+        self.list.enable(True)
+        super(UpdatesTab, self).enable(*args, **kwargs)
 
     @property
     def installable(self):
-        return self.content.list.selected_extensions
+        return self.list.selected_extensions
 
 
 class UpdateButton(Button):
