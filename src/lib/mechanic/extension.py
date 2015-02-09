@@ -29,13 +29,13 @@ class Extension(object):
         self.config = Configuration(self.config_path)
 
     @evented()
-    def update(self, extension_path=None):
+    def update(self, path=None):
         """Download and install the latest version of the extension."""
 
-        if extension_path is None:
-            extension_path = self.remote.download()
+        if path is None:
+            path = self.remote.download()
 
-        Extension(path=extension_path).install()
+        Extension(path=path).install()
 
     @evented()
     def install(self):
