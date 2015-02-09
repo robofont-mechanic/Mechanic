@@ -63,7 +63,7 @@ class UpdatesTab(BaseTab):
 
     @property
     def installable(self):
-        return self.list.selected_extensions
+        return self.list.selected
 
 
 class UpdateButton(Button):

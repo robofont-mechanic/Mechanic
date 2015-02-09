@@ -46,9 +46,5 @@ class UpdateList(ExtensionList):
         return item
 
     @property
-    def selected_extensions(self):
-        return [e['self'] for e in self.selected]
-
-    @property
     def selected(self):
-        return [row for row in self.get() if row['install']]
+        return [row['self'] for row in self.get() if row['install']]
