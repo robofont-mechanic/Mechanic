@@ -1,6 +1,6 @@
 import time
 
-from mechanic import env
+from mechanic import env, logger
 from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.extension import Extension
@@ -32,7 +32,7 @@ class Update(object):
 
     @classmethod
     def _fetch_updates(cls):
-        print "Mechanic: checking for updates..."
+        logger.info("checking for updates...")
 
         try:
             updates = [e for e in Extension.all() if e.should_update]

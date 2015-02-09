@@ -1,6 +1,6 @@
 import requests
 
-from mechanic import env
+from mechanic import env, logger
 
 
 class Registry(object):
@@ -16,7 +16,7 @@ class Registry(object):
         self.base_url = base_url
 
     def extensions(self):
-        print "Mechanic: fetching extensions from %s..." % self.base_url
+        logger.info("fetching extensions from %s..." % self.base_url)
         try:
             response = requests.get(self.url)
             response.raise_for_status()
@@ -25,7 +25,7 @@ class Registry(object):
             raise Registry.ConnectionError
 
     def add(self, **data):
-        print "Mechanic: posting extension to %s..." % self.base_url
+        logger.info("posting extension to %s..." % self.base_url)
         response = requests.post(self.url, data=data)
         response.raise_for_status()
         return response

@@ -1,6 +1,7 @@
 from AppKit import NSImage
 from vanilla import *
 
+from mechanic import logger
 from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
@@ -24,7 +25,7 @@ class UpdateNotificationWindow(BaseWindow):
         try:
             self.updates = self.get_updates(force)
         except Update.ConnectionError:
-            print "Mechanic: Couldn't connect to the internet"
+            logger.info("Couldn't connect to the internet")
             return
 
         if self.updates:
@@ -47,7 +48,7 @@ class UpdateNotificationWindow(BaseWindow):
 
             self.w.open()
         else:
-            print "Mechanic: All extensions are up to date."
+            logger.info("All extensions are up to date.")
 
     @progress.each('updates')
     @progress.tick('repositoryWillDownload',

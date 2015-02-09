@@ -7,6 +7,7 @@ import requests
 
 from zipfile import ZipFile
 
+from mechanic import logger
 from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.event import evented
@@ -45,7 +46,7 @@ class GithubRepo(object):
             else:
                 self.zip = self.zip_url % {'repo': self.repo}
         except requests.exceptions.HTTPError:
-            print "Couldn't get information about %s from %s" % (self.name, self.repo)
+            logger.info("Couldn't get information about %s from %s" % (self.name, self.repo))
             self.version = '0.0.0'
 
     def setup_download(self):
