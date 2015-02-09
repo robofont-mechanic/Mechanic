@@ -19,6 +19,13 @@ class GithubRepo(object):
     zip_url = "https://github.com/%(repo)s/archive/master.zip"
     plist_url = "https://raw.github.com/%(repo)s/master/%(plist_path)s"
 
+    @classmethod
+    def concerning(cls, extension):
+        return cls(extension.repository,
+                   name=extension.name,
+                   extension_path=extension.extension_path)
+
+
     def __init__(self, repo, name=None, extension_path=None, filename=None):
         self.repo = repo
         self.extension_path = extension_path

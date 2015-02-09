@@ -21,7 +21,7 @@ class Extension(object):
 
     @classmethod
     def install_remote(cls, repository, name, filename):
-        remote = GithubRepo(repository, name, filename)
+        remote = GithubRepo(repository, name=name, filename=filename)
         return cls(path=remote.download()).install()
 
     def __init__(self, name=None, path=None):
@@ -48,9 +48,7 @@ class Extension(object):
 
     @lazy_property
     def remote(self):
-        return GithubRepo(self.repository,
-                          name=self.name,
-                          extension_path=self.extension_path)
+        return GithubRepo.concerning(self)
 
     @property
     def is_current_version(self):
