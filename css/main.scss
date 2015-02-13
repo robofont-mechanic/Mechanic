@@ -1,52 +1,153 @@
 ---
-# Only the main Sass file needs front matter (the dashes are enough)
 ---
-@charset "utf-8";
 
-
-
-// Our variables
-$base-font-family: Helvetica, Arial, sans-serif;
-$base-font-size:   16px;
-$small-font-size:  $base-font-size * 0.875;
-$base-line-height: 1.5;
-
-$spacing-unit:     30px;
-
-$text-color:       #111;
-$background-color: #fdfdfd;
-$brand-color:      #2a7ae2;
-
-$grey-color:       #828282;
-$grey-color-light: lighten($grey-color, 40%);
-$grey-color-dark:  darken($grey-color, 25%);
-
-// Width of the content area
-$content-width:    800px;
-
-$on-palm:          600px;
-$on-laptop:        800px;
-
-
-
-// Using media queries with like this:
-// @include media-query($on-palm) {
-//     .wrapper {
-//         padding-right: $spacing-unit / 2;
-//         padding-left: $spacing-unit / 2;
-//     }
-// }
-@mixin media-query($device) {
-    @media screen and (max-width: $device) {
-        @content;
-    }
+body {
+  background-color: rgb(30, 30, 30);
+  color: rgb(240, 240, 240);
+  font-family: Helvetica, Arial;
+  font-size: 12pt;
+  line-height: 1.4em;
+  margin: 0;
+  padding: 75px 20px;
 }
 
+h1 {
+  font-weight: normal;
+  font-size: 12pt;
+  line-height: 1.4em;
+  margin: 0 0 10px;
+}
 
+a {
+  color: rgb(240, 240, 240);
+}
 
-// Import partials from `sass_dir` (defaults to `_sass`)
-@import
-        "base",
-        "layout",
-        "syntax-highlighting"
-;
+.page-header {
+  width: 100%;
+  max-width: 400px;
+  margin: -20px auto 0;
+  padding: 20px 30px 0 220px;
+  background: transparent url('/images/icon.png') no-repeat scroll left top;
+}
+
+.page-header h1 {
+  font-family: Impact, "DINCondensed-Bold", Helvetica, sans-serif;
+  font-size: 32pt;
+  line-height: 36pt;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.download {
+  padding: 10px 0;
+  background-color: rgb(10, 80, 207);
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  display: block;
+  text-decoration: none;
+  width: 8em;
+  text-align: center;
+  margin: 30px auto;
+}
+
+.links {
+  text-align: center;
+  margin: 1em 0;
+}
+
+.links a {
+  margin: 0 5px;
+}
+
+.posts {
+  margin: 85px auto;
+  width: 100%;
+  max-width: 700px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.post {
+  vertical-align: top;
+  background-color: white;
+  padding: 15px 20px;
+  text-decoration: none;
+  display: block;
+  color: rgb(25, 25, 25);
+}
+
+.post a {
+  color: rgb(25, 25, 25);
+}
+
+.post header {
+  position: relative;
+}
+
+.post:nth-child(2n + 1) {
+  background-color: rgb(242, 242, 242);
+}
+
+.post h1,
+.post .author {
+  display: inline-block;
+}
+
+.post h1 {
+  margin: 0 10px 0 0;
+}
+
+.post .metadata {
+  font-size: 10pt;
+  line-height: 1.5em;
+  color: rgb(150, 150, 150);
+  position: absolute;
+  top: 4px;
+  right: 0;
+  line-height: 1.1em;
+}
+
+.post .metadata div {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    padding-top: 40px;
+  }
+
+  .page-header {
+    padding: 140px 0 0;
+    background-position: center top;
+    background-size: 120px 120px;
+    margin-top: 0;
+  }
+
+  .post header {
+    padding-right: 4em;
+  }
+
+  .post h1,
+  .post .author {
+    display: block;
+    margin: 0;
+  }
+
+  .post .metadata {
+    margin-top: 3px;
+    position: static;
+  }
+
+  .post .metadata div {
+    margin: 0;
+  }
+
+  .post .metadata .source {
+    position: absolute;
+    top: 2px;
+    right: 0;
+  }
+}
+
+@import "syntax-highlighting";
