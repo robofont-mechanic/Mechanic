@@ -2,7 +2,7 @@ from AppKit import NSImage
 from vanilla import ImageView, TextBox, Button
 
 from mechanic import logger
-from mechanic.threaded import Threaded
+from mechanic.threaded import ThreadedObject
 from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
@@ -11,13 +11,9 @@ from mechanic.ui.windows.base import BaseWindow
 from mechanic.ui.windows.main import MechanicWindow
 
 
-class UpdateNotificationWindow(BaseWindow):
+class UpdateNotificationWindow(BaseWindow, ThreadedObject):
     window_size = (520, 130)
     window_title = "Extension Updates"
-
-    @classmethod
-    def with_new_thread(cls):
-        Threaded(cls)()
 
     def __init__(self, force=False):
         try:

@@ -22,3 +22,14 @@ class Threaded(object):
         Thread(target=target,
                args=args,
                kwargs=kwargs).start()
+
+
+class ThreadedObject(object):
+
+    @classmethod
+    def initialize_in_thread(cls, *args, **kwargs):
+        return Threaded(cls)()
+
+    @property
+    def in_thread(self):
+        return Threaded(self)

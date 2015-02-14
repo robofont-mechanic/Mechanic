@@ -1,14 +1,14 @@
 import time
 from vanilla import Button, TextBox
 
-from mechanic.threaded import Threaded
+from mechanic.threaded import ThreadedObject
 from mechanic.update import Update
 from mechanic.ui import progress
 from mechanic.ui.lists.update import UpdateList
 from mechanic.ui.tabs.base import BaseTab
 
 
-class UpdatesTab(BaseTab):
+class UpdatesTab(BaseTab, ThreadedObject):
     title = "Updates"
     image = "toolbarScriptReload"
     identifier = "updates"
@@ -25,7 +25,8 @@ class UpdatesTab(BaseTab):
                                                   callback=self.install_updates)
 
 
-        self.content.refresh_button = Button((0, -22, 90, 20), "Refresh", callback=self.update_list_with_thread)
+        self.content.refresh_button = Button((0, -22, 90, 20), "Refresh",
+                                             callback=self.in_thread.update_list)
 
         self.update_interface()
 
@@ -44,10 +45,7 @@ class UpdatesTab(BaseTab):
         for extension in self.installable:
             extension.update()
 
-        self.update_list_with_thread()
-
-    def update_list_with_thread(self, sender=None):
-        Threaded(self).update_list()
+        self.in_thread.update_list()
 
     def update_list(self, force=False):
         try:

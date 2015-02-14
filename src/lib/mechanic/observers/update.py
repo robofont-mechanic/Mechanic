@@ -12,4 +12,4 @@ class UpdateObserver(Observer):
     def check_for_updates(self, info):
         """Open updates window unless ran in last hour"""
         if not Update.checked_recently():
-            UpdateNotificationWindow.with_new_thread()
+            UpdateNotificationWindow.initialize_in_thread()
