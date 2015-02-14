@@ -148,6 +148,7 @@ class GithubRequest(object):
         self.url = url
 
     def get(self):
+        logger.info('Requesting {}'.format(self.url))
         return self.cache_response(self.url, self.get_cached(self.url))
 
     def get_cached(self, url):
@@ -161,6 +162,7 @@ class GithubRequest(object):
         response = requests.get(url, headers=headers)
 
         if response.status_code == 304:
+            logger.info('Using cached response for {}'.format(self.url))
             response = cached_response
 
         response.raise_for_status()

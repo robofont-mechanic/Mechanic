@@ -2,6 +2,7 @@ from AppKit import NSImage
 from vanilla import *
 
 from mechanic import logger
+from mechanic.threaded import Threaded
 from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
@@ -16,8 +17,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     @classmethod
     def with_new_thread(cls):
-        import threading
-        threading.Thread(target=cls).start()
+        Threaded(cls)()
 
     def __init__(self, force=False):
         try:
