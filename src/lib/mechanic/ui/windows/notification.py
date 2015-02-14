@@ -1,14 +1,14 @@
 from AppKit import NSImage
-from vanilla import *
+from vanilla import ImageView, TextBox, Button
 
 from mechanic import logger
 from mechanic.threaded import Threaded
 from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
-from mechanic.extension import Extension
 from mechanic.update import Update
 from mechanic.ui.windows.base import BaseWindow
+from mechanic.ui.windows.main import MechanicWindow
 
 
 class UpdateNotificationWindow(BaseWindow):
@@ -63,7 +63,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     def show_details(self, sender):
         self.w.close()
-        MechanicWindow('updates')
+        MechanicWindow().open('updates')
 
     def cancel(self, sender):
         self.w.close()
