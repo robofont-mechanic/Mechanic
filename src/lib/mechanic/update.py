@@ -1,4 +1,5 @@
 import time
+import requests
 
 from mechanic import env, logger
 from mechanic.version import Version
@@ -36,7 +37,7 @@ class Update(object):
 
         try:
             updates = [e for e in Extension.all() if e.should_update]
-        except:
+        except requests.ConnectionError:
             raise Update.ConnectionError
 
         cls._set_cached(updates)
