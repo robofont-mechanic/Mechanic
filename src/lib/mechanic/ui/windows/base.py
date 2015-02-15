@@ -13,6 +13,7 @@ class BaseWindow(BaseWindowController):
             self.add_tabs()
             self.set_active_tab(active)
         self.w.open()
+        return self
 
     def create_toolbar(self):
         self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
