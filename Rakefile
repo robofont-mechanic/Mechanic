@@ -12,6 +12,8 @@ SOURCE_FILES = FileList[
   "src/Resources/**/*"
 ]
 
+puts STARTUP.pathmap("%f")
+
 SOURCE_FILES.each do |src|
   target = src.pathmap("%{^src/,Mechanic.roboFontExt/}p")
   file target => src do
@@ -24,13 +26,13 @@ end
 file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
   require 'plist'
   require 'yaml'
-  
+
   menu_scripts = FileList["Mechanic.roboFontExt/lib/*.py"].exclude(STARTUP)
-  
+
   data = YAML.load_file t.source
   data['html'] = Dir.exists? "Mechanic.roboFontExt/html"
   data['launchAtStartUp'] = File.exists? STARTUP
-  data['mainScript'] = data['launchAtStartup'] ? STARTUP.pathmap("%f") : ''
+  data['mainScript'] = data['launchAtStartUp'] ? STARTUP.pathmap("%f") : ''
   data['timeStamp'] = Time.now.to_f
   data['addToMenu'] = menu_scripts.to_a.collect {|i| MenuItem.new(i).to_hash}
   data.save_plist t.name
