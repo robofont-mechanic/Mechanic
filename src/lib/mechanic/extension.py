@@ -85,10 +85,6 @@ class Extension(object):
             self.config.deprecated('repository')
 
     @property
-    def extension_path(self):
-        return self.config.deprecated('extensionPath')
-
-    @property
     def version(self):
         return Version(self.config['version'])
 

@@ -8,11 +8,13 @@ import requests
 from zipfile import ZipFile
 
 from mechanic import logger
+from mechanic.lazy_property import lazy_property
 from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.event import evented
 
 from .request import GithubRequest
+from .tree import GithubTree
 
 
 class GithubRepository(object):
@@ -24,12 +26,10 @@ class GithubRepository(object):
     def concerning(cls, extension):
         return cls(extension.repository,
                    name=extension.name,
-                   extension_path=extension.extension_path)
+                   filename=extension.filename)
 
-
-    def __init__(self, repo, name=None, extension_path=None, filename=None):
+    def __init__(self, repo, name=None, filename=None):
         self.repo = repo
-        self.extension_path = extension_path
         self.filename = filename
         self.username, self.name = repo.split('/')
         if name is not None:
@@ -39,15 +39,12 @@ class GithubRepository(object):
     def read(self):
         """Return the version and location of remote extension."""
         try:
-            if self.extension_path:
-                plist_path = os.path.join(self.extension_path, 'info.plist')
-                plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
-                response = GithubRequest(plist_url).get()
-                plist = plistlib.readPlistFromString(response.content)
-                self.version = plist['version']
-                self.zip = self.zip_url % {'repo': self.repo}
-            else:
-                self.zip = self.zip_url % {'repo': self.repo}
+            plist_path = os.path.join(self.extension_path, 'info.plist')
+            plist_url = self.plist_url % {'repo': self.repo, 'plist_path': plist_path}
+            response = GithubRequest(plist_url).get()
+            plist = plistlib.readPlistFromString(response.content)
+            self.version = plist['version']
+            self.zip = self.zip_url % {'repo': self.repo}
         except requests.exceptions.HTTPError:
             logger.info("Couldn't get information about %s from %s" % (self.name, self.repo))
             self.version = '0.0.0'
@@ -70,22 +67,16 @@ class GithubRepository(object):
 
         folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
 
-        if self.extension_path:
-            path = os.path.join(folder, self.extension_path)
-        else:
-            if self.filename:
-                match = '*%s' % self.filename
-            else:
-                match = '*%s.roboFontExt' % self.name
+        match = '*%s' % self.filename
 
-            # TODO: Make this use a generator
-            matches = []
-            for root, dirnames, _ in os.walk(self.tmp_path):
-                for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
-                    matches.append(os.path.join(root, dirname))
+        # TODO: Make this use a generator
+        matches = []
+        for root, dirnames, _ in os.walk(self.tmp_path):
+            for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
+                matches.append(os.path.join(root, dirname))
 
-            exact = fnmatch.filter(matches, match)
-            path = (exact and exact[0]) or None
+        exact = fnmatch.filter(matches, match)
+        path = (exact and exact[0]) or None
 
         return path
 
@@ -122,6 +113,14 @@ class GithubRepository(object):
     @version.setter
     def version(self, value):
         self._version = value
+
+    @lazy_property
+    def extension_path(self):
+        return self.tree.find(self.filename).get('path')
+
+    @lazy_property
+    def tree(self):
+        return GithubTree(self.repo)
 
     def _flush_tmp_path(self):
         if os.path.exists(self.tmp_path):
