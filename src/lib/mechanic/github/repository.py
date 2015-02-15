@@ -17,7 +17,6 @@ from .request import GithubRequest
 
 class GithubRepository(object):
 
-    tags_url = "https://api.github.com/repos/%(repo)s/tags"
     zip_url = "https://github.com/%(repo)s/archive/master.zip"
     plist_url = "https://raw.github.com/%(repo)s/master/%(plist_path)s"
 
@@ -47,11 +46,6 @@ class GithubRepository(object):
                 plist = plistlib.readPlistFromString(response.content)
                 self.version = plist['version']
                 self.zip = self.zip_url % {'repo': self.repo}
-            elif self._get_tags():
-                self.tags.sort(key=lambda s: Version(s["name"]),
-                               reverse=True)
-                self.zip = self.tags[0]['zipball_url']
-                self.version = self.tags[0]['name']
             else:
                 self.zip = self.zip_url % {'repo': self.repo}
         except requests.exceptions.HTTPError:
@@ -99,9 +93,8 @@ class GithubRepository(object):
     def download(self):
         """Download remote version of extension."""
 
-        self.setup_download()
-
         try:
+            self.setup_download()
             for content in self.stream_content:
                 self.download_chunk(content)
         finally:
@@ -129,12 +122,6 @@ class GithubRepository(object):
     @version.setter
     def version(self, value):
         self._version = value
-
-    def _get_tags(self):
-        url = self.tags_url % {'repo': self.repo}
-        response = GithubRequest(url).get()
-        self.tags = response.json()
-        return self.tags
 
     def _flush_tmp_path(self):
         if os.path.exists(self.tmp_path):
