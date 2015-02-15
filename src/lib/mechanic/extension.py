@@ -4,7 +4,7 @@ from mojo.extensions import ExtensionBundle
 
 from mechanic.version import Version
 from mechanic.storage import Storage
-from mechanic.repositories.github import GithubRepo
+from mechanic.github.repository import GithubRepo
 from mechanic.event import evented
 from mechanic.configuration import Configuration
 from mechanic.lazy_property import lazy_property
