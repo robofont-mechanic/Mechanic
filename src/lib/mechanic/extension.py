@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from mojo.extensions import ExtensionBundle
 
@@ -22,7 +23,10 @@ class Extension(object):
     @classmethod
     def install_remote(cls, repository, name, filename):
         remote = GithubRepository(repository, name=name, filename=filename)
-        return cls(path=remote.download()).install()
+        path = remote.download()
+        extension = cls(path=remote.download()).install()
+        shutil.rmtree(path) # TODO: removing the tree should happen after download somehow
+        return extension
 
     def __init__(self, name=None, path=None):
         self.name = name

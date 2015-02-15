@@ -4,6 +4,7 @@ import plistlib
 import fnmatch
 import errno
 import requests
+import tempfile
 
 from zipfile import ZipFile
 
@@ -19,7 +20,6 @@ from .tree import GithubTree
 
 class GithubRepository(object):
 
-    zip_url = "https://github.com/%(repo)s/archive/master.zip"
     plist_url = "https://raw.github.com/%(repo)s/master/%(plist_path)s"
 
     @classmethod
@@ -43,59 +43,55 @@ class GithubRepository(object):
             response = GithubRequest(plist_url).get()
             plist = plistlib.readPlistFromString(response.content)
             self.version = plist['version']
-            self.zip = self.zip_url % {'repo': self.repo}
         except requests.exceptions.HTTPError:
             logger.info("Couldn't get information about %s from %s" % (self.name, self.repo))
             self.version = '0.0.0'
 
-    def setup_download(self):
-        """Clear extension tmp dir, open download stream and local file."""
-        self.read()
-        self._flush_tmp_path()
-        filepath = os.path.join(self.tmp_path, os.path.basename(self.zip))
-        self.file = open(filepath, "wb")
-        self.stream = requests.get(self.zip, stream=True)
-        self.stream_content = self.stream.iter_content(chunk_size=8192)
-        self.content_length = self.stream.headers['content-length']
-
     @evented('repository')
-    def extract_download(self):
+    def extract_download(self, filepath, destination):
         """Extract downloaded zip file and return extension path."""
-        ZipFile(self.file.name).extractall(self.tmp_path)
-        os.remove(self.file.name)
 
-        folder = os.path.join(self.tmp_path, os.listdir(self.tmp_path)[0])
+        ZipFile(filepath).extractall(destination)
+
+        os.remove(filepath)
 
         match = '*%s' % self.filename
 
         # TODO: Make this use a generator
         matches = []
-        for root, dirnames, _ in os.walk(self.tmp_path):
+        for root, dirnames, _ in os.walk(destination):
             for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
                 matches.append(os.path.join(root, dirname))
 
         exact = fnmatch.filter(matches, match)
-        path = (exact and exact[0]) or None
-
-        return path
+        return (exact and exact[0]) or None
 
     @evented('repository')
     def download(self):
         """Download remote version of extension."""
+        tmp_dir = tempfile.mkdtemp()
 
         try:
-            self.setup_download()
-            for content in self.stream_content:
-                self.download_chunk(content)
-        finally:
-            self.stream.close()
-            self.file.close()
+            zip_path = os.path.join(tmp_dir, os.path.basename(self.zip_url))
+            zip_file = open(zip_path, "wb")
+            stream = requests.get(self.zip_url, stream=True)
+            chunks = stream.iter_content(chunk_size=8192)
 
-        return self.extract_download()
+            for content in chunks:
+                self.download_chunk(zip_file, content)
+        else:
+            shutil.rmtree(tmp_dir)
+        finally:
+            try:
+                zip_file.close()
+                stream.close()
+            except: pass
+
+        return self.extract_download(zip_file.name, tmp_dir)
 
     @evented('repository', 'downloadChunk')
-    def download_chunk(self, content):
-        self.file.write(content)
+    def download_chunk(self, file, content):
+        return file.write(content)
 
     @property
     def tmp_path(self):
@@ -113,6 +109,12 @@ class GithubRepository(object):
     def version(self, value):
         self._version = value
 
+    @property
+    def zip_url(self):
+        return "https://github.com/%(repo)s/archive/master.zip" % {
+            'repo': self.repo
+        }
+
     @lazy_property
     def extension_path(self):
         return self.tree.find(self.filename).get('path')
@@ -120,17 +122,3 @@ class GithubRepository(object):
     @lazy_property
     def tree(self):
         return GithubTree(self.repo)
-
-    def _flush_tmp_path(self):
-        if os.path.exists(self.tmp_path):
-            shutil.rmtree(self.tmp_path)
-        mkdir_p(self.tmp_path)
-
-
-def mkdir_p(path):
-    try:
-        os.makedirs(path)
-    except OSError as exc: # Python >2.5
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else: raise
