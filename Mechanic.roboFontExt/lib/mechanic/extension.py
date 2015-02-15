@@ -1,12 +1,14 @@
 import os
+import shutil
 
 from mojo.extensions import ExtensionBundle
 
 from mechanic.version import Version
 from mechanic.storage import Storage
-from mechanic.repositories.github import GithubRepo
+from mechanic.github.repository import GithubRepository
 from mechanic.event import evented
 from mechanic.configuration import Configuration
+from mechanic.lazy_property import lazy_property
 
 
 class Extension(object):
@@ -18,19 +20,27 @@ class Extension(object):
     def all(cls):
         return [cls(name=n) for n in ExtensionBundle.allExtensions()]
 
+    @classmethod
+    def install_remote(cls, repository, name, filename):
+        remote = GithubRepository(repository, name=name, filename=filename)
+        path = remote.download()
+        extension = cls(path=remote.download()).install()
+        shutil.rmtree(path) # TODO: removing the tree should happen after download somehow
+        return extension
+
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
         self.config = Configuration(self.config_path)
 
     @evented()
-    def update(self, extension_path=None):
+    def update(self, path=None):
         """Download and install the latest version of the extension."""
 
-        if extension_path is None:
-            extension_path = self.remote.download()
+        if path is None:
+            path = self.remote.download()
 
-        Extension(path=extension_path).install()
+        Extension(path=path).install()
 
     @evented()
     def install(self):
@@ -40,18 +50,9 @@ class Extension(object):
     def uninstall(self):
         self.bundle.deinstall()
 
-    @property
+    @lazy_property
     def remote(self):
-        if not self.repository:
-            return None
-
-        try:
-            return self.__remote
-        except AttributeError:
-            self.__remote = GithubRepo(self.repository,
-                                       name=self.name,
-                                       extension_path=self.extension_path)
-            return self.__remote
+        return GithubRepository.concerning(self)
 
     @property
     def is_current_version(self):
@@ -72,7 +73,7 @@ class Extension(object):
 
     @property
     def is_configured(self):
-        return self.remote is not None
+        return self.repository is not None
 
     @property
     def config_path(self):
@@ -86,10 +87,6 @@ class Extension(object):
     def repository(self):
         return self.config.namespaced('repository') or \
             self.config.deprecated('repository')
-
-    @property
-    def extension_path(self):
-        return self.config.deprecated('extensionPath')
 
     @property
     def version(self):

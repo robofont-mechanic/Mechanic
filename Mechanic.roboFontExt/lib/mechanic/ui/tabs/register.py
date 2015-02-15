@@ -3,7 +3,7 @@ import requests
 from vanilla import *
 from vanilla.dialogs import getFile
 
-from mechanic.env import default_registry
+from mechanic import env
 from mechanic.extension import Extension
 from mechanic.registry import Registry
 from mechanic.ui.fields.text_field import TextField
@@ -61,7 +61,7 @@ class RegisterTab(BaseTab):
     def register(self, sender):
         self.progress = self.start_progress('Sending to registry server...')
         try:
-            registry = Registry(default_registry)
+            registry = Registry(env.default_registry)
             response = registry.add(name=self.content.name.get(),
                                     filename=self.content.filename.get(),
                                     repository=self.content.repository.get())

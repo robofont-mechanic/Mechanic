@@ -1,26 +1,32 @@
 import time
-from vanilla import *
+from vanilla import Button, TextBox
 
+from mechanic.threaded import ThreadedObject
 from mechanic.update import Update
 from mechanic.ui import progress
 from mechanic.ui.lists.update import UpdateList
 from mechanic.ui.tabs.base import BaseTab
 
 
-class UpdatesTab(BaseTab):
+class UpdatesTab(BaseTab, ThreadedObject):
     title = "Updates"
     image = "toolbarScriptReload"
     identifier = "updates"
 
     def setup(self):
-        self.content.list = UpdateList((0, 0, -0, -40),
-                                       editCallback=self.update_interface)
+        self.list = UpdateList((20, 20, -20, -60),
+                               editCallback=self.update_interface,
+                               refreshCallback=self.update_interface)
 
-        self.content.updated_at_text = UpdatedTimeTextBox((0, -15, -0, 20),
+        self.content.updated_at_text = UpdatedTimeTextBox((100, -20, -0, 20),
                                                           sizeStyle="small")
 
         self.content.update_button = UpdateButton((-140, -22, 140, 20),
                                                   callback=self.install_updates)
+
+
+        self.content.refresh_button = Button((0, -22, 90, 20), "Refresh",
+                                             callback=self.in_thread.update_list)
 
         self.update_interface()
 
@@ -39,19 +45,30 @@ class UpdatesTab(BaseTab):
         for extension in self.installable:
             extension.update()
 
-        self.update_list(True)
+        self.in_thread.update_list()
 
     def update_list(self, force=False):
-        self.content.list.refresh(force=force)
-        self.update_interface()
+        try:
+            self.list.refresh(force=force)
+            self.enable()
+        except UpdateList.ConnectionError:
+            self.disable("Couldn't connect to the internet...")
 
     def update_interface(self, sender=None):
         self.content.updated_at_text.update()
-        self.content.update_button.update(len(self.content.list.selected))
+        self.content.update_button.update(len(self.list.selected))
+
+    def disable(self, *args, **kwargs):
+        self.list.enable(False)
+        super(UpdatesTab, self).disable(*args, **kwargs)
+
+    def enable(self, *args, **kwargs):
+        self.list.enable(True)
+        super(UpdatesTab, self).enable(*args, **kwargs)
 
     @property
     def installable(self):
-        return self.content.list.selected_extensions
+        return self.list.selected
 
 
 class UpdateButton(Button):
@@ -81,7 +98,7 @@ class UpdatedTimeTextBox(TextBox):
     def update(self):
         updated = Update.last_checked()
         if updated:
-            fmt = time.strftime('%d %b %Y, %H:%M', time.localtime(updated))
+            fmt = time.strftime('%d %b %Y, %H:%M:%S', time.localtime(updated))
             self.set("Last checked: %s" % fmt)
         else:
             self.set('')

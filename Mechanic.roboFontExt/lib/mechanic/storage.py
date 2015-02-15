@@ -1,6 +1,6 @@
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 
-from mechanic.env import environment
+from mechanic import env, logger
 
 
 class Storage(object):
@@ -10,7 +10,7 @@ class Storage(object):
 
     @classmethod
     def generate_key(cls, base):
-        return '.'.join((cls.namespace, environment, base))
+        return '.'.join((cls.namespace, env.environment, base))
 
     @classmethod
     def get(cls, base):
@@ -35,5 +35,5 @@ class Storage(object):
         for key, default in defaults.iteritems():
             value = cls.get(key)
             if value is None:
-                print 'Setting default value for %s to %s' % (key, default)
+                logger.info('Setting default value for %s to %s' % (key, default))
                 cls.set(key, default)

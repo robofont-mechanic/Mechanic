@@ -1,5 +1,7 @@
 import time
+import requests
 
+from mechanic import env, logger
 from mechanic.version import Version
 from mechanic.storage import Storage
 from mechanic.extension import Extension
@@ -15,7 +17,7 @@ class Update(object):
 
     @classmethod
     def checked_recently(cls):
-        return cls.last_checked() > time.time() - (60 * 60)
+        return cls.last_checked() > time.time() - env.updates_cache_interval
 
     @classmethod
     def all(cls, force=False, skip_patches=False):
@@ -31,11 +33,11 @@ class Update(object):
 
     @classmethod
     def _fetch_updates(cls):
-        print "Mechanic: checking for updates..."
+        logger.info("checking for updates...")
 
         try:
             updates = [e for e in Extension.all() if e.should_update]
-        except:
+        except requests.ConnectionError:
             raise Update.ConnectionError
 
         cls._set_cached(updates)

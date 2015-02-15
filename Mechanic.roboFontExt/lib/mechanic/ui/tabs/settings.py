@@ -1,6 +1,5 @@
 from AppKit import *
 from vanilla import *
-from vanilla.dialogs import getFile
 
 from mechanic.ui.lists.settings import SettingsList
 from mechanic.ui.tabs.base import BaseTab

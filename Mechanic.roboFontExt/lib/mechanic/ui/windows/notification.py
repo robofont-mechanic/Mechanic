@@ -1,31 +1,25 @@
 from AppKit import NSImage
-from vanilla import *
-from vanilla.dialogs import getFile
+from vanilla import ImageView, TextBox, Button
 
+from mechanic import logger
+from mechanic.threaded import ThreadedObject
 from mechanic.ui import progress
 from mechanic.ui.font import Font
 from mechanic.storage import Storage
-from mechanic.extension import Extension
 from mechanic.update import Update
 from mechanic.ui.windows.base import BaseWindow
+from mechanic.ui.windows.main import MechanicWindow
 
 
-class UpdateNotificationWindow(BaseWindow):
+class UpdateNotificationWindow(BaseWindow, ThreadedObject):
     window_size = (520, 130)
     window_title = "Extension Updates"
 
-    @classmethod
-    def with_new_thread(cls):
-        import threading
-        threading.Thread(target=cls).start()
-
     def __init__(self, force=False):
-        super(UpdateNotificationWindow, self).__init__()
-
         try:
             self.updates = self.get_updates(force)
         except Update.ConnectionError:
-            print "Mechanic: Couldn't connect to the internet"
+            logger.info("Couldn't connect to the internet")
             return
 
         if self.updates:
@@ -48,7 +42,7 @@ class UpdateNotificationWindow(BaseWindow):
 
             self.w.open()
         else:
-            print "Mechanic: All extensions are up to date."
+            logger.info("All extensions are up to date.")
 
     @progress.each('updates')
     @progress.tick('repositoryWillDownload',
@@ -65,7 +59,7 @@ class UpdateNotificationWindow(BaseWindow):
 
     def show_details(self, sender):
         self.w.close()
-        MechanicWindow('updates')
+        MechanicWindow().open('updates')
 
     def cancel(self, sender):
         self.w.close()

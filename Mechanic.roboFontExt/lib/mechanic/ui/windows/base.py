@@ -1,22 +1,19 @@
 from vanilla import Window, Tabs
 from defconAppKit.windows.baseWindow import BaseWindowController
 
+from mechanic.lazy_property import lazy_property
+
 
 class BaseWindow(BaseWindowController):
     window_size = (500, 300)
 
-    def __init__(self, active="Install"):
-        self.first_tab = active
-        self.w = Window(self.window_size,
-                        autosaveName=self.__class__.__name__,
-                        title=self.window_title)
-
-    def open(self):
+    def open(self, active="Install"):
         if self.toolbar.items:
             self.create_toolbar()
             self.add_tabs()
-            self.set_active_tab(self.first_tab)
+            self.set_active_tab(active)
         self.w.open()
+        return self
 
     def create_toolbar(self):
         self.w.addToolbar(toolbarIdentifier="mechanicToolbar",
@@ -51,13 +48,15 @@ class BaseWindow(BaseWindowController):
         index = self.w.tabs.get()
         return self.w.tabs[index]
 
-    @property
+    @lazy_property
     def toolbar(self):
-        try:
-            return self.__toolbar
-        except AttributeError:
-            self.__toolbar = Toolbar(self)
-            return self.__toolbar
+        return Toolbar(self)
+
+    @lazy_property
+    def w(self):
+        return Window(self.window_size,
+                      autosaveName=self.__class__.__name__,
+                      title=self.window_title)
 
 
 class Toolbar(object):
@@ -71,7 +70,7 @@ class Toolbar(object):
                            in enumerate(self.items)
                            if item['itemIdentifier'] == identifier), 0)
 
-    def add_item(self, view):
+    def add(self, view):
         item = dict(itemIdentifier=view.identifier,
                     label=view.title,
                     callback=self.window.toolbar_select,

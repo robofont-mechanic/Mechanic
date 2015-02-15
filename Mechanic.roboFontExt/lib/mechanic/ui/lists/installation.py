@@ -1,5 +1,6 @@
-from mojo.extensions import ExtensionBundle
+import webbrowser
 
+from mechanic.extension import Extension
 from mechanic.ui.lists.base import BaseList
 from mechanic.ui.formatters.description import DescriptionFormatter
 from mechanic.ui.cells.circle import CircleCell
@@ -24,13 +25,14 @@ class InstallationList(BaseList):
             'rowHeight': 39.0,
             'showColumnTitles': False,
             'allowsMultipleSelection': True,
+            'doubleClickCallback': self.open_repo
         })
 
         super(InstallationList, self).__init__(posSize, [], **kwargs)
 
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]
-        item = {'installed': ExtensionBundle(name=name).bundleExists(),
+        item = {'installed': Extension(name=name).installed,
                 'extension': extension}
         return super(InstallationList, self)._wrapItem(item)
 
@@ -49,6 +51,10 @@ class InstallationList(BaseList):
 
     def refresh(self):
         self.set(self.get())
+
+    def open_repo(self, sender):
+        for item in self.selected:
+            webbrowser.open('http://github.com/%s' % item['repository'])
 
     @property
     def selected(self):

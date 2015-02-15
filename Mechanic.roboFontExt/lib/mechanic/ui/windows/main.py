@@ -6,11 +6,7 @@ class MechanicWindow(BaseWindow):
     window_title = "Mechanic"
 
     def __init__(self, *args, **kwargs):
-        super(MechanicWindow, self).__init__(*args, **kwargs)
-
-        self.toolbar.add_item(InstallTab)
-        self.toolbar.add_item(UpdatesTab)
-        self.toolbar.add_item(RegisterTab)
-        self.toolbar.add_item(SettingsTab)
-
-        self.open()
+        self.toolbar.add(InstallTab)
+        self.toolbar.add(UpdatesTab)
+        self.toolbar.add(RegisterTab)
+        self.toolbar.add(SettingsTab)

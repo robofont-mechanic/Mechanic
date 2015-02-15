@@ -9,6 +9,8 @@ from mechanic.ui.formatters.version import VersionFormatter
 class UpdateList(ExtensionList):
     """Return an ExtensionList for updates window."""
 
+    class ConnectionError(Exception): pass
+
     columns = [{"title": "Install",
                 "key": "install",
                 "width": 40,
@@ -25,14 +27,18 @@ class UpdateList(ExtensionList):
                 "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
+        self.refresh_callback = kwargs.get('refreshCallback')
+        if self.refresh_callback:
+            del kwargs['refreshCallback']
         super(UpdateList, self).__init__(posSize, [], **kwargs)
 
     def refresh(self, force=False):
         try:
             self.set(Update.all(force))
+            if self.refresh_callback:
+                self.refresh_callback()
         except Update.ConnectionError:
-            print "Mechanic: Couldn't connect to the internet"
-            return
+            raise UpdateList.ConnectionError
 
     def _wrapItem(self, extension):
         item = super(UpdateList, self)._wrapItem(extension)
@@ -40,9 +46,5 @@ class UpdateList(ExtensionList):
         return item
 
     @property
-    def selected_extensions(self):
-        return [e['self'] for e in self.selected]
-
-    @property
     def selected(self):
-        return [row for row in self.get() if row['install']]
+        return [row['self'] for row in self.get() if row['install']]
