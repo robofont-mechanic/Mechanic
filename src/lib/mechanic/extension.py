@@ -4,7 +4,7 @@ from mojo.extensions import ExtensionBundle
 
 from mechanic.version import Version
 from mechanic.storage import Storage
-from mechanic.github.repository import GithubRepo
+from mechanic.github.repository import GithubRepository
 from mechanic.event import evented
 from mechanic.configuration import Configuration
 from mechanic.lazy_property import lazy_property
@@ -21,7 +21,7 @@ class Extension(object):
 
     @classmethod
     def install_remote(cls, repository, name, filename):
-        remote = GithubRepo(repository, name=name, filename=filename)
+        remote = GithubRepository(repository, name=name, filename=filename)
         return cls(path=remote.download()).install()
 
     def __init__(self, name=None, path=None):
@@ -48,7 +48,7 @@ class Extension(object):
 
     @lazy_property
     def remote(self):
-        return GithubRepo.concerning(self)
+        return GithubRepository.concerning(self)
 
     @property
     def is_current_version(self):

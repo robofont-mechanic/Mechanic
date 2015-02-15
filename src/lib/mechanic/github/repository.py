@@ -13,7 +13,7 @@ from mechanic.storage import Storage
 from mechanic.event import evented
 
 
-class GithubRepo(object):
+class GithubRepository(object):
 
     tags_url = "https://api.github.com/repos/%(repo)s/tags"
     zip_url = "https://github.com/%(repo)s/archive/master.zip"
