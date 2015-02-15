@@ -7,6 +7,7 @@ url: http://blog.robofontmechanic.com # the base hostname & protocol for your si
 twitter_username: rfmechanic
 github_username:  jackjennings/Mechanic
 environment: production
+permalink: /:year/:month/:day/:title/
 
 # Build settings
 markdown: kramdown
