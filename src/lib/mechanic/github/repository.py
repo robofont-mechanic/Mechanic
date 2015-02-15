@@ -31,9 +31,8 @@ class GithubRepository(object):
     def __init__(self, repo, name=None, filename=None):
         self.repo = repo
         self.filename = filename
-        self.username, self.name = repo.split('/')
-        if name is not None:
-            self.name = name
+        self.username, _ = repo.split('/', 1)
+        self.name = name
 
     @evented('repository')
     def read(self):
