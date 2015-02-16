@@ -12,7 +12,7 @@ SOURCE_FILES = FileList[
   "src/Resources/**/*"
 ]
 
-puts STARTUP.pathmap("%f")
+CLOBBER.include(SOURCE_FILES.pathmap("%{^src/,Mechanic.roboFontExt/}p"))
 
 SOURCE_FILES.each do |src|
   target = src.pathmap("%{^src/,Mechanic.roboFontExt/}p")
@@ -37,12 +37,13 @@ file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
   data['addToMenu'] = menu_scripts.to_a.collect {|i| MenuItem.new(i).to_hash}
   data.save_plist t.name
 end
+CLOBBER.include("Mechanic.roboFontExt/info.plist")
 
 directory "Mechanic.roboFontExt"
 
 task plist: %W[Mechanic.roboFontExt Mechanic.roboFontExt/info.plist]
 
-task build: [:source, :plist]
+task build: [:clobber, :source, :plist]
 
 task default: :build
 
