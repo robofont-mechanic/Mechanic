@@ -19,7 +19,7 @@ class UpdatesTab(BaseTab, ThreadedObject):
                                editCallback=self.update_interface,
                                refreshCallback=self.update_interface)
 
-        self.content.updated_at_text = UpdatedTimeTextBox((100, -20, -0, 20),
+        self.content.updated_at_text = UpdatedTimeTextBox((100, -18, -0, 20),
                                                           sizeStyle="small")
 
         self.content.update_button = UpdateButton((-140, -22, 140, 20),
@@ -47,15 +47,22 @@ class UpdatesTab(BaseTab, ThreadedObject):
         self.in_thread.update_list()
 
     def update_list(self, force=False):
+        if self.list.is_refreshing:
+            return None
+
         try:
             self.update_progress = Overlay("Checking for updates...",
                                            (20, 20, -20, -60),
-                                           opacity=0.4)
+                                           opacity=0.6,
+                                           offset=90)
+            self.content.refresh_button.enable(False)
             self.list.refresh(force=force)
             self.enable()
-            del self.update_progress
         except UpdateList.ConnectionError:
             self.disable("Couldn't connect to the internet...")
+        finally:
+            del self.update_progress
+            self.content.refresh_button.enable(True)
 
     def update_interface(self, sender=None):
         self.content.updated_at_text.update()

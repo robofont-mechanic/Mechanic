@@ -31,10 +31,10 @@ class Overlay(Group):
             self._nsObject.setTextColor_(NSColor.whiteColor())
 
 
-    def __init__(self, text, dimensions=(0, 0, -0, -0), opacity=0.8):
+    def __init__(self, text, dimensions=(0, 0, -0, -0), opacity=0.8, offset=120):
         super(Overlay, self).__init__(dimensions)
         self.background = Overlay.Background((0, 0, -0, -0), opacity)
-        self.disabledText = Overlay.CenteredText((0, 120, -0, 17), text)
+        self.disabledText = Overlay.CenteredText((0, offset, -0, 17), text)
 
     def __del__(self):
-        self._nsObject.removeFromSuperview()
+        self.getNSView().removeFromSuperview()

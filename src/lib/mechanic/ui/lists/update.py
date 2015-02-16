@@ -27,6 +27,7 @@ class UpdateList(ExtensionList):
                 "formatter": VersionFormatter.alloc().init()}]
 
     def __init__(self, posSize, **kwargs):
+        self.is_refreshing = False
         self.refresh_callback = kwargs.get('refreshCallback')
         if self.refresh_callback:
             del kwargs['refreshCallback']
@@ -34,11 +35,16 @@ class UpdateList(ExtensionList):
 
     def refresh(self, force=False):
         try:
+            self.is_refreshing = True
+            self.enable(False)
             self.set(Update.all(force))
             if self.refresh_callback:
                 self.refresh_callback()
         except Update.ConnectionError:
             raise UpdateList.ConnectionError
+        finally:
+            self.enable(True)
+            self.is_refreshing = False
 
     def _wrapItem(self, extension):
         item = super(UpdateList, self)._wrapItem(extension)
