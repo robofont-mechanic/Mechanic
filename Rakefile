@@ -46,6 +46,14 @@ task plist: %W[Mechanic.roboFontExt Mechanic.roboFontExt/info.plist]
 
 task build: [:clobber, :source, :plist]
 
+task :install => :build do
+  sh "open Mechanic.roboFontExt"
+end
+
+task :uninstall do
+  sh "rm -rf ~/Library/Application\\ Support/RoboFont/plugins/Mechanic.roboFontExt"
+end
+
 task default: :build
 
 task :demo do
