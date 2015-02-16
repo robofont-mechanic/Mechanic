@@ -79,9 +79,10 @@ class GithubRepository(object):
 
             for content in chunks:
                 self.download_chunk(zip_file, content)
+        except:
+            shutil.rmtree(tmp_dir)
         finally:
             try:
-                shutil.rmtree(tmp_dir)
                 zip_file.close()
                 stream.close()
             except: pass
