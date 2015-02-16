@@ -13,10 +13,11 @@ SOURCE_FILES = FileList[
 ]
 
 SOURCE_FILES.exclude('*.pyc')
+CLEAN.include(FileList['**/*.pyc'])
 
+directory "Mechanic.roboFontExt"
 CLOBBER.include('Mechanic.roboFontExt/**/*')
 CLOBBER.exclude('Mechanic.roboFontExt/.env')
-CLEAN.include(FileList['**/*.pyc'])
 
 SOURCE_FILES.each do |src|
   target = src.pathmap("%{^src/,Mechanic.roboFontExt/}p")
@@ -28,6 +29,7 @@ SOURCE_FILES.each do |src|
 end
 
 file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
+  require_relative 'tasks/menu_item'
   require 'plist'
   require 'yaml'
 
@@ -43,26 +45,27 @@ file "Mechanic.roboFontExt/info.plist" => "src/info.yml" do |t|
 end
 CLOBBER.include("Mechanic.roboFontExt/info.plist")
 
-directory "Mechanic.roboFontExt"
-
 task plist: %W[Mechanic.roboFontExt Mechanic.roboFontExt/info.plist]
 
+desc "Compiles an extension from src"
 task build: [:clobber, :source, :plist]
 
+desc "Compiles and installs an extension from src"
 task :install => :build do
   sh "open Mechanic.roboFontExt"
 end
 
+desc "Blindly uninstalls an installed Mechanic extension"
 task :uninstall do
   sh "rm -rf ~/Library/Application\\ Support/RoboFont/plugins/Mechanic.roboFontExt"
 end
 
-task default: :build
-
+desc "Runs the bin/demo.py script in RoboFont for capturing screenshots"
 task :demo do
   sh "robofont -p '#{File.expand_path('./bin/demo.py')}'"
 end
 
+desc "Compiles screenshots into a single image"
 task :screenshot do
   require 'chunky_png'
   cd 'screenshots'
@@ -76,41 +79,4 @@ task :screenshot do
   composite.save 'mechanic.png'
 end
 
-class MenuItem
-
-  attr_accessor :item
-
-  def initialize item
-    @item = item
-  end
-
-  def key
-    m = name.match('_([A-Z])$')
-    m ? m[1] : ''
-  end
-
-  def name
-    item.pathmap("%n")
-  end
-
-  def sanitized_name
-    name.gsub(/_#{key}/, '')
-  end
-
-  def title
-    ActiveSupport::Inflector.titleize(sanitized_name)
-  end
-
-  def path
-    item.pathmap("%f")
-  end
-
-  def to_hash
-    {
-      path: path,
-      preferredName: title,
-      shortKey: key
-    }
-  end
-
-end
+task default: :build
