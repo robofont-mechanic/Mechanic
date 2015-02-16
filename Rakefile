@@ -13,6 +13,7 @@ SOURCE_FILES = FileList[
 ]
 
 CLOBBER.include(SOURCE_FILES.pathmap("%{^src/,Mechanic.roboFontExt/}p"))
+CLEAN.include(FileList['**/*.pyc'])
 
 SOURCE_FILES.each do |src|
   target = src.pathmap("%{^src/,Mechanic.roboFontExt/}p")
