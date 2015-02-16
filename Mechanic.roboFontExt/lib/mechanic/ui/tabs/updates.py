@@ -32,7 +32,7 @@ class UpdatesTab(BaseTab, ThreadedObject):
 
     def activate(self):
         self.set_default_button(self.content.update_button)
-        self.update_list()
+        self.in_thread.update_list()
 
     @progress.each('installable')
     @progress.tick('repositoryWillDownload',

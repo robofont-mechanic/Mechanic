@@ -33,7 +33,7 @@ class Update(object):
 
     @classmethod
     def _fetch_updates(cls):
-        logger.info("checking for updates...")
+        logger.info("Fetching updates...")
 
         try:
             updates = [e for e in Extension.all() if e.should_update]
@@ -47,6 +47,8 @@ class Update(object):
 
     @classmethod
     def _get_cached(cls):
+        logger.info("Fetching cached updates...")
+
         extensions = []
         for name, version in Storage.get('update_cache').items():
             extension = Extension(name=name)

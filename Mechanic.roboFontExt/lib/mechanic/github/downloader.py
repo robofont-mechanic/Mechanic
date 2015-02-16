@@ -6,7 +6,7 @@ import fnmatch
 from zipfile import ZipFile
 
 
-ZIP_URL = "http://github.com/%(repo)s/archive/master.zip"
+ZIP_URL = "https://github.com/%(repo)s/archive/master.zip"
 
 
 class GithubDownloader(object):
