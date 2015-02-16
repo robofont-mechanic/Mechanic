@@ -1,12 +1,8 @@
 import os
 import shutil
 import plistlib
-import fnmatch
 import errno
 import requests
-import tempfile
-
-from zipfile import ZipFile
 
 from mechanic import logger
 from mechanic.lazy_property import lazy_property
@@ -16,6 +12,7 @@ from mechanic.event import evented
 
 from .request import GithubRequest
 from .tree import GithubTree
+from .downloader import GithubDownloader
 
 
 class GithubRepository(object):
@@ -34,7 +31,6 @@ class GithubRepository(object):
         self.username, _ = repo.split('/', 1)
         self.name = name
 
-    @evented('repository')
     def read(self):
         """Return the version and location of remote extension."""
         try:
@@ -44,58 +40,13 @@ class GithubRepository(object):
             plist = plistlib.readPlistFromString(response.content)
             self.version = plist['version']
         except requests.exceptions.HTTPError:
-            logger.info("Couldn't get information about %s from %s" % (self.name, self.repo))
+            logger.warn("Couldn't get information about %s from %s" % (self.name, self.repo))
             self.version = '0.0.0'
-
-    @evented('repository')
-    def extract_download(self, filepath, destination):
-        """Extract downloaded zip file and return extension path."""
-
-        ZipFile(filepath).extractall(destination)
-
-        os.remove(filepath)
-
-        match = '*%s' % self.filename
-
-        # TODO: Make this use a generator
-        matches = []
-        for root, dirnames, _ in os.walk(destination):
-            for dirname in fnmatch.filter(dirnames, '*.roboFontExt'):
-                matches.append(os.path.join(root, dirname))
-
-        exact = fnmatch.filter(matches, match)
-        return (exact and exact[0]) or None
 
     @evented('repository')
     def download(self):
         """Download remote version of extension."""
-        tmp_dir = tempfile.mkdtemp()
-
-        try:
-            zip_path = os.path.join(tmp_dir, os.path.basename(self.zip_url))
-            zip_file = open(zip_path, "wb")
-            stream = requests.get(self.zip_url, stream=True)
-            chunks = stream.iter_content(chunk_size=8192)
-
-            for content in chunks:
-                self.download_chunk(zip_file, content)
-        except:
-            shutil.rmtree(tmp_dir)
-        finally:
-            try:
-                zip_file.close()
-                stream.close()
-            except: pass
-
-        return self.extract_download(zip_file.name, tmp_dir)
-
-    @evented('repository', 'downloadChunk')
-    def download_chunk(self, file, content):
-        return file.write(content)
-
-    @property
-    def tmp_path(self):
-        return os.path.join("/", "tmp", "Mechanic", self.repo)
+        return GithubDownloader(self.repo, self.filename).extract()
 
     @property
     def version(self):
@@ -108,12 +59,6 @@ class GithubRepository(object):
     @version.setter
     def version(self, value):
         self._version = value
-
-    @property
-    def zip_url(self):
-        return "https://github.com/%(repo)s/archive/master.zip" % {
-            'repo': self.repo
-        }
 
     @lazy_property
     def extension_path(self):
