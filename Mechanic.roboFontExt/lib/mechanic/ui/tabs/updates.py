@@ -38,8 +38,6 @@ class UpdatesTab(BaseTab, ThreadedObject):
     @progress.each('installable')
     @progress.tick('repositoryWillDownload',
                    'Downloading {repository.repo}')
-    @progress.tick('repositoryWillExtractDownload',
-                   'Extracting {repository.repo}')
     @progress.tick('extensionWillInstall',
                    'Installing {extension.bundle.name}')
     def install_updates(self, sender=None):

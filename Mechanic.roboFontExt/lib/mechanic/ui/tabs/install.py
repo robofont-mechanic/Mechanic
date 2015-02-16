@@ -33,8 +33,6 @@ class InstallTab(BaseTab):
     @progress.each('list.selected')
     @progress.tick('repositoryWillDownload',
                    'Downloading {repository.repo}')
-    @progress.tick('repositoryWillExtractDownload',
-                   'Extracting {repository.repo}')
     @progress.tick('extensionWillInstall',
                    'Installing {extension.bundle.name}')
     def install(self, sender):
