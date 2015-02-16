@@ -23,6 +23,8 @@ class GithubRequest(object):
             headers['If-None-Match'] = etag
 
         response = requests.get(url, headers=headers)
+        logger.debug('Rate Limit: %s', response.headers['x-ratelimit-limit'])
+        logger.debug('Rate Limit Remaining: %s', response.headers['x-ratelimit-remaining'])
 
         if response.status_code == 304:
             logger.info('Using cached response for {}'.format(self.url))
