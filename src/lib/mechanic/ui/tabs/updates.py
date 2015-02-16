@@ -4,6 +4,7 @@ from vanilla import Button, TextBox
 from mechanic.threaded import ThreadedObject
 from mechanic.update import Update
 from mechanic.ui import progress
+from mechanic.ui.overlay import Overlay
 from mechanic.ui.lists.update import UpdateList
 from mechanic.ui.tabs.base import BaseTab
 
@@ -49,8 +50,12 @@ class UpdatesTab(BaseTab, ThreadedObject):
 
     def update_list(self, force=False):
         try:
+            self.update_progress = Overlay("Checking for updates...",
+                                           (20, 20, -20, -60),
+                                           opacity=0.4)
             self.list.refresh(force=force)
             self.enable()
+            del self.update_progress
         except UpdateList.ConnectionError:
             self.disable("Couldn't connect to the internet...")
 
