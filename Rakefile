@@ -7,12 +7,15 @@ BUNDLE = "Mechanic.roboFontExt"
 STARTUP = BUNDLE + "/lib/_startup.py"
 
 SOURCE_FILES = FileList[
-  "src/html/**/*",
-  "src/lib/**/*.py",
-  "src/Resources/**/*"
+  "src/html/**/*.*",
+  "src/lib/**/*.*",
+  "src/Resources/**/*.*"
 ]
 
-CLOBBER.include(SOURCE_FILES.pathmap("%{^src/,Mechanic.roboFontExt/}p"))
+SOURCE_FILES.exclude('*.pyc')
+
+CLOBBER.include('Mechanic.roboFontExt/**/*')
+CLOBBER.exclude('Mechanic.roboFontExt/.env')
 CLEAN.include(FileList['**/*.pyc'])
 
 SOURCE_FILES.each do |src|
