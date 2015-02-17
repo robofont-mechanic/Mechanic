@@ -3,7 +3,7 @@ layout: post
 title: "Mechanic 1.0"
 ---
 
-I'm very happy to announce that Mechanic 1.0 is released today. Mechanic 1.0 has been incubating for almost a year, and what should have been a quick reorganization ended up being an almost complete rewrite of the last release (version 0.6).
+I'm very happy to announce that Mechanic 1.0 is released today. Mechanic 1.0 has been incubating for almost a year. What should have been a quick reorganization ended up being an almost complete rewrite of the last release (version 0.6).
 
 While a much has changed internally, not a lot has changed to the Mechanic GUI you already know. All of the core functionality was already present in 0.6, but the codebase consisted of about a thousand lines of code smashed into 3 files. Before I could comfortably say that Mechanic was worthy of the 1.0 label, a lot of stale code needed to be extracted, rethought, or trashed. This release should be more maintainable and provide a decent platform to build on for future releases.
 
