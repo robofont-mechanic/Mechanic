@@ -32,7 +32,7 @@ class RegisterTab(BaseTab):
                                     "Repository",
                                     placeholder="username/MyExtension")
 
-        self.explanatory_text = TextBox((TextField.indent, 135, -20, 50),
+        self.explanatory_text = TextBox((TextField.indent + 20, 135, -20, 50),
                                         self.explanation)
 
         self.import_button = Button((-250, -42, 80, 20),
