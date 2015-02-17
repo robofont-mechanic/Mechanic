@@ -16,6 +16,11 @@ code {
     margin: 0;
   }
 
+  code {
+    display: block;
+    padding: 0;
+  }
+
   .c     { color: #998; font-style: italic } // Comment
   .err   { color: #a61717; background-color: #e3d2d2 } // Error
   .k     { font-weight: bold } // Keyword

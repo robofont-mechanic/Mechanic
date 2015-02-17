@@ -6,7 +6,7 @@ body {
   color: rgb(240, 240, 240);
   font-family: Helvetica, Arial;
   font-size: 12pt;
-  line-height: 1.4em;
+  line-height: 1.6em;
   margin: 0;
   padding: 75px 20px;
 }
@@ -14,7 +14,7 @@ body {
 h1 {
   font-weight: normal;
   font-size: 12pt;
-  line-height: 1.4em;
+  line-height: 1.6em;
   margin: 0 0 10px;
 
   a {
@@ -24,6 +24,16 @@ h1 {
 
 a {
   color: rgb(240, 240, 240);
+}
+
+hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid rgb(150, 150, 150);
+}
+
+p {
+  margin: 0.8em 0;
 }
 
 .page-header {
@@ -88,6 +98,13 @@ a {
   position: relative;
 }
 
+.post header h1 {
+  font-family: Impact, "DINCondensed-Bold", Helvetica, sans-serif;
+  font-size: 32pt;
+  line-height: 36pt;
+  margin-bottom: 20px;
+}
+
 .post:nth-child(2n + 1) {
   background-color: rgb(242, 242, 242);
 }
@@ -114,6 +131,11 @@ a {
 .post .metadata div {
   display: inline-block;
   margin-left: 10px;
+}
+
+.post .content h1 {
+  font-weight: bold;
+  margin: 0.8em 0 0;
 }
 
 @media screen and (max-width: 600px) {
