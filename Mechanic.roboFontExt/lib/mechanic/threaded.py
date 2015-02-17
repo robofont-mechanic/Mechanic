@@ -18,11 +18,19 @@ class Threaded(object):
 
     @staticmethod
     def run(target, *args, **kwargs):
-        logger.info('Calling `{}` in a new thread'.format(target.__name__))
+        Threaded.log(target)
         Thread(target=target,
                args=args,
                kwargs=kwargs).start()
 
+    @staticmethod
+    def log(target):
+        if hasattr(target, 'im_class'):
+            logger.info('Calling `%s#%s` in a new thread',
+                        target.im_class.__name__,
+                        target.__name__)
+        else:
+            logger.info('Initializing `%s` in a new thread', target.__name__)
 
 class ThreadedObject(object):
 
