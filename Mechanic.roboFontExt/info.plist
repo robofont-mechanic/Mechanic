@@ -47,7 +47,7 @@
 	<key>developer</key>
 	<string>Jack Jennings</string>
 	<key>developerURL</key>
-	<string>http://ja.ckjennin.gs</string>
+	<string>http://robofontmechanic.com</string>
 	<key>html</key>
 	<true/>
 	<key>launchAtStartUp</key>
@@ -57,7 +57,7 @@
 	<key>name</key>
 	<string>Mechanic</string>
 	<key>timeStamp</key>
-	<real>1424159285.6160572</real>
+	<real>1424159352.6660311</real>
 	<key>version</key>
 	<string>0.6.0</string>
 </dict>
