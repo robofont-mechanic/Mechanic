@@ -1,10 +1,12 @@
 import os
 import plistlib
 
+from mechanic import logger
+
 
 class Configuration(dict):
 
-    namespace = "com.robofontmechanic"
+    namespace = "com.robofontmechanic.Mechanic"
 
     def __init__(self, path):
         if os.path.exists(path):
@@ -12,7 +14,12 @@ class Configuration(dict):
                 self[key] = value
 
     def namespaced(self, key):
-        return self.get('.'.join([self.namespace, key]))
+        return self.get(self.namespace, {}).get(key)
 
     def deprecated(self, key):
-        return self.get(key)
+        value = self.get(key)
+        if value is not None:
+            logger.warn('%s is using the deprecated `%s` configuration, which will not be supported in Mechanic 2.',
+                        self.get('name'),
+                        key)
+        return value
