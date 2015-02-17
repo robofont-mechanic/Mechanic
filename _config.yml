@@ -12,7 +12,7 @@ permalink: /:year/:month/:day/:title/
 # Build settings
 markdown: kramdown
 
-ga_id: UA-41381381-2
+ga_id: UA-41381381-4
 
 exclude:
   - script
