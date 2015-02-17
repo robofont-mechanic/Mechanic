@@ -1,5 +1,6 @@
 from vanilla import *
 
+from mechanic.threaded import ThreadedObject
 from mechanic.extension import Extension
 from mechanic.registry import Registry
 from mechanic.ui import progress
@@ -7,7 +8,7 @@ from mechanic.ui.tabs.base import BaseTab
 from mechanic.ui.lists.installation import InstallationList
 
 
-class InstallTab(BaseTab):
+class InstallTab(BaseTab, ThreadedObject):
     title = "Install"
     image = "toolbarRun"
     identifier = "install"
@@ -25,7 +26,7 @@ class InstallTab(BaseTab):
 
         self.content.install_button = Button((-160, -22, 160, 20),
                                              "Install Extension",
-                                             callback=self.install)
+                                             callback=self.in_thread.install)
 
         self.update_buttons()
 
@@ -55,7 +56,7 @@ class InstallTab(BaseTab):
         self.update_buttons()
 
     def activate(self):
-        self.update_list()
+        self.in_thread.update_list()
 
     def update_list(self):
         try:
