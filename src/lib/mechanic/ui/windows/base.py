@@ -43,6 +43,9 @@ class BaseWindow(BaseWindowController):
     def set_window_size(self, tab):
         self.w.resize(tab.tab_size[0], tab.tab_size[1], False)
 
+    def start_progress(self, *args, **kwargs):
+        return self.startProgress(*args, **kwargs)
+
     @property
     def current_tab(self):
         index = self.w.tabs.get()

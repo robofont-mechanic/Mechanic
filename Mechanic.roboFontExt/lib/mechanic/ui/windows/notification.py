@@ -31,7 +31,7 @@ class UpdateNotificationWindow(BaseWindow, ThreadedObject):
 
             self.w.updateButton = Button((-150, -40, 130, 20),
                                          "Install Updates",
-                                         callback=self.update)
+                                         callback=self.do_update)
             self.w.cancelButton = Button((-255, -40, 90, 20),
                                          "Not Now",
                                          callback=self.cancel)
@@ -44,18 +44,18 @@ class UpdateNotificationWindow(BaseWindow, ThreadedObject):
         else:
             logger.info("All extensions are up to date.")
 
+    def do_update(self, sender):
+        self.update()
+        self.w.close()
+
     @progress.each('updates')
     @progress.tick('repositoryWillDownload',
                    'Downloading {repository.repo}')
-    @progress.tick('repositoryWillExtractDownload',
-                   'Extracting {repository.repo}')
     @progress.tick('extensionWillInstall',
                    'Installing {extension.bundle.name}')
-    def update(self, sender):
+    def update(self):
         for extension in self.updates:
             extension.update()
-
-        self.progress.close()
 
     def show_details(self, sender):
         self.w.close()

@@ -33,7 +33,7 @@ class BaseTab(VanillaBaseObject):
             del self.overlay
 
     def start_progress(self, *args, **kwargs):
-        return self.parent.startProgress(*args, **kwargs)
+        return self.parent.start_progress(*args, **kwargs)
 
     def close_notification_sheet(self, sender):
         self.w.notification.close()
