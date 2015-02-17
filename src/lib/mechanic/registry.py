@@ -26,9 +26,7 @@ class Registry(object):
 
     def add(self, **data):
         logger.info("posting extension to %s..." % self.base_url)
-        response = requests.post(self.url, data=data)
-        response.raise_for_status()
-        return response
+        return requests.post(self.url, data=data)
 
     @property
     def url(self):
