@@ -17,10 +17,10 @@ class SettingsTab(BaseTab):
     def setup(self):
         self.content.list = SettingsList((0, 60, -0, -0))
 
-        self.content.startup = SettingCheckBox((0, 0, -0, 22),
+        self.content.startup = SettingCheckBox((3, 0, -0, 22),
                                                self.updates_label,
                                                "check_on_startup")
 
-        self.content.patches = SettingCheckBox((0, 25, -0, 22),
+        self.content.patches = SettingCheckBox((3, 25, -0, 22),
                                                self.minor_updates_label,
                                                "ignore_patch_updates")
