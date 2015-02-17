@@ -48,7 +48,7 @@ CLOBBER.include("Mechanic.roboFontExt/info.plist")
 task plist: %W[Mechanic.roboFontExt Mechanic.roboFontExt/info.plist]
 
 desc "Compiles an extension from src"
-task build: [:clobber, :source, :plist]
+task build: [:clean, :clobber, :source, :plist]
 
 desc "Compiles and installs an extension from src"
 task :install => :build do
