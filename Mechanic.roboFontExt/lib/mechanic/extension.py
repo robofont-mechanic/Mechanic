@@ -24,7 +24,7 @@ class Extension(object):
     def install_remote(cls, repository, name, filename):
         remote = GithubRepository(repository, name=name, filename=filename)
         path = remote.download()
-        extension = cls(path=remote.download()).install()
+        extension = cls(path=path).install()
         shutil.rmtree(path) # TODO: removing the tree should happen after download somehow
         return extension
 
