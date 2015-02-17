@@ -19,7 +19,7 @@ class Configuration(dict):
     def deprecated(self, key):
         value = self.get(key)
         if value is not None:
-            logger.warn('%s is using the deprecated `%s` configuration, which will not be supported in Mechanic 2.',
+            logger.info('%s is using the deprecated `%s` configuration, which will not be supported in Mechanic 2.',
                         self.get('name'),
                         key)
         return value
