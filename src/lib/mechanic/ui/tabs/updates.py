@@ -24,7 +24,7 @@ class UpdatesTab(BaseTab, ThreadedObject):
                                                           sizeStyle="small")
 
         self.content.update_button = UpdateButton((-140, -22, 140, 20),
-                                                  callback=self.install_updates)
+                                                  callback=self.in_thread.install_updates)
 
         self.content.refresh_button = Button((0, -22, 90, 20), "Refresh",
                                              callback=self.in_thread.update_list)
@@ -47,7 +47,7 @@ class UpdatesTab(BaseTab, ThreadedObject):
         for extension in self.installable:
             extension.update()
 
-        self.in_thread.update_list()
+        self.update_list(force=True)
 
     def update_list(self, force=False):
         if self.list.is_refreshing:
