@@ -20,31 +20,31 @@ class RegisterTab(BaseTab):
     explanation = Text.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
     def setup(self):
-        self.content.name = TextField((0, 0),
-                                      "Name",
-                                      placeholder="My Extension")
+        self.name = TextField((20, 20, -20),
+                              "Name",
+                              placeholder="My Extension")
 
-        self.content.filename = TextField((0, 40),
-                                          "Filename",
-                                          placeholder="MyExtension.roboFontExt")
+        self.filename = TextField((20, 60, -20),
+                                  "Filename",
+                                  placeholder="MyExtension.roboFontExt")
 
-        self.content.repository = TextField((0, 80),
-                                            "Repository",
-                                            placeholder="username/MyExtension")
+        self.repository = TextField((20, 100, -20),
+                                    "Repository",
+                                    placeholder="username/MyExtension")
 
-        self.content.explanatory_text = TextBox((TextField.indent, 115, -0, 50),
-                                                self.explanation)
+        self.explanatory_text = TextBox((TextField.indent, 135, -20, 50),
+                                        self.explanation)
 
-        self.content.import_button = Button((-230, -22, 80, 20),
-                                            "Import",
-                                            callback=self.get_extension)
+        self.import_button = Button((-250, -42, 80, 20),
+                                    "Import",
+                                    callback=self.get_extension)
 
-        self.content.register_button = Button((-140, -22, 140, 20),
-                                              "Register",
-                                              callback=self.register)
+        self.register_button = Button((-160, -42, 140, 20),
+                                      "Register",
+                                      callback=self.register)
 
     def activate(self):
-        self.set_default_button(self.content.register_button)
+        self.set_default_button(self.register_button)
 
     def get_extension(self, sender):
         getFile(fileTypes=['roboFontExt'],
@@ -54,20 +54,20 @@ class RegisterTab(BaseTab):
     def import_extension(self, file):
         extension = Extension(path=file[0])
         if extension.bundle.bundleExists():
-            self.content.name.set(extension.bundle.name)
-            self.content.filename.set(extension.filename)
-            self.content.repository.set(extension.repository)
+            self.name.set(extension.bundle.name)
+            self.filename.set(extension.filename)
+            self.repository.set(extension.repository)
 
     def register(self, sender):
         self.progress = self.start_progress('Sending to registry server...')
         try:
             registry = Registry(env.default_registry)
-            response = registry.add(name=self.content.name.get(),
-                                    filename=self.content.filename.get(),
-                                    repository=self.content.repository.get())
+            response = registry.add(name=self.name.get(),
+                                    filename=self.filename.get(),
+                                    repository=self.repository.get())
             self.progress.close()
             response.raise_for_status()
-            self.show_notification_sheet('%s was added.' % self.content.name.get())
+            self.show_notification_sheet('%s was added.' % self.name.get())
             self.clear()
         except requests.exceptions.HTTPError as e:
             errors = response.json()['error']
@@ -79,6 +79,6 @@ class RegisterTab(BaseTab):
             self.show_connection_error_sheet()
 
     def clear(self):
-        self.content.name.set('')
-        self.content.filename.set('')
-        self.content.repository.set('')
+        self.name.set('')
+        self.filename.set('')
+        self.repository.set('')

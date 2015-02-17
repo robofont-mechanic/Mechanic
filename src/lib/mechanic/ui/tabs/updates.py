@@ -20,22 +20,22 @@ class UpdatesTab(BaseTab, ThreadedObject):
                                editCallback=self.update_interface,
                                refreshCallback=self.update_interface)
 
-        self.content.updated_at_text = UpdatedTimeTextBox((100, -18, -0, 20),
-                                                          sizeStyle="small")
+        self.updated_at_text = UpdatedTimeTextBox((120, -38, -20, 20),
+                                                  sizeStyle="small")
 
-        self.content.update_button = UpdateButton((-140, -22, 140, 20),
-                                                  callback=self.in_thread.install_updates)
+        self.update_button = UpdateButton((-160, -42, 140, 20),
+                                          callback=self.in_thread.install_updates)
 
-        self.content.refresh_button = Button((0, -22, 90, 20), "Refresh",
-                                             callback=self.in_thread.update_list)
+        self.refresh_button = Button((20, -42, 90, 20), "Refresh",
+                                     callback=self.in_thread.update_list)
 
         if env.environment == 'production':
-            self.content.refresh_button.show(False)
+            self.refresh_button.show(False)
 
         self.update_interface()
 
     def activate(self):
-        self.set_default_button(self.content.update_button)
+        self.set_default_button(self.update_button)
         self.in_thread.update_list()
 
     @progress.each('installable')
@@ -58,18 +58,18 @@ class UpdatesTab(BaseTab, ThreadedObject):
                                            (20, 20, -20, -60),
                                            opacity=0.6,
                                            offset=90)
-            self.content.refresh_button.enable(False)
+            self.refresh_button.enable(False)
             self.list.refresh(force=force)
             self.enable()
         except UpdateList.ConnectionError:
             self.disable("Couldn't connect to the internet...")
         finally:
             del self.update_progress
-            self.content.refresh_button.enable(True)
+            self.refresh_button.enable(True)
 
     def update_interface(self, sender=None):
-        self.content.updated_at_text.update()
-        self.content.update_button.update(len(self.list.selected))
+        self.updated_at_text.update()
+        self.update_button.update(len(self.list.selected))
 
     def disable(self, *args, **kwargs):
         self.list.enable(False)
@@ -106,7 +106,7 @@ class UpdatedTimeTextBox(TextBox):
 
     def __init__(self, posSize, **kwargs):
         if env.environment == 'production':
-            posSize = (0, posSize[1], posSize[2], posSize[3])
+            posSize = (20, posSize[1], posSize[2], posSize[3])
 
         super(UpdatedTimeTextBox, self).__init__(posSize, **kwargs)
         self.update()

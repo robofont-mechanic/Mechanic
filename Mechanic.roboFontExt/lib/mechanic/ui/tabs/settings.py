@@ -11,16 +11,13 @@ class SettingsTab(BaseTab):
     image = "prefToolbarMisc"
     identifier = "settings"
 
-    updates_label = "Check for updates on startup"
-    minor_updates_label = "Ignore patch updates on startup"
-
     def setup(self):
-        self.content.list = SettingsList((0, 60, -0, -0))
+        self.list = SettingsList((20, 80, -20, -20))
 
-        self.content.startup = SettingCheckBox((3, 0, -0, 22),
-                                               self.updates_label,
-                                               "check_on_startup")
+        self.startup = SettingCheckBox((23, 20, -20, 22),
+                                       "Check for updates on startup",
+                                       "check_on_startup")
 
-        self.content.patches = SettingCheckBox((3, 25, -0, 22),
-                                               self.minor_updates_label,
-                                               "ignore_patch_updates")
+        self.patches = SettingCheckBox((23, 45, -20, 22),
+                                       "Ignore patch updates on startup",
+                                       "ignore_patch_updates")

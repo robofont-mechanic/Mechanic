@@ -12,7 +12,6 @@ class BaseTab(VanillaBaseObject):
     def __init__(self, dimensions, parent=None):
         self._setupView(self.ns_view_class, dimensions)
         self.parent = parent
-        self.content = Group((20, 20, -20, -20))
         self.setup()
 
     def setup(self):

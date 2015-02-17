@@ -16,17 +16,16 @@ class InstallTab(BaseTab, ThreadedObject):
     tab_size = (500, 400)
 
     def setup(self):
-        # Can't use self.content here because of stacking issues with Overlay
         self.list = InstallationList((20, 20, -20, -60),
                                      selectionCallback=self.update_buttons)
 
-        self.content.uninstall_button = Button((-270, -22, 100, 20),
-                                               "Uninstall",
-                                               callback=self.uninstall)
+        self.uninstall_button = Button((-290, -42, 100, 20),
+                                       "Uninstall",
+                                       callback=self.uninstall)
 
-        self.content.install_button = Button((-160, -22, 160, 20),
-                                             "Install Extension",
-                                             callback=self.in_thread.install)
+        self.install_button = Button((-180, -42, 160, 20),
+                                     "Install Extension",
+                                     callback=self.in_thread.install)
 
         self.update_buttons()
 
@@ -62,7 +61,7 @@ class InstallTab(BaseTab, ThreadedObject):
         try:
             self.list.set(Registry.all())
             self.enable()
-            self.set_default_button(self.content.install_button)
+            self.set_default_button(self.install_button)
         except Registry.ConnectionError:
             self.disable("Couldn't connect to the registry server...")
 
@@ -79,18 +78,18 @@ class InstallTab(BaseTab, ThreadedObject):
         self.update_uninstall_button_label()
 
     def update_uninstall_button_label(self, sender=None):
-        self.content.uninstall_button.enable(len(self.uninstallable) > 0)
+        self.uninstall_button.enable(len(self.uninstallable) > 0)
 
     def update_install_button_label(self, sender=None):
         selections = self.list.getSelection()
-        self.content.install_button.enable(selections)
+        self.install_button.enable(selections)
         if len(selections) > 1:
             label = "Install %d Extensions" % len(selections)
         elif len(selections) is 1:
             label = "Install %d Extension" % len(selections)
         else:
             label = "Install Extensions"
-        self.content.install_button.setTitle(label)
+        self.install_button.setTitle(label)
 
     @property
     def uninstallable(self):
