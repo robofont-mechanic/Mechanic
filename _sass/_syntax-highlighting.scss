@@ -10,7 +10,6 @@ code {
 .highlight {
   background: #fff;
   margin-bottom: 1.4em;
-  padding: 20px;
 
   pre {
     margin: 0;
@@ -19,6 +18,8 @@ code {
   code {
     display: block;
     padding: 0;
+    overflow-y: scroll;
+    padding: 20px;
   }
 
   .c     { color: #998; font-style: italic } // Comment
