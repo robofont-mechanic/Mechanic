@@ -1,6 +1,7 @@
 import time
 from vanilla import Button, TextBox
 
+from mechanic import env
 from mechanic.threaded import ThreadedObject
 from mechanic.update import Update
 from mechanic.ui import progress
@@ -25,9 +26,11 @@ class UpdatesTab(BaseTab, ThreadedObject):
         self.content.update_button = UpdateButton((-140, -22, 140, 20),
                                                   callback=self.install_updates)
 
-
         self.content.refresh_button = Button((0, -22, 90, 20), "Refresh",
                                              callback=self.in_thread.update_list)
+
+        if env.environment == 'production':
+            self.content.refresh_button.show(False)
 
         self.update_interface()
 
@@ -102,6 +105,9 @@ class UpdateButton(Button):
 class UpdatedTimeTextBox(TextBox):
 
     def __init__(self, posSize, **kwargs):
+        if env.environment == 'production':
+            posSize = (0, posSize[1], posSize[2], posSize[3])
+
         super(UpdatedTimeTextBox, self).__init__(posSize, **kwargs)
         self.update()
 
