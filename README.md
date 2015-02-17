@@ -53,9 +53,9 @@ Once you have added the required keys to your `info.plist` file, you can registe
 
 ![mechanic register tab](screenshots/register.png)
 
-Click on "Import", then select your extension from the file selection dialog. If your extension is configured correctly, all of the field should be populated. Click "Register" to complete the process.
+Click on "Import", then select your extension from the file selection dialog. If your extension is configured correctly, all of the fields should be populated. Click "Register" to complete the process.
 
-When you register your extension, your name/username and the description of the
+When you register your extension, your name/username and the description of the repository will be recorded from GitHub. This information will be displayed in the list of installable extensions and on the Mechanic website, so make sure that you have set these how you want them to be seen before registering.
 
 You will only need to register once for each extension you want to have listed in the Mechanic installation list. To release new versions in the future, you only need to update the version number in the `info.plist` file and push the changes to GitHub.
 
