@@ -12,7 +12,7 @@ class TextField(Group):
                              "{0}:".format(label),
                              alignment="right")
 
-        self.text = EditText((self.indent, 0, -0, 22),
+        self.text = EditText((self.indent, 0, 500 - 40 - self.indent, 22),
                              placeholder=placeholder)
 
     def set(self, *args):
