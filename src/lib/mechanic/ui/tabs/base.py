@@ -1,7 +1,7 @@
 from AppKit import NSView
 from vanilla import VanillaBaseObject, Sheet, TextBox, Button, Group
 
-from mechanic.ui.font import Font
+from mechanic.ui.text import Text
 from mechanic.ui.overlay import Overlay
 
 

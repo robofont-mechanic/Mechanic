@@ -4,7 +4,7 @@ from vanilla import ImageView, TextBox, Button
 from mechanic import logger
 from mechanic.threaded import ThreadedObject
 from mechanic.ui import progress
-from mechanic.ui.font import Font
+from mechanic.ui.text import Text
 from mechanic.storage import Storage
 from mechanic.update import Update
 from mechanic.ui.windows.base import BaseWindow
@@ -76,10 +76,10 @@ class UpdateNotificationWindow(BaseWindow, ThreadedObject):
     @property
     def title(self):
         text = "Updates are available for %d of your extensions."
-        return Font.string(text=text % len(self.updates),
+        return Text.string(text=text % len(self.updates),
                            style="bold")
 
     @property
     def explanation(self):
         text = "If you don't want to update now, choose Extensions > Mechanic > Updates when you're ready to install."
-        return Font.string(text=text, size=11)
+        return Text.string(text=text, size=11)

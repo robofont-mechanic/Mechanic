@@ -7,7 +7,7 @@ from mechanic import env
 from mechanic.extension import Extension
 from mechanic.registry import Registry
 from mechanic.ui.fields.text_field import TextField
-from mechanic.ui.font import Font
+from mechanic.ui.text import Text
 from mechanic.ui.tabs.base import BaseTab
 
 
@@ -17,7 +17,7 @@ class RegisterTab(BaseTab):
     identifier = "register"
 
     tab_size = (500, 240)
-    explanation = Font.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
+    explanation = Text.string(text="Your name and the description of your extension will be based on the name/username and repository description on GitHub. Make sure these are set accordingly before registering your extension.", size=11)
 
     def setup(self):
         self.content.name = TextField((0, 0),

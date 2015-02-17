@@ -1,7 +1,8 @@
-from AppKit import *
+from AppKit import NSFontAttributeName, NSFont, NSMutableAttributedString, \
+                   NSAttributedString
 
 
-class Font(object):
+class Text(object):
     """Convenience class for returning NSAttributedStrings."""
     @staticmethod
     def regular(size):
@@ -19,5 +20,3 @@ class Font(object):
             s = NSAttributedString
         weight = getattr(self, style)(size)
         return s.alloc().initWithString_attributes_(text, weight)
-
-
