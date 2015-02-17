@@ -22,7 +22,6 @@ class GithubRepository(object):
     def __init__(self, repo, name=None, filename=None):
         self.repo = repo
         self.filename = filename
-        self.username, _ = repo.split('/', 1)
         self.name = name
 
     @evented('repository')
