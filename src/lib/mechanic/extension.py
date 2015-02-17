@@ -14,8 +14,6 @@ from mechanic.lazy_property import lazy_property
 class Extension(object):
     """Facilitates loading the configuration from and updating extensions."""
 
-    ticks_per_download = 4
-
     @classmethod
     def all(cls):
         return [cls(name=n) for n in ExtensionBundle.allExtensions()]
