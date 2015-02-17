@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Mechanic 1.0"
+---
+
+I'm very happy to announce that Mechanic 1.0 is released today. Mechanic 1.0 has been incubating for almost a year, and what should have been a quick reorganization ended up being an almost complete rewrite of the last release (version 0.6).
+
+While a much has changed internally, not a lot has changed to the Mechanic GUI you already know. All of the core functionality was already present in 0.6, but the codebase consisted of about a thousand lines of code smashed into 3 files. Before I could comfortably say that Mechanic was worthy of the 1.0 label, a lot of stale code needed to be extracted, rethought, or trashed. This release should be more maintainable and provide a decent platform to build on for future releases.
+
+Ultimately, Mechanic 1.0 is meant to be a solid base to build the next version of Mechanic. Mechanic 2 will have a much more radical change in architecture, which should enable some exciting new features. A separate post will outline the roadmap for Mechanic 2 (and minor versions of Mechanic 1.x).
+
+Thanks to everyone that's released their extensions through Mechanic. I'm looking forward to seeing what the RoboFont development community will launch in 2015!
+
+A few of the bigger (public-facing) changes are outlined below:
+
+# Configuration Has Changed (Slightly, and for the Better)
+
+The configuration that's required by Mechanic in `info.plist` has been moved under the `com.robofontmechanic.Mechanic` namespace. The `info.plist` file should now include the following in place of the old `repository` key:
+
+{% highlight xml %}
+<key>com.robofontmechanic.Mechanic</key>
+<dict>
+  <key>repository</key>
+  <string>jackjennings/Mechanic</string>
+</dict>
+{% endhighlight %}
+
+Mechanic will continue to read the deprecated root-level `repository` configuration until Mechanic 2 is released.
+
+In addition, the `extensionPath` configuration is no longer needed. This configuration  was a source of confusion for many people, so it has been removed in lieu of slightly slower downloads.
+
+# Tag-based Versioning is Gone
+
+Tag-based versioning has been removed from Mechanic. While in theory this was to be the favored way to mark versions for release, very few people actually used it. To make the codebase more maintainable, tags are no longer considered when determining if an extension should be updated.
+
+If you were using tag-based versioning, you can continue to tag your releases (I'd still consider it a good practice), but the `info.plist` configuration is now the only place Mechanic will look for version information.
+
+# GitHub Rate-Limiting: Solved
+
+Mechanic uses a couple of calls to GitHub's API in order to check if an extension should be updated. These calls are pretty aggressively rate-limited, and I received a handful of reports that users were hitting this limit now that there are a good number of extensions available. Mechanic 1.0 includes support for caching the result of requests to the GitHub API, which should alleviate the issue in most cases.
+
+# Bugs and Support
+
+Finally, thanks for everyone that has written in with bug reports and other notes about Mechanic. Please continue to submit bug and support requests to the [issue tracker](https://github.com/jackjennings/Mechanic/issues). I expect that there will be some issues that I haven't caught before release but will work to correct them quickly.
