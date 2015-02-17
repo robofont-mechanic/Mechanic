@@ -1,17 +1,19 @@
 import fnmatch
-import requests
+
+from .request import GithubRequest
+
+
+TREE_URL = 'https://api.github.com/repos/%(repo)s/git/trees/HEAD?recursive=1'
 
 
 class GithubTree(object):
 
-    api = 'https://api.github.com/repos/%(repo)s/git/trees/HEAD?recursive=1'
-
     def __init__(self, repository):
-        response = requests.get(self.endpoint(repository))
+        response = GithubRequest(self.endpoint(repository)).get()
         self.files = response.json().get('tree', [])
 
     def endpoint(self, repository):
-        return self.api % {'repo': repository}
+        return TREE_URL % {'repo': repository}
 
     def find(self, filename):
         glob = '*%s' % filename

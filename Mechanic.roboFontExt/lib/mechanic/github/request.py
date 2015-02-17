@@ -24,6 +24,9 @@ class GithubRequest(object):
 
         response = requests.get(url, headers=headers)
 
+        self.log_header(response, 'x-ratelimit-limit')
+        self.log_header(response, 'x-ratelimit-remaining')
+
         if response.status_code == 304:
             logger.info('Using cached response for {}'.format(self.url))
             response = cached_response
@@ -38,6 +41,10 @@ class GithubRequest(object):
 
     def get_etag(self, response):
         return response.headers['ETag']
+
+    def log_header(self, response, key):
+        if key in response.headers:
+            logger.debug('%s: %s', key, response.headers[key])
 
     @property
     def cache(self):
