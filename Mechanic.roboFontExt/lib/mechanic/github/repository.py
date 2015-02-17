@@ -36,6 +36,9 @@ class GithubRepository(object):
         except requests.exceptions.HTTPError:
             logger.warn("Couldn't get information about %s from %s" % (self.name, self.repo))
             return Version('0.0.0')
+        except AttributeError:
+            logger.warn("(Probably) Couldn't fetch the GitHub file tree for %s" % self.repo)
+            return Version('0.0.0')
 
     @lazy_property
     def tree(self):
