@@ -1,0 +1,7 @@
+name: Mechanic
+version: 1.0.0
+developer: Jack Jennings
+developerURL: http://robofontmechanic.com
+com.robofontmechanic.Mechanic:
+  repository: jackjennings/Mechanic
+  description: Package manager for RoboFont extensions
