@@ -13,6 +13,7 @@ permalink: /:year/:month/:day/:title/
 markdown: kramdown
 
 ga_id: UA-41381381-4
+ga_resource: blog.robofontmechanic.com
 
 exclude:
   - script
