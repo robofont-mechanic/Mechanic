@@ -6,13 +6,13 @@ import fnmatch
 from zipfile import ZipFile
 
 
-ZIP_URL = "https://github.com/%(repo)s/archive/master.zip"
+ZIP_URL = "https://github.com/%(repository)s/archive/master.zip"
 
 
 class GithubDownloader(object):
 
-    def __init__(self, repo, target):
-        self.repo = repo
+    def __init__(self, repository, target):
+        self.repository = repository
         self.target = target
         self.zip = self.download(self.zip_url)
 
@@ -54,4 +54,4 @@ class GithubDownloader(object):
 
     @property
     def zip_url(self):
-        return ZIP_URL % {'repo': self.repo}
+        return ZIP_URL % {'repository': self.repository}
