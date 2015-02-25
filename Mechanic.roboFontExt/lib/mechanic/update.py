@@ -52,7 +52,7 @@ class Update(object):
         extensions = []
         for name, version in Storage.get('update_cache').items():
             extension = Extension(name=name)
-            if extension.installed and extension.is_configured:
+            if extension.is_installed and extension.is_configured:
                 extension.remote.version = version
                 extensions.append(extension)
         return extensions

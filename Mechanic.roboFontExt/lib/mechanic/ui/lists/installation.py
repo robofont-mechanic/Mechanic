@@ -10,7 +10,7 @@ class InstallationList(BaseList):
     """Return an ExtensionList for installation window."""
 
     columns = [{"title": "Installed",
-                "key": "installed",
+                "key": "is_installed",
                 "width": 25,
                 "editable": False,
                 "cell": CircleCell.alloc().init()},
@@ -32,7 +32,7 @@ class InstallationList(BaseList):
 
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]
-        item = {'installed': Extension(name=name).installed,
+        item = {'is_installed': Extension(name=name).is_installed,
                 'extension': extension}
         return super(InstallationList, self)._wrapItem(item)
 

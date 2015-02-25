@@ -96,4 +96,4 @@ class InstallTab(BaseTab, ThreadedObject):
         filenames = [item['filename'] for item in self.list.selected]
         names = [filename.split("/")[-1] for filename in filenames]
         extensions = [Extension(name=name) for name in names]
-        return [ext for ext in extensions if ext.installed]
+        return [ext for ext in extensions if ext.is_installed]
