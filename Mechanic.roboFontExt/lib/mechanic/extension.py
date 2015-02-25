@@ -29,7 +29,6 @@ class Extension(object):
     def __init__(self, name=None, path=None):
         self.name = name
         self.bundle = ExtensionBundle(name=self.name, path=path)
-        self.config = Configuration(self.config_path)
 
     @evented()
     def update(self, path=None):
@@ -47,6 +46,10 @@ class Extension(object):
     @evented()
     def uninstall(self):
         self.bundle.deinstall()
+
+    @lazy_property
+    def config(self):
+        return Configuration(self.config_path)
 
     @lazy_property
     def remote(self):
