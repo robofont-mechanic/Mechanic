@@ -63,7 +63,7 @@ class Update(object):
         Storage.set('update_cache', cache)
 
     @classmethod
-    def _filter_patch_updates(cls, update):
-        local = Version(update.configuration.version)
-        remote = Version(update.remote.version)
+    def _filter_patch_updates(cls, extension):
+        local = extension.version
+        remote = extension.remote.version
         return remote.major > local.major or remote.minor > remote.minor
