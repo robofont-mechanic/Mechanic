@@ -16,13 +16,11 @@ class GithubRepository(object):
     @classmethod
     def concerning(cls, extension):
         return cls(extension.repository,
-                   name=extension.name,
                    filename=extension.filename)
 
-    def __init__(self, repo, name=None, filename=None):
+    def __init__(self, repo, filename=None):
         self.repo = repo
         self.filename = filename
-        self.name = name
 
     @evented('repository')
     def download(self):
@@ -34,10 +32,10 @@ class GithubRepository(object):
         try:
             return Version(GithubPlist(self.repo, self.extension_path)['version'])
         except requests.exceptions.HTTPError:
-            logger.warn("Couldn't get information about %s from %s" % (self.name, self.repo))
+            logger.warn("Couldn't get version information from %s", self.repo)
             return Version('0.0.0')
         except AttributeError:
-            logger.warn("(Probably) Couldn't fetch the GitHub file tree for %s" % self.repo)
+            logger.warn("(Probably) Couldn't fetch the GitHub file tree for %s", self.repo)
             return Version('0.0.0')
 
     @lazy_property

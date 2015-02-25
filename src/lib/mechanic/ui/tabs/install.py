@@ -38,7 +38,6 @@ class InstallTab(BaseTab, ThreadedObject):
     def install(self, sender):
         for item in self.list.selected:
             Extension.install_remote(repository=item['repository'],
-                                     name=item['name'],
                                      filename=item['filename'])
 
         self.list.refresh()

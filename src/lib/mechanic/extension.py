@@ -19,8 +19,8 @@ class Extension(object):
         return [cls(name=n) for n in ExtensionBundle.allExtensions()]
 
     @classmethod
-    def install_remote(cls, repository, name, filename):
-        remote = GithubRepository(repository, name=name, filename=filename)
+    def install_remote(cls, repository, filename):
+        remote = GithubRepository(repository, filename)
         path = remote.download()
         extension = cls(path=path).install()
         shutil.rmtree(path) # TODO: removing the tree should happen after download somehow
