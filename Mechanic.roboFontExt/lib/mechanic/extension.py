@@ -48,8 +48,8 @@ class Extension(object):
         self.bundle.deinstall()
 
     @lazy_property
-    def config(self):
-        return Configuration(self.config_path)
+    def configuration(self):
+        return Configuration(self.configuration_path)
 
     @lazy_property
     def remote(self):
@@ -81,7 +81,7 @@ class Extension(object):
         return self.may_update and not self.is_current_version
 
     @property
-    def config_path(self):
+    def configuration_path(self):
         return os.path.join(self.path, 'info.plist')
 
     @property
@@ -90,12 +90,12 @@ class Extension(object):
 
     @property
     def repository(self):
-        return self.config.namespaced('repository') or \
-            self.config.deprecated('repository')
+        return self.configuration.namespaced('repository') or \
+            self.configuration.deprecated('repository')
 
     @property
     def version(self):
-        return Version(self.config['version'])
+        return Version(self.configuration['version'])
 
     @property
     def filename(self):

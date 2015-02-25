@@ -64,6 +64,6 @@ class Update(object):
 
     @classmethod
     def _filter_patch_updates(cls, update):
-        local = Version(update.config.version)
+        local = Version(update.configuration.version)
         remote = Version(update.remote.version)
         return remote.major > local.major or remote.minor > remote.minor
