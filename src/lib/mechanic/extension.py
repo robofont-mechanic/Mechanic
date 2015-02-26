@@ -53,7 +53,7 @@ class Extension(object):
 
     @lazy_property
     def remote(self):
-        return GithubRepository.concerning(self)
+        return GithubRepository(self.repository, self.filename)
 
     @property
     def is_current_version(self):

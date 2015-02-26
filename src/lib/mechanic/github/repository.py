@@ -13,11 +13,6 @@ from .plist import GithubPlist
 
 class GithubRepository(object):
 
-    @classmethod
-    def concerning(cls, extension):
-        return cls(extension.repository,
-                   filename=extension.filename)
-
     def __init__(self, repo, filename=None):
         self.repo = repo
         self.filename = filename
