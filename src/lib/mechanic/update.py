@@ -49,12 +49,12 @@ class Update(object):
     def _get_cached(cls):
         logger.info("Fetching cached updates...")
 
-        cache = Storage.get('update_cache').items()
-        extensions = [Extension(name=name) for name, _ in cache]
+        cache = Storage.get('update_cache')
+        extensions = [Extension(name=name) for name, _ in cache.items()]
 
         for extension in extensions:
             if extension.is_installed and extension.is_configured:
-                extension.remote.version = cache[extension.name]['version']
+                extension.remote.version = Version(cache[extension.name])
 
         return extensions
 
