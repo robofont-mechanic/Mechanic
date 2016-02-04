@@ -44,10 +44,14 @@ Add the following snippet to the `info.plist` file inside of your extension:
 <dict>
   <key>repository</key>
   <string>username/my-extension</string>
+  <key>summary</key>
+  <string>A brief description of what this thing does</string>
 </dict>
 ```
 
 Replace `username/my-extension` with your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
+
+Replace the `summary` string with a description of the extension's functionality.
 
 Once you have added the required keys to your `info.plist` file, you can register your extension from within the Mechanic interface in RoboFont.
 
