@@ -15,6 +15,8 @@ class UpdatesTab(BaseTab, ThreadedObject):
     image = "toolbarScriptReload"
     identifier = "updates"
 
+    max_tab_size = (500, 10000)
+
     def setup(self):
         self.list = UpdateList((20, 20, -20, -60),
                                editCallback=self.update_interface,

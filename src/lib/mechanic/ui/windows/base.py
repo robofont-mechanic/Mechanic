@@ -44,6 +44,12 @@ class BaseWindow(BaseWindowController):
     def set_window_size(self, tab):
         self.w.resize(tab.tab_size[0], tab.tab_size[1], False)
 
+        # 22 is a modifier that is somehow needed to make the min and max height
+        # correctly sized in relation to the dimensions that the window is
+        # resized to above...
+        self.w._window.setMinSize_((tab.tab_size[0], tab.tab_size[1] + 22))
+        self.w._window.setMaxSize_((tab.max_tab_size[0], tab.max_tab_size[1] + 22))
+
     def start_progress(self, *args, **kwargs):
         return self.startProgress(*args, **kwargs)
 
@@ -60,5 +66,5 @@ class BaseWindow(BaseWindowController):
     def w(self):
         return Window(self.window_size,
                       autosaveName=self.__class__.__name__,
-                      title=self.window_title)
-
+                      title=self.window_title,
+                      minSize=self.window_size)

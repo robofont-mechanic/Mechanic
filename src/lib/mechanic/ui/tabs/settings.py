@@ -11,6 +11,8 @@ class SettingsTab(BaseTab):
     image = "prefToolbarMisc"
     identifier = "settings"
 
+    max_tab_size = (500, 10000)
+
     def setup(self):
         self.list = SettingsList((20, 80, -20, -20))
 

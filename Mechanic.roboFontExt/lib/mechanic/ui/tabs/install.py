@@ -14,6 +14,7 @@ class InstallTab(BaseTab, ThreadedObject):
     identifier = "install"
 
     tab_size = (500, 400)
+    max_tab_size = (500, 10000)
 
     def setup(self):
         self.list = InstallationList((20, 20, -20, -60),

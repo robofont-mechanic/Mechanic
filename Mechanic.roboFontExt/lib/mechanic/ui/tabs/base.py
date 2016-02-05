@@ -56,3 +56,7 @@ class BaseTab(VanillaBaseObject):
     @property
     def w(self):
         return self.parent.w
+
+    @property
+    def max_tab_size(self):
+        return self.tab_size
