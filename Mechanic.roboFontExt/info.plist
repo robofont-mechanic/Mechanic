@@ -39,10 +39,10 @@
 	</array>
 	<key>com.robofontmechanic.Mechanic</key>
 	<dict>
-		<key>description</key>
-		<string>Package manager for RoboFont extensions</string>
 		<key>repository</key>
 		<string>jackjennings/Mechanic</string>
+		<key>summary</key>
+		<string>Package manager for RoboFont extensions</string>
 	</dict>
 	<key>developer</key>
 	<string>Jack Jennings</string>
@@ -57,7 +57,7 @@
 	<key>name</key>
 	<string>Mechanic</string>
 	<key>timeStamp</key>
-	<real>1454638178.610094</real>
+	<real>1454638229.557399</real>
 	<key>version</key>
 	<string>1.1.0</string>
 </dict>

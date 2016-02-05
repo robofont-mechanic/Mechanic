@@ -4,4 +4,4 @@ developer: Jack Jennings
 developerURL: http://robofontmechanic.com
 com.robofontmechanic.Mechanic:
   repository: jackjennings/Mechanic
-  description: Package manager for RoboFont extensions
+  summary: Package manager for RoboFont extensions
