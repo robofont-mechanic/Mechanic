@@ -3,19 +3,21 @@ Mechanic
 
 Mechanic provides an interface in RoboFont for installing and updating extensions hosted on GitHub.
 
+There are a number of [available extensions](http://robofontmechanic.com) listed on the Mechanic website.
+
 https://github.com/jackjennings/Mechanic
 
-![mechanic preview](http://ja.ckjennin.gs/public/images/Mechanic-preview.png)
+![mechanic preview](screenshots/mechanic.png)
 
 Requirements
 ------------
 
-Mechanic requires RoboFont 1.3 or greater.
+Mechanic requires RoboFont 1.5 or greater.
 
 Installation
 ------------
 
-Double click `Mechanic.roboFontExt`.
+[Download](archive/master.zip), then double click `Mechanic.roboFontExt`.
 
 Features
 --------
@@ -27,61 +29,45 @@ Features
 * Manually check for updates of configured extensions
 * Register extensions to the public extension registry
 
-Extension Registry
-------------------
-
-Mechanic has a website that lists all of the [available extensions](http://robofontmechanic.com).
-
 Mechanic for Developers
 -----------------------
 
-If you are already hosting your code on GitHub, support for mechanic is easy to add to your existing extensions. You can version your extension in two ways, depending on how your repository is set up: with git tags, or through `info.plist`.
+If you are already hosting your code on GitHub, support for Mechanic is easy to add to your existing extension.
 
-Either way:
 * Mechanic assumes that you are releasing on the master branch.
 * Mechanic recognizes major, minor, and patch level versions, `X.Y.Z`. Patch level is optional.
 
+Add the following snippet to the `info.plist` file inside of your extension:
+
+```xml
+<key>com.robofontmechanic.Mechanic</key>
+<dict>
+  <key>repository</key>
+  <string>username/my-extension</string>
+  <key>summary</key>
+  <string>A brief description of what this thing does</string>
+</dict>
+```
+
+Replace `username/my-extension` with your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
+
+Replace the `summary` string with a description of the extension's functionality.
+
 Once you have added the required keys to your `info.plist` file, you can register your extension from within the Mechanic interface in RoboFont.
 
-### Versioning with Tags (recommended)
+![mechanic register tab](screenshots/register.png)
 
-If you only have a single extension in your repository, using tags is the best way to organize your releases. Tagging allows you to specify a single, authoritative commit for each version of your extension.
+Click on "Import", then select your extension from the file selection dialog. If your extension is configured correctly, all of the fields should be populated. Click "Register" to complete the process.
 
-In order for Mechanic to recognize your extension, add a `repository` key to your `info.plist` file:
+When you register your extension, your name/username and the description of the repository will be recorded from GitHub. This information will be displayed in the list of installable extensions and on the Mechanic website, so make sure that you have set these how you want them to be seen before registering.
 
-```xml
-	<key>repository</key>
-	<string>username/Repository</string>
-```
+You will only need to register once for each extension you want to have listed in the Mechanic installation list. To release new versions in the future, you only need to update the version number in the `info.plist` file and push the changes to GitHub.
 
-* `repository` should contain your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
+Developing Mechanic
+-------------------
 
-When checking a local extension's version against a repository, Mechanic will search your repository's tags for the latest version number. When you want to release a new version of your extension, tag the specific commit with a incremented version number. From the command line, your first release might look like:
+To run the development version of Mechanic, you'll need to download and run the [mechanic-server](https://github.com/jackjennings/mechanic-server) software.
 
-```
-	git tag -a 0.1 -m "Release version 0.1"
-	git push origin master --tags
-```
+The `rake` Ruby library is currently used to perform several development tasks. Run `rake -T` to get a list of all defined tasks.
 
-Because Mechanic checks the locally installed extension's plist against your git tags, you'll need to manually ensure that the version in your `info.plist` matches your release's tagged version. 
-
-When versioning with tags, Mechanic installs the first RoboFont extension that it finds in your repository. If there's more than one, it will try to guess which is the correct extension based on it's filename. If you need to have more than one extension in your repository, consider versioning with `info.plist`.
-
-### Versioning with `info.plist`
-
-You can also version your extension using only the key found in `info.plist`.
-
-Add the standard `repository` key to your `info.plist`, along with an `extensionPath` key.
-
-```xml
-	<key>repository</key>
-	<string>username/Repository</string>
-	<key>extensionPath</key>
-	<string>path/to/Extension.roboFontExt</string>
-```
-
-* `repository` should contain your username and the name of the repository that your extension is stored in (e.g. `jackjennings/Mechanic`).
-
-* `extensionPath` should contain the path to your extension, relative to the root of your repository (e.g. `ext/myExtension/myExtension.roboFontExt`)
-
-Mechanic will download the `info.plist` file that is contained in the extension specified in `extensionPath` when checking for updates.
+Updates should be made to the files in `src` directory, after which running `rake build` will compile an installable RoboFont extension. Running `rake install` will both build and install the development extension.
