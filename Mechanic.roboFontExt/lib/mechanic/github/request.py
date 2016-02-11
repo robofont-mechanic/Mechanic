@@ -22,6 +22,8 @@ class GithubRequest(object):
             etag = self.get_etag(cached_response)
             headers['If-None-Match'] = etag
 
+        logger.debug("Requesting {}", url)
+
         response = requests.get(url, headers=headers)
 
         self.log_header(response, 'x-ratelimit-limit')
