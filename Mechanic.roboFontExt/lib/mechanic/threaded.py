@@ -1,4 +1,4 @@
-from AppKit import NSObject, NSThread
+from AppKit import NSThread
 
 from mechanic import logger
 
