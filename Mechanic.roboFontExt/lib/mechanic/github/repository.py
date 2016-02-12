@@ -27,9 +27,10 @@ class GithubRepository(object):
         try:
             return Version(GithubPlist(self.repo, self.extension_path)['version'])
         except requests.exceptions.HTTPError as e:
-            logger.warn("Couldn't get version information from %s because of an HTTP connection error: %d",
+            logger.warn("Couldn't get version information from %s\n\tHTTP status: %d\n\tresponse: %s",
                         self.repo,
-                        e.response.status_code)
+                        e.response.status_code,
+                        e.response.text)
             return Version('0.0.0')
         except AttributeError:
             logger.warn("(Probably) Couldn't fetch the GitHub file tree for %s", self.repo)

@@ -5,7 +5,6 @@ from .request import GithubRequest
 
 TREE_URL = 'https://api.github.com/repos/%(repo)s/git/trees/HEAD?recursive=1'
 
-
 class GithubTree(object):
 
     def __init__(self, repository):
