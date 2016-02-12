@@ -11,9 +11,9 @@ formatter = logging.Formatter(formatting)
 logger = logging.getLogger(name)
 logger.setLevel(getattr(logging, env.log_level.upper(), logging.DEBUG))
 
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+# handler = logging.StreamHandler(sys.stdout)
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
 
 if env.environment == 'development':
     current_dir = os.path.dirname(__file__)
@@ -25,9 +25,6 @@ if env.environment == 'development':
         os.makedirs(log_dir)
     except OSError:
         pass
-
-    print(log_dir)
-    print(log_path)
 
     fileHandler = logging.FileHandler(log_path)
     fileHandler.setFormatter(formatter)
