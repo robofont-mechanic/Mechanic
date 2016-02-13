@@ -1,6 +1,8 @@
 import pickle
 from lib.tools.notifications import SelectorWrapper
 
+from mechanic.bus import Bus
+
 
 class EventCaller(object):
 
