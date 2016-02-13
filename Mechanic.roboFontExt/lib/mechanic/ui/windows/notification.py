@@ -37,8 +37,6 @@ class UpdateNotificationWindow(BaseWindow):
             self.w.setDefaultButton(self.w.updateButton)
 
             self.w.open()
-        else:
-            logger.info("All extensions are up to date.")
 
     def do_update(self, sender):
         self.update()

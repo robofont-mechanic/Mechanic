@@ -1,11 +1,10 @@
-from AppKit import NSThread
-
 from mechanic import logger
 from mechanic.bus import Bus
+from mechanic.event_caller import EventCaller
 from mechanic.storage import Storage
 from mechanic.observers.update import UpdateObserver
+from mechanic.ui.windows.notification import UpdateNotificationWindow
 
-from lib.tools.notifications import SelectorWrapper
 
 Storage.set_defaults(ignore={},
                      update_cache={},
@@ -15,3 +14,6 @@ Storage.set_defaults(ignore={},
 
 UpdateObserver('applicationDidFinishLaunching',
                'applicationDidBecomeActive')
+
+
+EventCaller('newUpdatesFound', UpdateNotificationWindow)

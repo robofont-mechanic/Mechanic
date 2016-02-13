@@ -4,7 +4,6 @@ from mechanic.threaded import Threaded
 from mechanic.update import Update
 from mechanic.observer import Observer
 from mechanic.storage import Storage
-from mechanic.ui.windows.notification import UpdateNotificationWindow
 
 
 class UpdateObserver(Observer):
@@ -12,8 +11,6 @@ class UpdateObserver(Observer):
 
     def __init__(self, *events):
         self.add('check_for_updates_in_thread', *events)
-
-        Bus().on('mechanic.new_updates', self.display_notification_ui)
 
     def check_for_updates_in_thread(self, info):
         Threaded(self).check_for_updates()
@@ -30,7 +27,9 @@ class UpdateObserver(Observer):
                 return
 
             if updates:
-                Bus().emit("mechanic.new_updates", updates)
+                logger.info("%d new updates found", len(updates))
+
+                Bus().emit("newUpdatesFound", updates)
             else:
                 logger.info("No new updates found")
         else:
@@ -39,7 +38,3 @@ class UpdateObserver(Observer):
     def should_check_for_updates(self):
         return bool(Storage.get('check_on_startup')) and \
             not Update.checked_recently()
-
-    def display_notification_ui(self, notification):
-        updates = notification.userInfo()
-        UpdateNotificationWindow(updates)
