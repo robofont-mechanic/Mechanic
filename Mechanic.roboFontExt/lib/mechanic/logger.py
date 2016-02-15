@@ -30,6 +30,8 @@ if env.environment == 'development':
     fileHandler.setFormatter(formatter)
     logger.addHandler(fileHandler)
 
+logger.addHandler(logging.NullHandler())
+
 debug    = logger.debug
 info     = logger.info
 warn     = logger.warn
