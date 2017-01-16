@@ -25,12 +25,19 @@ class GithubRepository(object):
     @lazy_property
     def version(self):
         try:
-            return Version(GithubPlist(self.repo, self.extension_path)['version'])
-        except requests.exceptions.HTTPError:
-            logger.warn("Couldn't get version information from %s", self.repo)
+            plist = GithubPlist(self.repo, self.extension_path)
+            return Version(plist['version'])
+        except requests.exceptions.HTTPError as e:
+            logger.warn("Couldn't get version information from %s\n\tHTTP status: %d\n\tresponse: %s",
+                        self.repo,
+                        e.response.status_code,
+                        e.response.text)
             return Version('0.0.0')
         except AttributeError:
             logger.warn("(Probably) Couldn't fetch the GitHub file tree for %s", self.repo)
+            return Version('0.0.0')
+        except GithubPlist.MalformedPlistError:
+            logger.warn("An invalid plist was found for the extension in %s", self.repo)
             return Version('0.0.0')
 
     @lazy_property

@@ -11,10 +11,11 @@ class GithubRequest(object):
         self.url = url
 
     def get(self):
-        logger.info('Requesting {}'.format(self.url))
-        return self.cache_response(self.url, self.get_cached(self.url))
+        logger.debug('Requesting {}'.format(self.url))
 
-    def get_cached(self, url):
+        return self.cache_response(self.url, self.get_with_etag_cache(self.url))
+
+    def get_with_etag_cache(self, url):
         headers = {}
         cached_response = self.cache.get(url, None)
 
@@ -22,7 +23,9 @@ class GithubRequest(object):
             etag = self.get_etag(cached_response)
             headers['If-None-Match'] = etag
 
-        response = requests.get(url, headers=headers)
+        logger.debug('Headers: %s', headers)
+
+        response = requests.get(url, headers=headers, auth=NullAuth())
 
         self.log_header(response, 'x-ratelimit-limit')
         self.log_header(response, 'x-ratelimit-remaining')
@@ -32,6 +35,7 @@ class GithubRequest(object):
             response = cached_response
 
         response.raise_for_status()
+
         return response
 
     def cache_response(self, url, response):
@@ -49,3 +53,22 @@ class GithubRequest(object):
     @property
     def cache(self):
         return self.__class__.__cache
+
+
+class NullAuth(requests.auth.AuthBase):
+    '''force requests to ignore the ``.netrc``
+
+    Copied from: https://github.com/kennethreitz/requests/issues/2773#issuecomment-174312831
+
+    Some sites do not support regular authentication, but we still
+    want to store credentials in the ``.netrc`` file and submit them
+    as form elements. Without this, requests would otherwise use the
+    .netrc which leads, on some sites, to a 401 error.
+
+    Use with::
+
+        requests.get(url, auth=NullAuth())
+    '''
+
+    def __call__(self, r):
+        return r

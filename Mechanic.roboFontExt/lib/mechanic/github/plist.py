@@ -1,5 +1,6 @@
 import os
 import plistlib
+import xml
 
 from mechanic.lazy_property import lazy_property
 
@@ -11,6 +12,8 @@ PLIST_URL = "https://raw.github.com/%(repo)s/master/%(plist_path)s"
 
 class GithubPlist(object):
 
+    class MalformedPlistError(Exception): pass
+
     def __init__(self, repo, path):
         self.repo = repo
         self.plist_path = os.path.join(path, 'info.plist')
@@ -20,8 +23,11 @@ class GithubPlist(object):
 
     @lazy_property
     def data(self):
-        response = GithubRequest(self.plist_url).get()
-        return plistlib.readPlistFromString(response.content)
+        try:
+            response = GithubRequest(self.plist_url).get()
+            return plistlib.readPlistFromString(response.content)
+        except xml.parsers.expat.ExpatError as e:
+            raise GithubPlist.MalformedPlistError
 
     @lazy_property
     def plist_url(self):

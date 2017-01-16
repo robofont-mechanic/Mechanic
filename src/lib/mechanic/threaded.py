@@ -1,4 +1,4 @@
-from AppKit import NSObject, NSThread
+from AppKit import NSThread
 
 from mechanic import logger
 
@@ -26,11 +26,11 @@ class Threaded(object):
     @staticmethod
     def log(target):
         if hasattr(target, 'im_class'):
-            logger.info('Calling `%s#%s` in a new thread',
-                        target.im_class.__name__,
-                        target.__name__)
+            logger.debug('Calling `%s#%s` in a new thread',
+                         target.im_class.__name__,
+                         target.__name__)
         else:
-            logger.info('Initializing `%s` in a new thread', target.__name__)
+            logger.debug('Initializing `%s` in a new thread', target.__name__)
 
 
 class ThreadedObject(object):

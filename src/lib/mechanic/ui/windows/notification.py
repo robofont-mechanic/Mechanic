@@ -11,16 +11,12 @@ from mechanic.ui.windows.base import BaseWindow
 from mechanic.ui.windows.main import MechanicWindow
 
 
-class UpdateNotificationWindow(BaseWindow, ThreadedObject):
+class UpdateNotificationWindow(BaseWindow):
     window_size = (520, 130)
     window_title = "Extension Updates"
 
-    def __init__(self, force=False):
-        try:
-            self.updates = self.get_updates(force)
-        except Update.ConnectionError:
-            logger.info("Couldn't connect to the internet")
-            return
+    def __init__(self, updates):
+        self.updates = updates
 
         if self.updates:
             self.create_image()
@@ -41,8 +37,6 @@ class UpdateNotificationWindow(BaseWindow, ThreadedObject):
             self.w.setDefaultButton(self.w.updateButton)
 
             self.w.open()
-        else:
-            logger.info("All extensions are up to date.")
 
     def do_update(self, sender):
         self.update()
@@ -68,10 +62,6 @@ class UpdateNotificationWindow(BaseWindow, ThreadedObject):
         image = NSImage.imageNamed_("ExtensionIcon")
         self.w.image = ImageView((15, 15, 80, 80), scale='fit')
         self.w.image.setImage(imageObject=image)
-
-    def get_updates(self, force):
-        skip_patches = bool(Storage.get('ignore_patch_updates'))
-        return Update.all(force, skip_patches=skip_patches)
 
     @property
     def title(self):
