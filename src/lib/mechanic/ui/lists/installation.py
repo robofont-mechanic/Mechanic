@@ -33,7 +33,8 @@ class InstallationList(BaseList):
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]
         item = {'is_installed': Extension(name=name).is_installed,
-                'extension': extension}
+                'extension': extension,
+                'search': ' '.join([name.lower(), extension[u'author'].lower(), extension[u'description'].lower()])}
         return super(InstallationList, self)._wrapItem(item)
 
     def _unwrapListItems(self, items=None):

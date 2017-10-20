@@ -1,5 +1,7 @@
 from vanilla import *
 
+import AppKit
+
 from mechanic.threaded import ThreadedObject
 from mechanic.extension import Extension
 from mechanic.registry import Registry
@@ -20,6 +22,9 @@ class InstallTab(BaseTab, ThreadedObject):
         self.list = InstallationList((20, 20, -20, -60),
                                      selectionCallback=self.update_buttons)
 
+        self.search_box = SearchBox((20, -42, 150, 20),
+                                    callback=self.search)
+
         self.uninstall_button = Button((-290, -42, 100, 20),
                                        "Uninstall",
                                        callback=self.uninstall)
@@ -29,6 +34,16 @@ class InstallTab(BaseTab, ThreadedObject):
                                      callback=self.in_thread.install)
 
         self.update_buttons()
+
+    def search(self, sender):
+        search = sender.get()
+        arrayController = self.list.getNSTableView().dataSource()
+        if not search:
+            arrayController.setFilterPredicate_(None)
+        else:
+            search = 'search CONTAINS "%s"' % search.lower()
+            predicate = AppKit.NSPredicate.predicateWithFormat_(search)
+            arrayController.setFilterPredicate_(predicate)
 
 
     @progress.each('list.selected')
