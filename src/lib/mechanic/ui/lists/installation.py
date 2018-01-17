@@ -68,6 +68,7 @@ class InstallationList(BaseList):
 
     @property
     def selected(self):
-        list_ = self.get()
-        selections = self.getSelection()
-        return [list_[s] for s in selections]
+        items = self.getNSTableView().dataSource().selectedObjects()
+        if not self._itemsWereDict:
+            items = [item["item"] for item in items]
+        return self._unwrapListItems(items)
