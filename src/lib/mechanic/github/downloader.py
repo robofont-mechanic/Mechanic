@@ -1,5 +1,6 @@
 import os
 import requests
+import certifi
 import tempfile
 import fnmatch
 
@@ -21,7 +22,7 @@ class GithubDownloader(object):
         filepath = os.path.join(tmp_dir, os.path.basename(url))
 
         with open(filepath, "wb") as download:
-            stream = requests.get(url, stream=True)
+            stream = requests.get(url, stream=True, verify=certifi.where())
             chunks = stream.iter_content(chunk_size=8192)
 
             for content in chunks:
