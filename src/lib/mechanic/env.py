@@ -4,7 +4,13 @@
 """
 
 import os.path as __p
-import ConfigParser as __cp
+
+try:
+    # Python 3
+    import configparser as __cp
+except ImportError:
+    # Python 2
+    import ConfigParser as __cp
 
 __f = __p.abspath(__p.join(__p.dirname(__file__), '..', '..', '.env'))
 __c = __cp.ConfigParser()
