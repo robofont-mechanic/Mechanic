@@ -1,4 +1,5 @@
 import webbrowser
+from AppKit import NSPredicate
 
 from mechanic.extension import Extension
 from mechanic.ui.lists.base import BaseList
@@ -65,6 +66,17 @@ class InstallationList(BaseList):
     def open_repo(self, sender):
         for item in self.selected:
             webbrowser.open('http://github.com/%s' % item['repository'])
+
+    def filter(self, search):
+        arrayController = self.getNSTableView().dataSource()
+
+        if not search:
+            arrayController.setFilterPredicate_(None)
+        else:
+            search = 'search CONTAINS "%s"' % search.lower()
+            predicate = NSPredicate.predicateWithFormat_(search)
+            arrayController.setFilterPredicate_(predicate)
+
 
     @property
     def selected(self):

@@ -1,7 +1,5 @@
 from vanilla import *
 
-import AppKit
-
 from mechanic.threaded import ThreadedObject
 from mechanic.extension import Extension
 from mechanic.registry import Registry
@@ -36,15 +34,7 @@ class InstallTab(BaseTab, ThreadedObject):
         self.update_buttons()
 
     def search(self, sender):
-        search = sender.get()
-        arrayController = self.list.getNSTableView().dataSource()
-        if not search:
-            arrayController.setFilterPredicate_(None)
-        else:
-            search = 'search CONTAINS "%s"' % search.lower()
-            predicate = AppKit.NSPredicate.predicateWithFormat_(search)
-            arrayController.setFilterPredicate_(predicate)
-
+        self.list.filter(sender.get())
 
     @progress.each('list.selected')
     @progress.tick('repositoryWillDownload',
