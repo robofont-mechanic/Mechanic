@@ -63,14 +63,12 @@ class InstallTab(BaseTab, ThreadedObject):
         self.in_thread.update_list()
 
     def update_list(self):
-        print("update_list")
         try:
             self.list.set(Registry.all())
             self.enable()
             self.set_default_button(self.install_button)
         except Registry.ConnectionError:
             self.disable("Couldn't connect to the registry server...")
-        print("done update_list")
 
     def disable(self, *args, **kwargs):
         self.list.enable(False)
