@@ -1,4 +1,5 @@
 import webbrowser
+from AppKit import NSPredicate
 
 from mechanic.extension import Extension
 from mechanic.ui.lists.base import BaseList
@@ -32,8 +33,18 @@ class InstallationList(BaseList):
 
     def _wrapItem(self, extension):
         name = extension[u'filename'].split("/")[-1]
+
+        search = []
+        if name:
+            search.append(name.lower())
+        if extension[u'author']:
+            search.append(extension[u'author'].lower())
+        if extension[u'description']:
+            search.append(extension[u'description'].lower())
+
         item = {'is_installed': Extension(name=name).is_installed,
-                'extension': extension}
+                'extension': extension,
+                'search': ' '.join(search)}
         return super(InstallationList, self)._wrapItem(item)
 
     def _unwrapListItems(self, items=None):
@@ -56,8 +67,20 @@ class InstallationList(BaseList):
         for item in self.selected:
             webbrowser.open('http://github.com/%s' % item['repository'])
 
+    def filter(self, search):
+        arrayController = self.getNSTableView().dataSource()
+
+        if not search:
+            arrayController.setFilterPredicate_(None)
+        else:
+            search = 'search CONTAINS "%s"' % search.lower()
+            predicate = NSPredicate.predicateWithFormat_(search)
+            arrayController.setFilterPredicate_(predicate)
+
+
     @property
     def selected(self):
-        list_ = self.get()
-        selections = self.getSelection()
-        return [list_[s] for s in selections]
+        items = self.getNSTableView().dataSource().selectedObjects()
+        if not self._itemsWereDict:
+            items = [item["item"] for item in items]
+        return self._unwrapListItems(items)

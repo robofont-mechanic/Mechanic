@@ -4,9 +4,9 @@ import semversion
 from mechanic import logger
 
 
-_re = re.compile('^'
-                 '(\d+)\.(\d+)'  # minor, major
-                 '$')
+_re = re.compile(r'^'
+                 r'(\d+)\.(\d+)'  # minor, major
+                 r'$')
 
 
 _error = """Version number `%s` is not in a format Mechanic understands.

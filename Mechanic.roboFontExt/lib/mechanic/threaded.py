@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from AppKit import NSThread
 
 from mechanic import logger
@@ -65,4 +67,4 @@ class TaskRunner(object):
             errorMessage = [self.separator,
                             traceback.format_exc(5),
                             self.separator]
-            print "\n".join(errorMessage)
+            print("\n".join(errorMessage))

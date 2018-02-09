@@ -12,6 +12,7 @@ GEM
       concurrent-ruby (~> 1.0)
     minitest (5.11.1)
     plist (3.4.0)
+    rake (12.3.0)
     thread_safe (0.3.6)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
@@ -23,6 +24,7 @@ DEPENDENCIES
   activesupport
   chunky_png
   plist
+  rake
 
 BUNDLED WITH
    1.16.1

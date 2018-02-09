@@ -32,7 +32,7 @@ class Storage(object):
 
     @classmethod
     def set_defaults(cls, **defaults):
-        for key, default in defaults.iteritems():
+        for key, default in defaults.items():
             value = cls.get(key)
             if value is None:
                 logger.info('Setting default value for %s to %s' % (key, default))

@@ -20,6 +20,9 @@ class InstallTab(BaseTab, ThreadedObject):
         self.list = InstallationList((20, 20, -20, -60),
                                      selectionCallback=self.update_buttons)
 
+        self.search_box = SearchBox((20, -42, 150, 20),
+                                    callback=self.search)
+
         self.uninstall_button = Button((-290, -42, 100, 20),
                                        "Uninstall",
                                        callback=self.uninstall)
@@ -30,6 +33,8 @@ class InstallTab(BaseTab, ThreadedObject):
 
         self.update_buttons()
 
+    def search(self, sender):
+        self.list.filter(sender.get())
 
     @progress.each('list.selected')
     @progress.tick('repositoryWillDownload',
