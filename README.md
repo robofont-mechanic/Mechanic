@@ -17,7 +17,7 @@ Mechanic requires RoboFont 1.5 or greater.
 Installation
 ------------
 
-[Download](archive/master.zip), then double click `Mechanic.roboFontExt`.
+[Download](https://github.com/jackjennings/Mechanic/archive/master.zip), then double click `Mechanic.roboFontExt`.
 
 Features
 --------
